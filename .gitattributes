@@ -1,0 +1,22 @@
+* text=auto
+
+*.css text
+*.html text
+*.js text
+*.json text
+*.md text
+*.svg text
+*.toml text
+*.txt text
+*.xml text
+*.yaml text
+
+*.gif binary
+*.jpg binary
+*.png binary
+
+*.eot binary
+*.otf binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
