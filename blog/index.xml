@@ -15,7 +15,7 @@
       <pubDate>Sat, 24 Dec 2016 09:00:00 +0100</pubDate>
       
       <guid>https://cito.github.io/blog/f-strings/</guid>
-      <description>&lt;p&gt;&lt;img src=&#34;img/f-strings-0.jpg&#34; class=&#34;center half&#34; alt=&#34;Benchmark results&#34;&gt;&lt;/p&gt;
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/f-strings-0.jpg&#34; alt=&#34;Benchmark results&#34;&gt;
 
 &lt;p&gt;Hurray! It&amp;rsquo;s Christmas time - and Python 3.6 has been released!&lt;/p&gt;
 
@@ -138,7 +138,7 @@ for fmt in format:
 
 &lt;p&gt;Here is a diagram of the execution times of the various tested methods:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;img/f-strings-1.png&#34; class=&#34;center half&#34; alt=&#34;Benchmark results&#34;&gt;&lt;/p&gt;
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/f-strings-1.png&#34; alt=&#34;Benchmark results&#34;&gt;
 
 &lt;p&gt;As with all benchmarks, keep in mind that many factors play a role when formatting and this serves only as a rough guidance. Particularly, I noticed that when using &amp;ldquo;d&amp;rdquo; as a format specifier for the integer number, the prominence of the f-string execution time was largely diminished. Maybe there is still room for optimization here. But formatting with f-strings was still the fastest methods.&lt;/p&gt;
 
@@ -153,7 +153,7 @@ for fmt in format:
       <pubDate>Fri, 23 Dec 2016 19:00:00 +0100</pubDate>
       
       <guid>https://cito.github.io/blog/pinboard-review/</guid>
-      <description>&lt;p&gt;&lt;img src=&#34;img/pinboard-review.jpg&#34; class=&#34;center half&#34; alt=&#34;Pinboard&#34;&gt;&lt;/p&gt;
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/pinboard-review.jpg&#34; alt=&#34;Pinboard&#34;&gt;
 
 &lt;p&gt;Here is a short review of the &lt;a href=&#34;https://pinboard.in/&#34;&gt;Pinboard&lt;/a&gt; bookmarking service that I&amp;rsquo;m using for several years now.&lt;/p&gt;
 
@@ -186,7 +186,7 @@ for fmt in format:
       <pubDate>Thu, 22 Dec 2016 22:00:00 +0100</pubDate>
       
       <guid>https://cito.github.io/blog/welcome/</guid>
-      <description>&lt;p&gt;&lt;img src=&#34;img/welcome.jpg&#34; class=&#34;center half&#34; alt=&#34;Heidelberg&#34;&gt;&lt;/p&gt;
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/welcome.jpg&#34; alt=&#34;Heidelberg&#34;&gt;
 
 &lt;p&gt;It&amp;rsquo;s this time of the year again, and I decided to use some of the cold and long winter evenings to finally start blogging.&lt;/p&gt;
 
