@@ -33,7 +33,7 @@
 
 &lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
 &amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; print(f&#39;He said his name is {name} and he is {age} years old.&#39;)
+&amp;gt;&amp;gt;&amp;gt; f&#39;He said his name is {name} and he is {age} years old.&#39;
 He said his name is Fred and he is 42 years old.
 &lt;/code&gt;&lt;/pre&gt;
 
