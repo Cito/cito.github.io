@@ -9,6 +9,73 @@
     <atom:link href="https://cito.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Never iterate a changing dict</title>
+      <link>https://cito.github.io/blog/never-iterate-a-changing-dict/</link>
+      <pubDate>Sat, 07 Jan 2017 19:52:45 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/never-iterate-a-changing-dict/</guid>
+      <description>&lt;p&gt;Yesterday I noticed a bug in a Python program that only appeared when running it with the new Python 3.6.&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/never-iterate-a-changing-dict.jpg&#34; alt=&#34;A slippery slope&#34;&gt;
+
+&lt;p&gt;It turned out that the program had been running a slippery slope all the time.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;Essentially, the program tried to find for a given list of field names, like&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;names = [&#39;alpha&#39;, &#39;bravo&#39;, &#39;charlie&#39;, &#39;delta&#39;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and a given format-string, like&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fmtstr = &#39;show only {alpha}, {bravo} and {charlie}&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;which of the given field names where used in the string. The following code was used to examine this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;used_names = []
+d = dict.fromkeys(names)
+for k in d:
+    del d[k]
+    try:
+        fmtstr.format(**d)
+    except KeyError:
+        used_names.append(k)
+    d[k] = None
+
+print(&amp;quot;Used names:&amp;quot;, &#39;, &#39;.join(sorted(used_names)))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The code simply tries to format the string while successively omitting one of the given field names. If formatting fails with a KeyError, it knows that the field name is used.&lt;/p&gt;
+
+&lt;p&gt;When you run this code with Python versions before 3.6, it works as expected:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Used names: alpha, bravo, charlie
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, when you try to run it with Python 3.6, it will print out something very strange:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Used names: alpha, alpha, alpha, alpha, alpha, bravo, bravo, bravo, bravo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What&amp;rsquo;s happening here? Can you spot the problem?&lt;/p&gt;
+
+&lt;p&gt;If you look carefully, you probably see it: Yes, this is another instance of the dreaded &amp;ldquo;changing a mutable object while iterating it&amp;rdquo; problem, that you surely have already experienced sometime or other when getting an error message like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;RuntimeError: dictionary changed size during iteration
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In this case, however, the dictionary did not change its size. Actually it did not even change its keys between iterations. So you wouldn&amp;rsquo;t think there could be a problem with this code, and in fact it worked fine until recently. But in Python 3.6 the dict type has been reimplemented to use a more compact representation. This implementation does not pardon iterating over a changing dictionary even if you try to restore removed keys immediately, since it uses insertion order with an additional level of indirection, which causes hiccups when iterating while keys are removed and re-inserted, thereby changing the order and internal pointers of the dict.&lt;/p&gt;
+
+&lt;p&gt;Note that this problem is not fixed by iterating &lt;code&gt;d.keys()&lt;/code&gt; instead of &lt;code&gt;d&lt;/code&gt;, since in Python 3, &lt;code&gt;d.keys()&lt;/code&gt; returns a dynamic view of the keys in the dict which results in the same problem. Instead, iterate over &lt;code&gt;list(d)&lt;/code&gt;. This will produce a list from the keys of the dictionary that will not change during iteration. Or you can also iterate over &lt;code&gt;sorted(d)&lt;/code&gt; if a sorted order is important.&lt;/p&gt;
+
+&lt;p&gt;Just to make this clear: This is not a &lt;em&gt;bug&lt;/em&gt; in Python 3.6. Iterating an object and changing it at the same time was always considered unsafe and bad style. The benefits of the new dict implementation are great enough to accept this kind of incompatibility. However, I wonder whether it would be possible and beneficial to safeguard the for loop with a check of the private version of the dict that has just been added in Python 3.6 as well (see &lt;a href=&#34;https://www.python.org/dev/peps/pep-0509/&#34;&gt;PEP509&lt;/a&gt;), and raise a RuntimeError if the version changes, similarly to how a change of the dictionary size is already detected and reported as an error. Then running programs like the one above would raise an error instead of failing in strange and nondeterministic ways.&lt;/p&gt;
+
+&lt;p&gt;To sum up the morale of this story: Never iterate a changing dictionary, even if you preserve its size and keys. Instead run the for loop over a copy of the keys or items of the dictionary.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Python and the 36 Towers</title>
       <link>https://cito.github.io/blog/python-36-towers/</link>
       <pubDate>Tue, 27 Dec 2016 17:10:27 +0100</pubDate>

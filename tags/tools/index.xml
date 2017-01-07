@@ -38,7 +38,7 @@
 
 &lt;p&gt;My only complaint is that the website and some of the browser add-ons are getting a bit long in the tooth. Firefox has switched to a new add-on system, and the official add-on based on the old system feels very slow and will probably stop working end of next year when Firefox will move to the new system exclusively. So some overhaul of Pinboard seems overdue.&lt;/p&gt;
 
-&lt;p&gt;Meanwhile, I have created my own Firefox add-on for Pinboard that is snappier than the original one and uses the new add-on system - but I&amp;rsquo;ll write about that in another blog post.&lt;/p&gt;</description>
+&lt;p&gt;Meanwhile, I have created my own Firefox add-on for Pinboard called &lt;a href=&#34;https://github.com/Cito/Pinboard-Pin&#34;&gt;&amp;ldquo;Pinboard Pin&amp;rdquo;&lt;/a&gt; that is snappier than the original one and uses the new add-on system - I&amp;rsquo;ll write more about that in &lt;a href=&#34;https://cito.github.io/blog/web-ext-with-angular&#34;&gt;another blog post&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
   </channel>
