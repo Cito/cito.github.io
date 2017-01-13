@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8">
+<base href="https://cito.github.io/">
+
+<title>Ending the Epic Battle for Overlay Icons | Seasoned &amp; Agile</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="description" content="A solution for automatically rearranging the sort order of the overlay icons in the Windows registry.">
+
+<meta name="description" content="[Python, Programming]">
+
+
+<meta name="author" content="Christoph Zwerschke">
+<meta name="date" content="2017-01-13 19:31:27 &#43;0100 CET">
+<link rel="canonical" href="https://cito.github.io/blog/overlay-icon-battle/">
+
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body lang="en">
+<header id="site-header">
+<a href="https://cito.github.io/" class="title">Seasoned &amp; Agile</a>
+<nav><ul>
+<li><a href="https://cito.github.io/about/" title="About Me" rel="me"><i class="fa fa-user-circle"></i></a></li>
+<li><a href="https://cito.github.io/tags/" title="Tags"><i class="fa fa-tags"></i></a></li>
+<li><a href="https://github.com/cito" title="~ GitHub ~"><i class="fa fa-github"></i></a></li>
+<li><a href="https://plus.google.com/+ChristophZwerschke" title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li>
+<li><a href="https://twitter.com/CitoZwer" title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li>
+<li><a href="mailto:cito@online.de" title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li>
+<li><a href="" title="RSS"><i class="fa fa-rs"></i></a></li>
+</ul></nav>
+</header>
+
+
+<main id="site-main" role="main">
+<article>
+
+<header>
+<div>Fri Jan 13, 2017</div>
+<div>4 minute read</div>
+<ul class="tags">
+  
+    <li> <a href="https://cito.github.io//tags/python">Python</a> </li>
+  
+    <li> <a href="https://cito.github.io//tags/windows">Windows</a> </li>
+  
+</ul>
+</header>
+<section>
+<h1 class="title">Ending the Epic Battle for Overlay Icons</h1>
+<p>An epic battle is going on deep inside in the registry of my Windows PC. The combatants: Dropbox, Google Drive, OneDrive and the allied forces of TortoiseGit, TortoiseHg and TortoiseSVN. The weapons: blank spaces.</p>
+
+<p>Let me explain: As so often, wars start when there are certain scarce or indivisible resources that are in demand by multiple contenders. In this, case, the resources are so called &ldquo;overlay icons&rdquo;. These are the tiny additions displayed at the lower left corner of the symbols for files and folders in the Windows explorer, like the small arrow that indicates a shortcut. Some third-party tools like TortoiseGit or Dropbox make also good use of them to show the state of the files in the registry or the cloud, like whether the file has been changed, is not yet synchronized and so on.</p>
+
+<img class="center" src="https://cito.github.io/img/overlay-icon-battle.png" alt="Overlay Icons">
+
+<p></p>
+
+<p>The problem is: Windows has only 15 slots available for such overlay icons. Yes, even in the latest Windows 10, you still only have 15 slots. While it didn&rsquo;t matter much in former times, when they were rarely used, it has become a real problem today. Several different cloud services are now fighting for these few slots, and if you&rsquo;re a developer, you will probably like TortoiseGit and other clients for source repositories which also use the overlay icons to display the state of the files in the registry in the Windows explorer, which is a tremendously helpful. While all the Tortoise clients share the same icons, these are already 9 of the available slots.</p>
+
+<p>This means that in the end, not all overlay icons will be displayed. Windows simply sorts the registered overlay icons alphabetically in the registry and uses only the first 15 of them. Soon, software vendors found that there is a simple trick to get their icons into the top 10 of the overlay icons in front of all the others, just by prepending the icon names with a blank. This of course spurred an absurd arms race of vendors prepending names with more and more blanks in order to overtrump others already using this trick.</p>
+
+<p>The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.</p>
+
+<p>Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use:</p>
+
+<pre><code>#/usr/bin/python3
+
+import os
+import winreg as reg
+
+# names of all overlay icons that shall be boosted:
+
+boost = &quot;&quot;&quot;
+    Tortoise1Normal
+    Tortoise2Modified
+    Tortoise3Conflict
+    Tortoise4Locked
+    Tortoise5ReadOnly
+    Tortoise6Deleted
+    Tortoise7Added
+    Tortoise8Ignored
+    Tortoise9Unversioned
+    DropboxExt01
+    DropboxExt02
+    DropboxExt03
+    DropboxExt04
+    DropboxExt05
+    DropboxExt06
+&quot;&quot;&quot;
+
+boost = set(boost.split())
+
+with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
+        r'SOFTWARE\Microsoft\Windows\CurrentVersion'
+        r'\Explorer\ShellIconOverlayIdentifiers') as base:
+
+    names = set()
+    renames = []
+    i = 0
+    while True:
+        try:
+            name = reg.EnumKey(base, i)
+        except OSError:
+            break
+        core = name.strip()
+        if core in names:
+            print('Delete', repr(core))
+            reg.DeleteKey(base, name)
+        else:
+            names.add(core)
+            if core in boost:
+                core = ' ' + core
+            if core != name:
+                renames.append((name, core))
+        i += 1
+
+    if renames:
+        for old_name, new_name in renames:
+            print('Rename', repr(old_name), 'to', repr(new_name))
+            value = reg.QueryValue(base, old_name)
+            reg.CreateKey(base, new_name)
+            reg.SetValue(base, new_name, reg.REG_SZ, value)
+            reg.DeleteKey(base, old_name)
+    else:
+        print('Nothing to rename')
+</code></pre>
+
+<p>This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.</p>
+
+<p>Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &ldquo;run as administrator&rdquo; under the advanced options.</p>
+
+<p>Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up, and you need to reboot Windows in order to make the changes effective. After all, you&rsquo;re running a Windows computer.</p>
+</section>
+</article>
+</main>
+
+<aside class="rel">
+<p>
+
+</p>
+<p>
+
+<a href="https://cito.github.io/blog/never-iterate-a-changing-dict/">Never Iterate a Changing Dict <i class="fa fa-long-arrow-right"></i> </a>
+
+</p>
+</aside>
+
+<footer id="site-footer">
+<p>&copy; 2016-2017 Christoph Zwerschke. All rights reserved.</p>
+</footer>
+</body>
+</html>

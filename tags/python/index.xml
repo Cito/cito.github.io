@@ -9,7 +9,98 @@
     <atom:link href="https://cito.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Never iterate a changing dict</title>
+      <title>Ending the Epic Battle for Overlay Icons</title>
+      <link>https://cito.github.io/blog/overlay-icon-battle/</link>
+      <pubDate>Fri, 13 Jan 2017 19:31:27 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/overlay-icon-battle/</guid>
+      <description>&lt;p&gt;An epic battle is going on deep inside in the registry of my Windows PC. The combatants: Dropbox, Google Drive, OneDrive and the allied forces of TortoiseGit, TortoiseHg and TortoiseSVN. The weapons: blank spaces.&lt;/p&gt;
+
+&lt;p&gt;Let me explain: As so often, wars start when there are certain scarce or indivisible resources that are in demand by multiple contenders. In this, case, the resources are so called &amp;ldquo;overlay icons&amp;rdquo;. These are the tiny additions displayed at the lower left corner of the symbols for files and folders in the Windows explorer, like the small arrow that indicates a shortcut. Some third-party tools like TortoiseGit or Dropbox make also good use of them to show the state of the files in the registry or the cloud, like whether the file has been changed, is not yet synchronized and so on.&lt;/p&gt;
+
+&lt;img class=&#34;center&#34; src=&#34;https://cito.github.io/img/overlay-icon-battle.png&#34; alt=&#34;Overlay Icons&#34;&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;The problem is: Windows has only 15 slots available for such overlay icons. Yes, even in the latest Windows 10, you still only have 15 slots. While it didn&amp;rsquo;t matter much in former times, when they were rarely used, it has become a real problem today. Several different cloud services are now fighting for these few slots, and if you&amp;rsquo;re a developer, you will probably like TortoiseGit and other clients for source repositories which also use the overlay icons to display the state of the files in the registry in the Windows explorer, which is a tremendously helpful. While all the Tortoise clients share the same icons, these are already 9 of the available slots.&lt;/p&gt;
+
+&lt;p&gt;This means that in the end, not all overlay icons will be displayed. Windows simply sorts the registered overlay icons alphabetically in the registry and uses only the first 15 of them. Soon, software vendors found that there is a simple trick to get their icons into the top 10 of the overlay icons in front of all the others, just by prepending the icon names with a blank. This of course spurred an absurd arms race of vendors prepending names with more and more blanks in order to overtrump others already using this trick.&lt;/p&gt;
+
+&lt;p&gt;The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.&lt;/p&gt;
+
+&lt;p&gt;Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#/usr/bin/python3
+
+import os
+import winreg as reg
+
+# names of all overlay icons that shall be boosted:
+
+boost = &amp;quot;&amp;quot;&amp;quot;
+    Tortoise1Normal
+    Tortoise2Modified
+    Tortoise3Conflict
+    Tortoise4Locked
+    Tortoise5ReadOnly
+    Tortoise6Deleted
+    Tortoise7Added
+    Tortoise8Ignored
+    Tortoise9Unversioned
+    DropboxExt01
+    DropboxExt02
+    DropboxExt03
+    DropboxExt04
+    DropboxExt05
+    DropboxExt06
+&amp;quot;&amp;quot;&amp;quot;
+
+boost = set(boost.split())
+
+with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
+        r&#39;SOFTWARE\Microsoft\Windows\CurrentVersion&#39;
+        r&#39;\Explorer\ShellIconOverlayIdentifiers&#39;) as base:
+
+    names = set()
+    renames = []
+    i = 0
+    while True:
+        try:
+            name = reg.EnumKey(base, i)
+        except OSError:
+            break
+        core = name.strip()
+        if core in names:
+            print(&#39;Delete&#39;, repr(core))
+            reg.DeleteKey(base, name)
+        else:
+            names.add(core)
+            if core in boost:
+                core = &#39; &#39; + core
+            if core != name:
+                renames.append((name, core))
+        i += 1
+
+    if renames:
+        for old_name, new_name in renames:
+            print(&#39;Rename&#39;, repr(old_name), &#39;to&#39;, repr(new_name))
+            value = reg.QueryValue(base, old_name)
+            reg.CreateKey(base, new_name)
+            reg.SetValue(base, new_name, reg.REG_SZ, value)
+            reg.DeleteKey(base, old_name)
+    else:
+        print(&#39;Nothing to rename&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.&lt;/p&gt;
+
+&lt;p&gt;Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &amp;ldquo;run as administrator&amp;rdquo; under the advanced options.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up, and you need to reboot Windows in order to make the changes effective. After all, you&amp;rsquo;re running a Windows computer.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Never Iterate a Changing Dict</title>
       <link>https://cito.github.io/blog/never-iterate-a-changing-dict/</link>
       <pubDate>Sat, 07 Jan 2017 19:52:45 +0100</pubDate>
       

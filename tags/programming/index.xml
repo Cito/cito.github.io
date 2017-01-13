@@ -9,7 +9,7 @@
     <atom:link href="https://cito.github.io/tags/programming/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Never iterate a changing dict</title>
+      <title>Never Iterate a Changing Dict</title>
       <link>https://cito.github.io/blog/never-iterate-a-changing-dict/</link>
       <pubDate>Sat, 07 Jan 2017 19:52:45 +0100</pubDate>
       
