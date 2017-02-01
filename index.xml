@@ -6,8 +6,231 @@
     <description>Recent content on Seasoned &amp; Agile</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 13 Jan 2017 19:31:27 +0100</lastBuildDate>
+    <lastBuildDate>Wed, 01 Feb 2017 19:00:00 +0100</lastBuildDate>
     <atom:link href="https://cito.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Web Extensions made with Angular</title>
+      <link>https://cito.github.io/blog/web-ext-with-angular/</link>
+      <pubDate>Wed, 01 Feb 2017 19:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/web-ext-with-angular/</guid>
+      <description>&lt;p&gt;In this blog post I want to show how you can create &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/What_are_WebExtensions&#34;&gt;WebExtensions&lt;/a&gt; for modern web browsers like Firefox, Chrome, Opera or Edge using the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. Angular version 2 and above).&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-0.png&#34; alt=&#34;Web Extensions made with Angular&#34;&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;the-webextensions-api&#34;&gt;The WebExtensions API&lt;/h2&gt;
+
+&lt;p&gt;In the past, each web browser provided its own way of creating extensions (also called browser add-ons or plugins) to add functionality to the web browser &amp;ndash; if extensions were supported at all. In Firefox for instance, you had to use &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL&#34;&gt;XUL&lt;/a&gt; to create extensions. In 2015, however, Mozilla announced to deprecate the old way of building extensions and switch to a new extension API called WebExtensions. This step has been criticized by many users and developers, since Firefox had accumulated a rich pool of useful extensions over the years. However, the new API has several advantages over the old ways of building extensions:&lt;/p&gt;
+
+&lt;p&gt;First, it is more or less compatible across multiple browsers. This makes it easy for developers to create extensions that can be used with all popular browsers. Instead of learning different technologies, you only need to get acquainted with the WebExtensions API. Second, this is even easier since the new API is based on the standard web technologies JavaScript, HTML and CSS. The &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions&#34;&gt;WebExtensions docs&lt;/a&gt; on MDN explain everything very well and are a great reference. The new API has also some other advantages like improved security and being able to operate in a multi-process environment.&lt;/p&gt;
+
+&lt;h2 id=&#34;creating-webextensions-with-angular&#34;&gt;Creating WebExtensions with Angular&lt;/h2&gt;
+
+&lt;p&gt;Since WebExtensions are based on standard web technologies, you can resort to many existing frameworks and libraries for client side web applications when creating such web extensions. Here I want to show that it might be even feasible to use the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. version 2 and newer) for creating a web extension.&lt;/p&gt;
+
+&lt;p&gt;This is the result of a little coding experiment I did when I wanted to build &amp;ndash; or rather re-build &amp;ndash; a web extension for storing bookmarks using the &lt;a href=&#34;https://pinboard.in/&#34;&gt;Pinboard&lt;/a&gt; service. If you don&amp;rsquo;t know Pinboard, you may want to read the &lt;a href=&#34;https://cito.github.io/blog/pinboard-review&#34;&gt;review&lt;/a&gt; I posted this month. It is a really useful bookmark manager, and it also provides a web API for storing bookmarks that can be accessed by web apps or browser extensions.&lt;/p&gt;
+
+&lt;p&gt;Actually Pinboard does already provide an official extension for Firefox and other browsers. However, the official Firefox extension is still using the old XUL technology, so that it will stop working in Firefox in about a year when Mozilla will not support it any more, and I also found that it was annoyingly slow. Storing a bookmark should be a quick process &amp;ndash; I don&amp;rsquo;t want to wait several seconds for loading a web form. One of the reasons for the sluggishness of the official web extension is that it does not cache the list of tags that are provided as suggestions. My idea was to use the &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage&#34;&gt;Web Storage API&lt;/a&gt; of WebExtensions to cache this list, so that it doesn&amp;rsquo;t need to be retrieved newly for every link you want to add.&lt;/p&gt;
+
+&lt;p&gt;It seems other people had similar ideas, since I found an unofficial Firefox add-on called &lt;a href=&#34;https://github.com/lostsnow/pinboard-firefox&#34;&gt;Pinboard+&lt;/a&gt; which already did pretty much what I wanted and had been created using the WebExtension API. This Firefox extension was actually a port of Chrome extension called &lt;a href=&#34;https://github.com/clvrobj/Pinboard-Plus&#34;&gt;Pinboard Plus&lt;/a&gt;. But unfortunately, the Firefox port was not based on the latest version of Pinboard Plus and did not work reliably for me, and also fixing the bugs turned out to be not so easy since the extension was based on the old AngularJS (version 1.2), jQuery and Underscore.js libraries, which I felt made the code a bit convoluted and hard to maintain.&lt;/p&gt;
+
+&lt;p&gt;So I decided that it would be a good exercise to re-write Pinboard Plus as a modern Angular application using no additional libraries (well, of course Angular itself requires a few other libraries internally such as RxJS). I called this new extension &lt;a href=&#34;https://addons.mozilla.org/firefox/addon/pinboard-pin/&#34;&gt;Pinboard Pin&lt;/a&gt; and published the source code on &lt;a href=&#34;https://github.com/Cito/Pinboard-Pin&#34;&gt;GitHub&lt;/a&gt;. This rewrite was also intended as a proof-of-concept that modern Angular is a viable platform for building web extensions.&lt;/p&gt;
+
+&lt;p&gt;Of course, the Angular framework might be considered an overkill for building a simple web extension. But my simple Pinboard Pin extension already contains three forms with several input fields, uses validation and an auto-suggest feature for tags, and communication with the Pinboard API over HTTP, which are all things that are easy to implement using Angular. The new Angular framework also allows writing the application in TypeScript. Unfortunately, I was not able to find typings for the WebExtensions API, though.&lt;/p&gt;
+
+&lt;h2 id=&#34;peculiarities-of-webextensions&#34;&gt;Peculiarities of WebExtensions&lt;/h2&gt;
+
+&lt;p&gt;Actually, the Angular framework is primarily targeting so-called &amp;ldquo;single page applications&amp;rdquo; (SPAs), i.e. applications which are based on a single HTML page. Therefore the &lt;a href=&#34;https://cli.angular.io/&#34;&gt;Angular CLI&lt;/a&gt; produces a single HTML page, usually called &lt;code&gt;index.html&lt;/code&gt;. Now WebExtensions are not exactly SPAs, but pretty similar.&lt;/p&gt;
+
+&lt;p&gt;One difference is that instead of a single page, WebExtensions feature different kinds of starting pages. The default popup that opens when clicking on the button of the browser extension must be specified as the property &lt;code&gt;default_popup&lt;/code&gt; of the &lt;code&gt;browser_action&lt;/code&gt; object in the &lt;code&gt;manifest.json&lt;/code&gt; file. Since we only have one HTML page, we must specify it here:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;browser_action&amp;quot;: {
+ &amp;quot;default_title&amp;quot;: &amp;quot;Pinboard Pin&amp;quot;,
+ &amp;quot;default_icon&amp;quot;: {
+    &amp;quot;32&amp;quot;: &amp;quot;/img/pinboard_idle_32.png&amp;quot;,
+    &amp;quot;64&amp;quot;: &amp;quot;/img/pinboard_idle_64.png&amp;quot;,
+ },
+ &amp;quot;default_popup&amp;quot;: &amp;quot;/index.html&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We need to tell the Angular CLI that it must add the &lt;code&gt;manifest.json&lt;/code&gt; file that describes the web extension to the web browser and other necessary files from our &lt;code&gt;src&lt;/code&gt; directory to the &lt;code&gt;dist&lt;/code&gt; directory when it builds the web extension. This can be achieved by setting the &lt;code&gt;assets&lt;/code&gt; property of the &lt;code&gt;apps&lt;/code&gt; object item in the &lt;code&gt;angular-cli.json&lt;/code&gt; configuration file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;apps&amp;quot;: [
+  {
+    &amp;quot;root&amp;quot;: &amp;quot;src&amp;quot;,
+    &amp;quot;outDir&amp;quot;: &amp;quot;dist&amp;quot;,
+    &amp;quot;assets&amp;quot;: [
+      &amp;quot;img&amp;quot;,
+      &amp;quot;js&amp;quot;,
+      &amp;quot;manifest.json&amp;quot;
+    ],
+    &amp;quot;index&amp;quot;: &amp;quot;index.html&amp;quot;,
+    &amp;quot;main&amp;quot;: &amp;quot;main.ts&amp;quot;,
+    &amp;quot;test&amp;quot;: &amp;quot;test.ts&amp;quot;,
+    &amp;quot;tsconfig&amp;quot;: &amp;quot;tsconfig.json&amp;quot;,
+    &amp;quot;prefix&amp;quot;: &amp;quot;app&amp;quot;,
+    &amp;quot;mobile&amp;quot;: false,
+    &amp;quot;styles&amp;quot;: [
+      &amp;quot;styles.css&amp;quot;
+    ],
+    &amp;quot;scripts&amp;quot;: [],
+    &amp;quot;environments&amp;quot;: {
+      &amp;quot;source&amp;quot;: &amp;quot;environments/environment.ts&amp;quot;,
+      &amp;quot;dev&amp;quot;: &amp;quot;environments/environment.ts&amp;quot;,
+      &amp;quot;prod&amp;quot;: &amp;quot;environments/environment.prod.ts&amp;quot;
+    }
+  }
+]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;img&lt;/code&gt; directory contains the icons in various sizes and variations (highlighted and normal), and the &lt;code&gt;js&lt;/code&gt; folder contains a &amp;ldquo;content script&amp;rdquo; that can be injected into the current page in order to retrieve its title, description and keywords. These are then used to pre-populate the input fields of the form for bookmarking the page.&lt;/p&gt;
+
+&lt;p&gt;In order to communicate with the Pinboard API, we need the user&amp;rsquo;s Pinboard API token. If the token has not yet been stored in the local storage area of the extension, we first need to show a login dialog that requests it from the user:&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-1.png&#34; alt=&#34;Pinboard Pin login dialog&#34;&gt;
+
+&lt;p&gt;Only after the user has entered the API token and it has been validated, we want to show the actual popup for storing the current page as a bookmark:&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-2.png&#34; alt=&#34;Pinboard Pin bookmark dialog&#34;&gt;
+
+&lt;p&gt;This can be easily solved with a so-called &amp;ldquo;guard&amp;rdquo; in Angular. We can use the same guard not only as an authentication guard, but also for navigating to the other pages that are part of our WebExtension. One of them is the options page showing a form where you can change the settings of the page:&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-3.png&#34; alt=&#34;Pinboard Pin options dialog&#34;&gt;
+
+&lt;p&gt;This options page must be specified as the property &lt;code&gt;page&lt;/code&gt; of the &lt;code&gt;options_ui&lt;/code&gt; object in the &lt;code&gt;manifest.json&lt;/code&gt; file. Unfortunately, the Angular CLI creates only one &lt;code&gt;index.html&lt;/code&gt; page for us, and it cannot be easily configured to provide an additional &lt;code&gt;options.html&lt;/code&gt; page. But luckily, Firefox allows passing query parameters to the options page:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;options_ui&amp;quot;: {
+  &amp;quot;page&amp;quot;: &amp;quot;/index.html?page=options&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So we simply use the Angular router to navigate to the options page by checking a query parameter in our guard for the default route. The code for the guard therefore looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@Injectable()
+export class Guard implements CanActivate {
+
+  constructor(private pinboard: PinboardService, private router: Router) {}
+
+  canActivate(route: ActivatedRouteSnapshot,
+              state: RouterStateSnapshot): Observable&amp;lt;boolean&amp;gt;|boolean {
+
+    let page = route.queryParams[&#39;page&#39;];
+
+    if (!page || page == &#39;popup&#39;) {
+      return this.pinboard.needToken.map(needed =&amp;gt; {
+        if (!needed) return true;
+        this.router.navigate([&#39;/login&#39;]);
+        return false;
+      });
+    }
+
+    this.router.navigate([&#39;/&#39; + page]);
+    return false;
+  }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;setting-up-the-angular-router&#34;&gt;Setting up the Angular router&lt;/h2&gt;
+
+&lt;p&gt;To use the authentication guard, we can define our app routes like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;const appRoutes: Routes = [
+  { path: &#39;login&#39;, component: LoginComponent },
+  { path: &#39;options&#39;, component: OptionsComponent },
+  { path: &#39;background&#39;, component: BackgroundComponent },
+  { path: &#39;**&#39;, component: PinPageComponent, canActivate: [Guard] }
+];
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you see, the default path is guarded. The guard only returns &lt;code&gt;true&lt;/code&gt; when no &lt;code&gt;page&lt;/code&gt; query parameter is specified and we already have the API token. In this case, the route is activated and the &lt;code&gt;PinPageComponent&lt;/code&gt; is shown, which is the main dialog for bookmarking a page with Pinboard. Otherwise, the guard blocks the route by returning &lt;code&gt;false&lt;/code&gt; and navigates to the &lt;code&gt;/login&lt;/code&gt; path instead. This path is not guarded and shows the &lt;code&gt;LoginComponent&lt;/code&gt; which is the dialog for entering the API token. Finally, if a &lt;code&gt;page&lt;/code&gt; query parameter has been specified, the guard also blocks the default route and navigates to the specified page instead. For the options page, it navigates to &lt;code&gt;/options&lt;/code&gt; which displays the options form with the settings shown above.&lt;/p&gt;
+
+&lt;p&gt;In the app routes above there is another route for a &lt;code&gt;background&lt;/code&gt; page that we haven&amp;rsquo;t talked about yet. A background page can be used for long-running background tasks. In the Pinboard Pin extension, it is used for always checking via the Pinboard API whether the active tab is already bookmarked in Pinboard and highlighting the Pinboard icon if this is the case. This is one of the additional features that can be enabled on the options page. Actually, you would only need a background &lt;em&gt;script&lt;/em&gt; for this purpose, not a background &lt;em&gt;page&lt;/em&gt;, but navigating to a page with a &lt;code&gt;BackgroundComponent&lt;/code&gt; in the way described above seems to be the easiest way to have TypeScript and the Angular service machinery available when doing our background work. In the &lt;code&gt;ngOnInit()&lt;/code&gt; method of the component, we add a listener for the &lt;code&gt;tabs.onUpdated&lt;/code&gt; event that requests the Pinboard API for the URL of the updated browser tab and sets the icon accordingly. The background page can be specified in the &lt;code&gt;manifest.json&lt;/code&gt; file like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;quot;background&amp;quot;: {
+  &amp;quot;page&amp;quot;: &amp;quot;/index.html?page=background&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;creating-angular-services-for-web-apis&#34;&gt;Creating Angular services for web APIs&lt;/h2&gt;
+
+&lt;p&gt;The guard and the components of the Pinboard extension inject a &lt;code&gt;PinboardService&lt;/code&gt; for storing and updating Pinboard bookmarks and suggesting tags using the Pinboard API. This service in turn uses the built-in &lt;code&gt;Http&lt;/code&gt; client and a &lt;code&gt;StorageService&lt;/code&gt; that is a thin wrapper around the WebExtensions storage API. The latter is used to translate the Promises used by the WebExtensions API to Observables, which are used everywhere else in this Angular application, so that the asynchronous operations can be more smoothly combined.&lt;/p&gt;
+
+&lt;p&gt;Here is the code for the crucial part of the Pinboard service:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;const apiUrl = &#39;https://api.pinboard.in/v1/&#39;;
+
+@Injectable()
+export class PinboardService {
+
+  constructor(private http: Http, private storage: StorageService) { }
+
+  // get an object via the Pinboard API
+  httpGet(method: string, params?: any): Observable&amp;lt;any&amp;gt; {
+    params = params || {};
+    if (!params.auth_token)
+      return this.storage.get(&#39;token&#39;).switchMap(token =&amp;gt; {
+          if (!token) Observable.throw(new Error(&#39;No API token!&#39;));
+          params.auth_token = token;
+          return this.httpGet(method, params);
+        });
+    params.format = &#39;json&#39;;
+    let search = new URLSearchParams();
+    for (let key in params) search.set(key, params[key]);
+    return this.http.get(
+      apiUrl + method, {search: search}).map(res =&amp;gt; res.json());
+  }
+
+  // get bookmark with the given url
+  get(url): Observable&amp;lt;any&amp;gt; {
+    return this.httpGet(&#39;posts/get&#39;, {url: url, meta: &#39;no&#39;});
+  }
+
+  // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;httpGet()&lt;/code&gt; method is a universal method for communicating with the Pinboard API. It first checks whether the necessary API token has been provided as part of the parameters. If no, it requests the &lt;code&gt;StorageService&lt;/code&gt; to get the API token from the local storage of the browser extension. The API token is then added to the parameters and the &lt;code&gt;httpGet()&lt;/code&gt; method is called again. This time the request is sent via the &lt;code&gt;Http&lt;/code&gt; client, and the decoded JSON object in the response is returned.&lt;/p&gt;
+
+&lt;p&gt;The reactive extensions used in Angular are very convenient for combining the various asynchronous operations. They are particularly handy for implementing the auto-suggest feature that suggests suitable tags from Pinboard when entering text in the tag input field:&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-4.png&#34; alt=&#34;Pinboard Pin auto-suggest tags&#34;&gt;
+
+&lt;p&gt;Here, we can make good use of the &lt;code&gt;debounceTime()&lt;/code&gt; and &lt;code&gt;distinctUntilChanged()&lt;/code&gt; methods of the Observable that reports the keyboard events on the tag input field, since we don&amp;rsquo;t want to check the suggested tags too frequently.&lt;/p&gt;
+
+&lt;h2 id=&#34;building-the-web-extension&#34;&gt;Building the web extension&lt;/h2&gt;
+
+&lt;p&gt;For development, you can build the extension with the Angular CLI using the command&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ng build --aot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;--aot&lt;/code&gt; option evokes Angular&amp;rsquo;s &amp;ldquo;ahead of time compiler&amp;rdquo; which compiles and bundles all the TypeScript modules and Angular templates into a few files, primarily &lt;code&gt;main.bundle.js&lt;/code&gt;, containing the code of your application, and &lt;code&gt;vendor.bundle.js&lt;/code&gt;, containing the library code that is required by Angular. It also creates source map files which are useful for debugging the extension. You can load the extension into Firefox by navigating to the URL &lt;code&gt;about:debugging&lt;/code&gt;, clicking on the button &amp;ldquo;Load Temporary Add-on&amp;rdquo; and then selecting any file in the &lt;code&gt;dist&lt;/code&gt; folder that Angular CLI has built. You can also reload and debug the web extension using the corresponding buttons on the &lt;code&gt;about:debugging&lt;/code&gt; page.&lt;/p&gt;
+
+&lt;p&gt;Even better, you can use the &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Getting_started_with_web-ext&#34;&gt;web-ext tool&lt;/a&gt;. When you run this tool in the dist folder, it loads the extension, watches the dist folder for any changes, and reloads the extension automatically. This is very convenient during development.&lt;/p&gt;
+
+&lt;p&gt;When you want to ship the extension, you add the &lt;code&gt;--prod&lt;/code&gt; option in order to build an optimized version with minified bundles. This option also evokes the tree-shaking functionality that further reduces the size of the bundles by removing unused code. You can also add the &lt;code&gt;--sourcemap=false&lt;/code&gt; option in order to suppress the creation of the source map files:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ng build --aot --prod --sourcemap=false
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This command also produces gzipped versions of the bundles, which you should remove because they are of no use when packaging the application as a web extension. Another small problem is that the Angular CLI (or actually &lt;a href=&#34;https://webpack.github.io/&#34;&gt;webpack&lt;/a&gt;) creates random &lt;a href=&#34;https://webpack.github.io/docs/long-term-caching.html#option-2-one-hash-per-chunk&#34;&gt;&amp;ldquo;chunk hashes&amp;rdquo;&lt;/a&gt; for the various bundles it creates. These are useful for invalidating the browser cache when you deploy a web application. But for web extensions, they are not necessary, since these come with their own version number and do not live in the browser cache. These hashes are also obstructive for the Mozilla add-on review process, since the hashes can be different when the extension is built in another environment. The review process however requires a reproducible build output. So I simply run a script after the above build step that subsequently removes the chunk hashes again. Another solution would be to hack the &lt;code&gt;webpack-build-production.js&lt;/code&gt; configuration in &lt;code&gt;angular-cli/models&lt;/code&gt;, removing the &lt;code&gt;[chunkhash]&lt;/code&gt; parts in the file names. I avoided this so that reviewers can use the original Angular CLI. Hopefully Angular CLI will become a bit more configurable in the future, so that such hacks will not be necessary.&lt;/p&gt;
+
+&lt;p&gt;In order to package everything up into a distributable zip archive, you can again use the web-ext tool:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;web-ext build --source-dir=dist --artifacts-dir=.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note that the build command of Angular CLI by default creates JavaScript code that is backward compatible with ECMAScript&amp;nbsp;5. Since the latest versions of Firefox already supports ECMAScript&amp;nbsp;6 pretty well, you may consider creating ECMAScript&amp;nbsp;6 code instead, because this will be smaller and a bit more efficient. In order to do this, you must set &lt;code&gt;target=&amp;quot;es6&amp;quot;&lt;/code&gt; instead of &lt;code&gt;target=&amp;quot;es5&amp;quot;&lt;/code&gt; in the configuration file &lt;code&gt;tsconfig.json&lt;/code&gt; in the &lt;code&gt;src&lt;/code&gt; directory. However, the current version of Angular CLI uses the &lt;a href=&#34;https://github.com/mishoo/UglifyJS2&#34;&gt;UglifyJS2&lt;/a&gt; library which is not yet compatible with ECMAScript&amp;nbsp;6. If you are adventurous, you can use the &lt;a href=&#34;https://github.com/mishoo/UglifyJS2/tree/harmony&#34;&gt;harmony branch&lt;/a&gt; of this library instead. This actually seemed to work when I tried it. However, it only produced an ECMAScript&amp;nbsp;6 version of the main bundle. The vendor bundle was still ECMAScript&amp;nbsp;5, because it is bundled from the library modules which are shipped with npm and are all ECMAScript&amp;nbsp;5 code. Since the vendor bundle makes up the lion&amp;rsquo;s share of the packaged application, using &lt;code&gt;target=&amp;quot;es6&amp;quot;&lt;/code&gt; does not have much of an effect and currently causes more trouble than it&amp;rsquo;s worth. If you have any ideas how to create an ECMAScript&amp;nbsp;6 vendor bundle, let me know. But probably we should just wait for Angular 4 next month &amp;ndash; I noticed that the changelog for the latest Angular 4.0.0-beta.5 says it now supports creating ES6 distributions.&lt;/p&gt;
+
+&lt;p&gt;The last step is to let Mozilla sign your web extension. This is now required in order to make the extension permanently installable in the Firefox browser. Signing is done through &lt;a href=&#34;http://addons.mozilla.org/&#34;&gt;addons.mozilla.org&lt;/a&gt; (AMO). You have two options: Distributing your web extension as a &amp;ldquo;listed&amp;rdquo; add-on on AMO, or distributing it yourself via a web page or application installer. The good news is that since last week it&amp;rsquo;s also possible to use both options, so you can pre-release web-extension to beta users without having these versions listed or reviewed on AMO. This mitigates the problem that getting your web extension reviewed as a listed add-on can take quite a while when it is packed and uglified like when it has been created as a bundle with the Angular CLI. This is because the reviewers need to check the source code and replicate the build step to verify the output is the same, and there are only a few reviewers who do such source code reviews. In my case it took over a month to get the Pinboard Pin extension &lt;a href=&#34;https://addons.mozilla.org/firefox/addon/pinboard-pin/&#34;&gt;listed&lt;/a&gt;. However, I believe this was also due to the winter holidays, and I assume in the future the review process will become smoother.&lt;/p&gt;
+
+&lt;p&gt;All in all, using the new Angular framework turned out to be a viable option for creating web extensions that can be time-saving and convenient when developing extensions with a somewhat sophisticated or complex UI.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Ending the Epic Battle for Overlay Icons</title>
