@@ -38,7 +38,12 @@
 
 &lt;p&gt;So I decided that it would be a good exercise to re-write Pinboard Plus as a modern Angular application using no additional libraries (well, of course Angular itself requires a few other libraries internally such as RxJS). I called this new extension &lt;a href=&#34;https://addons.mozilla.org/firefox/addon/pinboard-pin/&#34;&gt;Pinboard Pin&lt;/a&gt; and published the source code on &lt;a href=&#34;https://github.com/Cito/Pinboard-Pin&#34;&gt;GitHub&lt;/a&gt;. This rewrite was also intended as a proof-of-concept that modern Angular is a viable platform for building web extensions.&lt;/p&gt;
 
-&lt;p&gt;Of course, the Angular framework might be considered an overkill for building a simple web extension. But my simple Pinboard Pin extension already contains three forms with several input fields, uses validation and an auto-suggest feature for tags, and communication with the Pinboard API over HTTP, which are all things that are easy to implement using Angular. The new Angular framework also allows writing the application in TypeScript. Unfortunately, I was not able to find typings for the WebExtensions API, though.&lt;/p&gt;
+&lt;p&gt;Of course, the Angular framework might be considered an overkill for building a simple web extension. But my simple Pinboard Pin extension already contains three forms with several input fields, uses validation and an auto-suggest feature for tags, and communication with the Pinboard API over HTTP, which are all things that are easy to implement using Angular.&lt;/p&gt;
+
+&lt;p&gt;The new Angular framework also allows writing the application in TypeScript. Type definitions for the Chrome specific web extensions API using the &lt;code&gt;chrome&lt;/code&gt; namespace are available in the &lt;code&gt;@types/chrome&lt;/code&gt; npm package. Unfortunately, I was not able to find typings for the more generic API using the &lt;code&gt;browser&lt;/code&gt; namespace. While the APIs are largely similar, there are a few differences. Particularly, the &lt;code&gt;chrome&lt;/code&gt; API uses callbacks where the &lt;code&gt;browser&lt;/code&gt; API uses Promises. Therefore, I added the necessary type definitions manually in &lt;code&gt;typings.d.ts&lt;/code&gt;, reusing parts and interfaces from the chrome specific typings. Of course you can also work without type definitions by simply saying:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;declare var browser: any;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;peculiarities-of-webextensions&#34;&gt;Peculiarities of WebExtensions&lt;/h2&gt;
 
