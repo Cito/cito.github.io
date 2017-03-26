@@ -94,7 +94,7 @@ with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
 
 &lt;p&gt;This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.&lt;/p&gt;
 
-&lt;p&gt;Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &amp;ldquo;run as administrator&amp;rdquo; under the advanced options.&lt;/p&gt;
+&lt;p&gt;Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &amp;ldquo;run as administrator&amp;rdquo; under the advanced options (do not set &amp;ldquo;run as administrator&amp;rdquo; under the compatibility section, because this would then apply to the Python executable in general).&lt;/p&gt;
 
 &lt;p&gt;Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up, and you need to reboot Windows in order to make the changes effective. After all, you&amp;rsquo;re running a Windows computer.&lt;/p&gt;</description>
     </item>
