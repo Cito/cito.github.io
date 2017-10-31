@@ -15,16 +15,15 @@
 
 <meta name="author" content="Christoph Zwerschke">
 <meta name="date" content="2016-12-24 09:00:00 &#43;0100 CET">
+<meta name="last-modified" content="2016-12-24 09:00:00 &#43;0100 CET">
 <link rel="canonical" href="https://cito.github.io/blog/f-strings/">
 
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body lang="en">
 <header id="site-header">
@@ -72,55 +71,40 @@
 <h2 id="some-examples">Some examples</h2>
 
 <p>Look how easy it is:</p>
-
-<pre><code>&gt;&gt;&gt; name = 'Fred'
-&gt;&gt;&gt; age = 42
-&gt;&gt;&gt; f'He said his name is {name} and he is {age} years old.'
-He said his name is Fred and he is 42 years old.
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="o">&gt;&gt;&gt;</span> <span class="n">name</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;Fred&#39;</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">42</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="sa"></span><span class="s1">&#39;He said his name is {name} and he is {age} years old.&#39;</span>
+    <span class="n">He</span> <span class="n">said</span> <span class="n">his</span> <span class="n">name</span> <span class="ow">is</span> <span class="n">Fred</span> <span class="ow">and</span> <span class="n">he</span> <span class="ow">is</span> <span class="mi">42</span> <span class="n">years</span> <span class="n">old</span><span class="o">.</span></code></pre></div>
 <p>As you see, this works pretty much like the <code>.format()</code> method, however you can directly insert the names from the current scope in the format string. This is much simpler than the old way, and avoids duplication:</p>
-
-<pre><code>&gt;&gt;&gt; name = 'Fred'
-&gt;&gt;&gt; age = 42
-&gt;&gt;&gt; 'He said his name is {name} and he is {age} years old.'.format(
-...     name=name, age=age)
-He said his name is Fred and he is 42 years old.
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="o">&gt;&gt;&gt;</span> <span class="n">name</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;Fred&#39;</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">42</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="sa"></span><span class="s1">&#39;He said his name is {name} and he is {age} years old.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="o">...</span>     <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="n">age</span><span class="p">)</span>
+    <span class="n">He</span> <span class="n">said</span> <span class="n">his</span> <span class="n">name</span> <span class="ow">is</span> <span class="n">Fred</span> <span class="ow">and</span> <span class="n">he</span> <span class="ow">is</span> <span class="mi">42</span> <span class="n">years</span> <span class="n">old</span><span class="o">.</span></code></pre></div>
 <p>Sure, you can omit the names inside the curly braces since Python 3.1, like this:</p>
-
-<pre><code>&gt;&gt;&gt; name = 'Fred'
-&gt;&gt;&gt; age = 42
-&gt;&gt;&gt; 'He said his name is {} and he is {} years old.'.format(name, age)
-'He said his name is Fred and he is 42 years old.'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="o">&gt;&gt;&gt;</span> <span class="n">name</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;Fred&#39;</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">42</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="sa"></span><span class="s1">&#39;He said his name is {} and he is {} years old.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+    <span class="sa"></span><span class="s1">&#39;He said his name is Fred and he is 42 years old.&#39;</span></code></pre></div>
 <p>But still, this is longer and not as readable as the f-string notation.</p>
 
 <p>And it gets even better than this, as f-strings also support any Python expressions inside the curly braces. You can also write triple-quoted f-strings that span multiple lines, like so:</p>
-
-<pre><code>&gt;&gt;&gt; name = 'Fred'
-&gt;&gt;&gt; seven = 7
-&gt;&gt;&gt; f'''He said his name is {name.upper()}
-...    and he is {6 * seven} years old.'''
-'He said his name is FRED\n    and he is 42 years old.'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="o">&gt;&gt;&gt;</span> <span class="n">name</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;Fred&#39;</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">seven</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="sa"></span><span class="s1">&#39;&#39;&#39;He said his name is {name.upper()}
+</span><span class="s1">    ...    and he is {6 * seven} years old.&#39;&#39;&#39;</span>
+    <span class="sa"></span><span class="s1">&#39;He said his name is FRED</span><span class="se">\n</span><span class="s1">    and he is 42 years old.&#39;</span></code></pre></div>
 <p>Note that while you can create raw f-strings by using the prefix &ldquo;fr&rdquo;, you cannot create binary f-strings with &ldquo;fb&rdquo; in Python 3.6 (maybe this will be added in a future Python version). Formatting with f-strings is one of the new features in Python 3 that will not be ported back to Python 2, therefore a &ldquo;fu&rdquo; prefix to designate unicode is not necessary and not supported.</p>
 
 <h2 id="comparison-with-template-literals-in-javascript">Comparison with template literals in JavaScript</h2>
 
 <p>When we look beyond our Python back yard over to the JavaScript folks, we see that they introduced a very similar feature called &ldquo;template strings&rdquo; or &ldquo;template literals&rdquo; as part of the <a href="http://www.ecma-international.org/ecma-262/6.0/">ECMAScript 2015</a> standard. It&rsquo;s good to see the JavaScript and Python communities taking inspiration from each other. Instead of the prefix &ldquo;f&rdquo; and ordinary quotes, the JavaScript template strings are designated with reverse quotes (&ldquo;backticks&rdquo;), and they can span multi lines which ordinary JavaScript strings can&rsquo;t. Therefore template scripts in JavaScript actually correspond to triple-quoted f-strings in Python. Another difference is that the interpolation syntax of template strings in JavaScript requires a dollar sign in front of the curly braces. Otherwise, they are pretty similar. So, in current JavaScript you can write this:</p>
-
-<pre><code>&gt; name = 'Fred'
-&gt; seven = 7
-&gt; console.log(`He said his name is ${name.toUpperCase()}
-    and he is ${6 * seven} years old`)
-He said his name is FRED
-  and he is 42 years old
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript">    <span class="o">&gt;</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;Fred&#39;</span>
+    <span class="o">&gt;</span> <span class="nx">seven</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="o">&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`He said his name is </span><span class="si">${</span><span class="nx">name</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span><span class="si">}</span><span class="sb">
+</span><span class="sb">        and he is </span><span class="si">${</span><span class="mi">6</span> <span class="o">*</span> <span class="nx">seven</span><span class="si">}</span><span class="sb"> years old`</span><span class="p">)</span>
+    <span class="nx">He</span> <span class="nx">said</span> <span class="nx">his</span> <span class="nx">name</span> <span class="nx">is</span> <span class="nx">FRED</span>
+      <span class="nx">and</span> <span class="nx">he</span> <span class="nx">is</span> <span class="mi">42</span> <span class="nx">years</span> <span class="nx">old</span></code></pre></div>
 <p>Note that backticks had been used as an alternative syntax for the <code>repr()</code> method in Python before, but have been removed from the language with Python 3, since the backtick character causes too many problems (e.g. it can be difficult to distinguish in some fonts or difficult to enter on some keyboards), and I think it&rsquo;s good that Python uses the &ldquo;f&rdquo;-prefix instead of another kind of quote. This makes it actually easier to switch between f-strings and ordinary strings. Another advantage of Python is that the concepts of a template string (prefix &ldquo;f&rdquo;) and a multi-line string (triple quotes) are cleanly separated and can be used independently of each other. And I like that I don&rsquo;t have to enter that additional dollar sign.</p>
 
 <p>What make things a bit more confusing is that JavaScript templates also have a syntax called &ldquo;tagged templates&rdquo; that looks like the prefix syntax of Python, but has a totally different semantics. The prefix (&ldquo;tag&rdquo;) in JavaScript actually is the name of a function that is called with the template string and its substitutions as parameters. There is also a standard function called <code>String.raw</code> in JavaScript that can be used as a tag function. If you set <code>r = String.raw</code>, you can use raw strings in JavaScript like in Python with a similar syntax (though not exactly the same, since you still need backticks instead of quotes).</p>
@@ -128,13 +112,10 @@ He said his name is FRED
 <h2 id="comparison-with-template-strings-in-python">Comparison with template strings in Python</h2>
 
 <p>Python also provides an older kind of <a href="https://docs.python.org/3/library/string.html#template-strings">template strings</a> as part of the standard library. These template strings also use the syntax with the dollar sign and the curly braces like JavaScript does, but you can usually omit the curly braces, which you cannot do in JavaScript. You use them like this:</p>
-
-<pre><code>&gt;&gt;&gt; from string import Template
-&gt;&gt;&gt; t = Template('He said his name is $name and he is $age years old.')
-&gt;&gt;&gt; t.substitute(name='Fred', age=42)
-'He said his name is Fred and he is 42 years old.'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;He said his name is $name and he is $age years old.&#39;</span><span class="p">)</span>
+    <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa"></span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="sa"></span><span class="s1">&#39;He said his name is Fred and he is 42 years old.&#39;</span></code></pre></div>
 <h2 id="performance-considerations">Performance considerations</h2>
 
 <p>You may be worried that the new way of formatting strings might be slower than the conventional ways. Particularly the old template strings look like they might be faster when used more than once with different values, since the template string must only be parsed when the <code>Template()</code> object is created and can then be reused. But it turns out the opposite is the case, and f-strings are really fast because they are pre-parsed as well and stored in efficient bytecode for faster execution.</p>
@@ -142,42 +123,39 @@ He said his name is FRED
 <p>To confirm this in practice, I ran a simple benchmark and found that using f-strings was distinctly faster than formatting with the &ldquo;%&rdquo; operator or simple string concatenation, twice as fast than the <code>.format()</code> method and even 20 times faster than formatting with <code>Template()</code>, which does not seem to be implemented very efficiently.</p>
 
 <p>So you can also interpret the &ldquo;f&rdquo; in &ldquo;f-strings&rdquo; as &ldquo;fast&rdquo;. It&rsquo;s good that Python still keeps the old ways for backward compatibility, but in new code you should definitely make use of these fantastic f-strings. Here is the code for the benchmark, if you want to test it yourself:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">timeit</span>
 
-<pre><code>import timeit
+<span class="n">format</span> <span class="o">=</span> <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">def format(name, age):
+</span><span class="s2">    return f&#39;He said his name is {name} and he is {age} years old.&#39;
+</span><span class="s2">&#34;&#34;&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">def format(name, age):
+</span><span class="s2">    return &#39;He said his name is </span><span class="si">%s</span><span class="s2"> and he is </span><span class="si">%s</span><span class="s2"> years old.&#39; % (name, age)
+</span><span class="s2">&#34;&#34;&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">def format(name, age):
+</span><span class="s2">    return &#39;He said his name is &#39; + name + &#39; and he is &#39; + str(
+</span><span class="s2">        age) + &#39; years old.&#39;
+</span><span class="s2">&#34;&#34;&#34;</span><span class="p">,</span>  <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">def format(name, age):
+</span><span class="s2">    return &#39;He said his name is {} and he is {} years old.&#39;.format(name, age)
+</span><span class="s2">&#34;&#34;&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">from string import Template
+</span><span class="s2">
+</span><span class="s2">template = Template(&#39;He said his name is $name and he is $age years old.&#39;)
+</span><span class="s2">
+</span><span class="s2">def format(name, age):
+</span><span class="s2">    return template.substitute(name=name, age=age)
+</span><span class="s2">&#34;&#34;&#34;</span>
 
-format = &quot;&quot;&quot;
-def format(name, age):
-    return f'He said his name is {name} and he is {age} years old.'
-&quot;&quot;&quot;, &quot;&quot;&quot;
-def format(name, age):
-    return 'He said his name is %s and he is %s years old.' % (name, age)
-&quot;&quot;&quot;, &quot;&quot;&quot;
-def format(name, age):
-    return 'He said his name is ' + name + ' and he is ' + str(
-        age) + ' years old.'
-&quot;&quot;&quot;,  &quot;&quot;&quot;
-def format(name, age):
-    return 'He said his name is {} and he is {} years old.'.format(name, age)
-&quot;&quot;&quot;, &quot;&quot;&quot;
-from string import Template
+<span class="n">test</span> <span class="o">=</span> <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">def test():
+</span><span class="s2">    for name in (&#39;Fred&#39;, &#39;Barney&#39;, &#39;Gary&#39;, &#39;Rock&#39;, &#39;Perry&#39;, &#39;Jackie&#39;):
+</span><span class="s2">        for age in range (20, 200):
+</span><span class="s2">            format(name, age)
+</span><span class="s2">&#34;&#34;&#34;</span>
 
-template = Template('He said his name is $name and he is $age years old.')
-
-def format(name, age):
-    return template.substitute(name=name, age=age)
-&quot;&quot;&quot;
-
-test = &quot;&quot;&quot;
-def test():
-    for name in ('Fred', 'Barney', 'Gary', 'Rock', 'Perry', 'Jackie'):
-        for age in range (20, 200):
-            format(name, age)
-&quot;&quot;&quot;
-
-for fmt in format:
-    print(timeit.timeit('test()', fmt + test, number=10000))
-</code></pre>
-
+<span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">format</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;test()&#39;</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">+</span> <span class="n">test</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">10000</span><span class="p">))</span></code></pre></div>
 <p>Here is a diagram of the execution times of the various tested methods:</p>
 
 <img class="center half" src="https://cito.github.io/img/f-strings-1.png" alt="Benchmark results">

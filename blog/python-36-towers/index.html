@@ -15,16 +15,15 @@
 
 <meta name="author" content="Christoph Zwerschke">
 <meta name="date" content="2016-12-27 17:10:27 &#43;0100 CET">
+<meta name="last-modified" content="2016-12-27 17:10:27 &#43;0100 CET">
 <link rel="canonical" href="https://cito.github.io/blog/python-36-towers/">
 
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body lang="en">
 <header id="site-header">
@@ -100,72 +99,70 @@
 <p>In 1984, the professional Canadian mathematician Douglas Stinson gave a much shorter proof without using a computer. Today, with a computer and some Python you can easily prove that the problem is not solvable even before breakfast.</p>
 
 <p>Here is the small Python program I wrote to find the 96 solutions of the 36 Cube:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#/usr/bin/python3</span>
 
-<pre><code>#/usr/bin/python3
+<span class="sa"></span><span class="s2">&#34;&#34;&#34;The 36 Tower Puzzle&#34;&#34;&#34;</span>
 
-&quot;&quot;&quot;The 36 Tower Puzzle&quot;&quot;&quot;
+<span class="c1"># the colors of the tower</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;red yellow blue green violet orange&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
-# the colors of the tower
-colors = 'red yellow blue green violet orange'.split()
+<span class="c1"># the heights of the stubs</span>
+<span class="c1"># (stub of height 1 at upper left corner)</span>
+<span class="n">heights</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;134520 250413 013254 541302 425031 302145&#39;</span>
+<span class="n">heights</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">heights</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
 
-# the heights of the stubs
-# (stub of height 1 at upper left corner)
-heights = '134520 250413 013254 541302 425031 302145'
-heights = [list(map(int, row)) for row in heights.split()]
+<span class="c1"># possible positions of the towers</span>
+<span class="n">places</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+            <span class="n">places</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">5</span> <span class="o">-</span> <span class="n">heights</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">))</span>
 
-# possible positions of the towers
-places = [[set() for height in range(6)] for color in range(6)]
-for row in range(6):
-    for column in range(6):
-        for color in range(6):
-            places[color][5 - heights[row][column]].add((row, column))
+<span class="c1"># this is the crucial trick: two towers are special</span>
+<span class="c1"># if you comment out the following two lines, no solution is found</span>
+<span class="n">places</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">places</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-# this is the crucial trick: two towers are special
-# if you comment out the following two lines, no solution is found
-places[1][4].add((1, 2))
-places[5][5].add((3, 2))
+<span class="c1"># list of all towers</span>
+<span class="n">towers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">color</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
 
-# list of all towers
-towers = [(color, height) for color in range(6) for height in range(6)]
+<span class="c1"># the board</span>
+<span class="n">board</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
 
-# the board
-board = [[None] * 6 for row in range(6)]
+<span class="c1"># list for storing the solutions</span>
+<span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
 
-# list for storing the solutions
-solutions = []
+<span class="k">def</span> <span class="nf">stringify</span><span class="p">():</span>
+    <span class="sa"></span><span class="s2">&#34;&#34;&#34;convert the board to a readable string&#34;&#34;&#34;</span>
+    <span class="k">return</span> <span class="sa"></span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
-def stringify():
-    &quot;&quot;&quot;convert the board to a readable string&quot;&quot;&quot;
-    return '\n'.join('-'.join(colors[color]
-        for color in board[row]) for row in range(6))
+<span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">tower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sa"></span><span class="s2">&#34;&#34;&#34;solve the puzzle recursively&#34;&#34;&#34;</span>
+    <span class="k">if</span> <span class="n">tower</span> <span class="o">==</span> <span class="mi">36</span><span class="p">:</span>
+        <span class="n">solution</span> <span class="o">=</span> <span class="n">stringify</span><span class="p">()</span>
+        <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Solution {}:&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solutions</span><span class="p">)))</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="n">color</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">towers</span><span class="p">[</span><span class="n">tower</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">places</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="n">height</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">row2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row2</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">column2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column2</span><span class="p">]</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
+                    <span class="n">solve</span><span class="p">(</span><span class="n">tower</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
 
-def solve(tower=0):
-    &quot;&quot;&quot;solve the puzzle recursively&quot;&quot;&quot;
-    if tower == 36:
-        solution = stringify()
-        solutions.append(solution)
-        print(&quot;\nSolution {}:&quot;.format(len(solutions)))
-        print(solution)
-        return
-    color, height = towers[tower]
-    for row, column in places[color][height]:
-        if board[row][column] is None:
-            for row2 in range(6):
-                if board[row2][column] == color:
-                    break
-            else:
-                for column2 in range(6):
-                    if board[row][column2] == color:
-                        break
-                else:
-                    board[row][column] = color
-                    solve(tower + 1)
-                    board[row][column] = None
-
-print(&quot;Solving...&quot;)
-solve()
-print(&quot;\nReady.&quot;)
-</code></pre>
+<span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;Solving...&#34;</span><span class="p">)</span>
+<span class="n">solve</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Ready.&#34;</span><span class="p">)</span></code></pre></div>
 </section>
 </article>
 </main>

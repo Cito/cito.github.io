@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tools on Seasoned &amp; Agile</title>
-    <link>https://cito.github.io/tags/tools/index.xml</link>
+    <link>https://cito.github.io/tags/tools/</link>
     <description>Recent content in Tools on Seasoned &amp; Agile</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="https://cito.github.io/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 23 Dec 2016 19:00:00 +0100</lastBuildDate>
+    
+	<atom:link href="https://cito.github.io/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Pinboard - Social Bookmarking for Introverts</title>
@@ -20,25 +23,7 @@
 
 &lt;p&gt;Every web browser has a built-in bookmark manager, usually opened with the keyboard shortcut &lt;code&gt;Ctrl&lt;/code&gt;+&lt;code&gt;Shift&lt;/code&gt;+&lt;code&gt;B&lt;/code&gt;. Modern browsers also allow syncing your bookmarks to the could, so that you can share your bookmarks for instance between your home desktop and your tablet or office computer. So why are online bookmark managers like Pinboard still interesting? Why would you even want to pay for them?&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;One reason might be to share links and lists of links with others. Many bookmark managers focus on this aspect of &amp;ldquo;social bookmarking&amp;rdquo;. However, this is not the most important aspect of Pinboard. Actually Pinboard even advertises itself as an an &amp;ldquo;antisocial site&amp;rdquo; or &amp;ldquo;social bookmarking for introverts&amp;rdquo; - over half our users don&amp;rsquo;t share any public content at all, and you can make private bookmarks the default setting. In any case you have full control over which links you want to make public and which should stay private. Pinboard is not mainly for discovering links, but for archiving them, kind of your personal treasure trove of links - or as the patron saint of introverts Gollum would call it, &amp;ldquo;my precious!&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Another feature is the &amp;ldquo;read later&amp;rdquo; flag that you can add to any bookmark. But this aspect is also not the most important one, and there are dedicated services such as &lt;a href=&#34;https://getpocket.com/&#34;&gt;Pocket&lt;/a&gt; or &lt;a href=&#34;https://www.instapaper.com/&#34;&gt;Instapaper&lt;/a&gt; which offer better solutions for not only keeping track of articles you want to read but also displaying them in a nice readable layout. The Safari web browser even comes with a &amp;ldquo;reading list&amp;rdquo; feature built-in. So I&amp;rsquo;m actually using Pocket as my &amp;ldquo;first line of defense&amp;rdquo; against the information flood from the Internet, and Pinboard only as my archive to store everything that I found useful and want to keep as a reference or read in more depth later.&lt;/p&gt;
-
-&lt;p&gt;One peculiar feature of Pinboard is that you can sync tweets from up to three Twitter accounts and save them to Pinboard. You can then search in your personal twitter archive on Pinboard. You can also choose to add links from these tweets as Pinboard bookmarks. This is definitely a useful feature, but not the reason why I&amp;rsquo;m using Pinboard.&lt;/p&gt;
-
-&lt;p&gt;What makes Pinboard particularly useful are the tags that can be added to the bookmarks, and the possibility to review your bookmarks by tag or combination of tags. For instance, if I want to see all links about 3D programming in Python, I can first click on the &amp;ldquo;3d&amp;rdquo; tag in my tag cloud on the right side of my Pinboard page. Now I see all bookmarks tagged with &amp;ldquo;3d&amp;rdquo;, along with a smaller tag cloud of tags like &amp;ldquo;python&amp;rdquo; with a plus sign that can be clicked to narrow down the list of bookmarks even further. There is another feature that allows combining several tags into a &amp;ldquo;bundle&amp;rdquo;. By clicking onto such a tag bundle, you will see all bookmarks with tags in that bundle (i.e. having at least one tag from that bundle). This allows grouping the tags into several larger areas of interest, like &amp;ldquo;science&amp;rdquo; or &amp;ldquo;politics&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;An interesting feature is the possibility to save arbitrary plain text or markdown formatted notes. Each such note will be an ad hoc web page with its own unique URL. You can tag notes with the same tags that are used for your bookmarks, and they will appear along with your bookmarks for these tags. Like normal bookmarks, notes can also be flagged as private or public.&lt;/p&gt;
-
-&lt;p&gt;Personally, I find Pinboard as a bookmark archive/manager service very useful. It does more or less one thing, but it does it pretty well. The web interface is not very nice and modern, but clean and functional, with bulk editing and a quick editing feature showing a preview of the bookmarked site. There is also a &lt;a href=&#34;http://m.pinboard.in/&#34;&gt;mobile website&lt;/a&gt;, a web &lt;a href=&#34;https://pinboard.in/api/&#34;&gt;API&lt;/a&gt; and there are several official and third-party browser add-ons and native apps supporting Pinboard. The browser add-ons also allow saving and restoring whole &amp;ldquo;tab sets&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;In 2015 the site moved to an annual subscription system, but the annual fee of $11 is still fair and helps the creator of this useful service make a living and pay for the servers. For an annual fee of $25 You can also choose to have all of your bookmarked pages archived and searchable within Pinboard.&lt;/p&gt;
-
-&lt;p&gt;My only complaint is that the website and some of the browser add-ons are getting a bit long in the tooth. Firefox has switched to a new add-on system, and the official add-on based on the old system feels very slow and will probably stop working end of next year when Firefox will move to the new system exclusively. So some overhaul of Pinboard seems overdue.&lt;/p&gt;
-
-&lt;p&gt;Meanwhile, I have created my own Firefox add-on for Pinboard called &lt;a href=&#34;https://github.com/Cito/Pinboard-Pin&#34;&gt;&amp;ldquo;Pinboard Pin&amp;rdquo;&lt;/a&gt; that is snappier than the original one and uses the new add-on system - I&amp;rsquo;ll write more about that in &lt;a href=&#34;https://cito.github.io/blog/web-ext-with-angular&#34;&gt;another blog post&lt;/a&gt;.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

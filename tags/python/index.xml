@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Python on Seasoned &amp; Agile</title>
-    <link>https://cito.github.io/tags/python/index.xml</link>
+    <link>https://cito.github.io/tags/python/</link>
     <description>Recent content in Python on Seasoned &amp; Agile</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <atom:link href="https://cito.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 13 Jan 2017 19:31:27 +0100</lastBuildDate>
+    
+	<atom:link href="https://cito.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Ending the Epic Battle for Overlay Icons</title>
@@ -20,83 +23,7 @@
 
 &lt;img class=&#34;center&#34; src=&#34;https://cito.github.io/img/overlay-icon-battle.png&#34; alt=&#34;Overlay Icons&#34;&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;The problem is: Windows has only 15 slots available for such overlay icons. Yes, even in the latest Windows 10, you still only have 15 slots. While it didn&amp;rsquo;t matter much in former times, when they were rarely used, it has become a real problem today. Several different cloud services are now fighting for these few slots, and if you&amp;rsquo;re a developer, you will probably like TortoiseGit and other clients for source repositories which also use the overlay icons to display the state of the files in the registry in the Windows explorer, which is a tremendously helpful. While all the Tortoise clients share the same icons, these are already 9 of the available slots.&lt;/p&gt;
-
-&lt;p&gt;This means that in the end, not all overlay icons will be displayed. Windows simply sorts the registered overlay icons alphabetically in the registry and uses only the first 15 of them. Soon, software vendors found that there is a simple trick to get their icons into the top 10 of the overlay icons in front of all the others, just by prepending the icon names with a blank. This of course spurred an absurd arms race of vendors prepending names with more and more blanks in order to overtrump others already using this trick.&lt;/p&gt;
-
-&lt;p&gt;The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.&lt;/p&gt;
-
-&lt;p&gt;Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#/usr/bin/python3
-
-import os
-import winreg as reg
-
-# names of all overlay icons that shall be boosted:
-
-boost = &amp;quot;&amp;quot;&amp;quot;
-    Tortoise1Normal
-    Tortoise2Modified
-    Tortoise3Conflict
-    Tortoise4Locked
-    Tortoise5ReadOnly
-    Tortoise6Deleted
-    Tortoise7Added
-    Tortoise8Ignored
-    Tortoise9Unversioned
-    DropboxExt01
-    DropboxExt02
-    DropboxExt03
-    DropboxExt04
-    DropboxExt05
-    DropboxExt06
-&amp;quot;&amp;quot;&amp;quot;
-
-boost = set(boost.split())
-
-with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
-        r&#39;SOFTWARE\Microsoft\Windows\CurrentVersion&#39;
-        r&#39;\Explorer\ShellIconOverlayIdentifiers&#39;) as base:
-
-    names = set()
-    renames = []
-    i = 0
-    while True:
-        try:
-            name = reg.EnumKey(base, i)
-        except OSError:
-            break
-        core = name.strip()
-        if core in names:
-            print(&#39;Delete&#39;, repr(core))
-            reg.DeleteKey(base, name)
-        else:
-            names.add(core)
-            if core in boost:
-                core = &#39; &#39; + core
-            if core != name:
-                renames.append((name, core))
-        i += 1
-
-    if renames:
-        for old_name, new_name in renames:
-            print(&#39;Rename&#39;, repr(old_name), &#39;to&#39;, repr(new_name))
-            value = reg.QueryValue(base, old_name)
-            reg.CreateKey(base, new_name)
-            reg.SetValue(base, new_name, reg.REG_SZ, value)
-            reg.DeleteKey(base, old_name)
-    else:
-        print(&#39;Nothing to rename&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.&lt;/p&gt;
-
-&lt;p&gt;Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &amp;ldquo;run as administrator&amp;rdquo; under the advanced options (do not set &amp;ldquo;run as administrator&amp;rdquo; under the compatibility section, because this would then apply to the Python executable in general).&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up, and you need to reboot Windows in order to make the changes effective. After all, you&amp;rsquo;re running a Windows computer.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -111,59 +38,7 @@ with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
 
 &lt;p&gt;It turned out that the program had been running a slippery slope all the time.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;Essentially, the program tried to find for a given list of field names, like&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;names = [&#39;alpha&#39;, &#39;bravo&#39;, &#39;charlie&#39;, &#39;delta&#39;]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;and a given format-string, like&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;fmtstr = &#39;show only {alpha}, {bravo} and {charlie}&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;which of the given field names where used in the string. The following code was used to examine this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;used_names = []
-d = dict.fromkeys(names)
-for k in d:
-    del d[k]
-    try:
-        fmtstr.format(**d)
-    except KeyError:
-        used_names.append(k)
-    d[k] = None
-
-print(&amp;quot;Used names:&amp;quot;, &#39;, &#39;.join(sorted(used_names)))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The code simply tries to format the string while successively omitting one of the given field names. If formatting fails with a KeyError, it knows that the field name is used.&lt;/p&gt;
-
-&lt;p&gt;When you run this code with Python versions before 3.6, it works as expected:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Used names: alpha, bravo, charlie
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;However, when you try to run it with Python 3.6, it will print out something very strange:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Used names: alpha, alpha, alpha, alpha, alpha, bravo, bravo, bravo, bravo
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;What&amp;rsquo;s happening here? Can you spot the problem?&lt;/p&gt;
-
-&lt;p&gt;If you look carefully, you probably see it: Yes, this is another instance of the dreaded &amp;ldquo;changing a mutable object while iterating it&amp;rdquo; problem, that you surely have already experienced sometime or other when getting an error message like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;RuntimeError: dictionary changed size during iteration
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this case, however, the dictionary did not change its size. Actually it did not even change its keys between iterations. So you wouldn&amp;rsquo;t think there could be a problem with this code, and in fact it worked fine until recently. But in Python 3.6 the dict type has been reimplemented to use a more compact representation. This implementation does not pardon iterating over a changing dictionary even if you try to restore removed keys immediately, since it uses insertion order with an additional level of indirection, which causes hiccups when iterating while keys are removed and re-inserted, thereby changing the order and internal pointers of the dict.&lt;/p&gt;
-
-&lt;p&gt;Note that this problem is not fixed by iterating &lt;code&gt;d.keys()&lt;/code&gt; instead of &lt;code&gt;d&lt;/code&gt;, since in Python 3, &lt;code&gt;d.keys()&lt;/code&gt; returns a dynamic view of the keys in the dict which results in the same problem. Instead, iterate over &lt;code&gt;list(d)&lt;/code&gt;. This will produce a list from the keys of the dictionary that will not change during iteration. Or you can also iterate over &lt;code&gt;sorted(d)&lt;/code&gt; if a sorted order is important.&lt;/p&gt;
-
-&lt;p&gt;Just to make this clear: This is not a &lt;em&gt;bug&lt;/em&gt; in Python 3.6. Iterating an object and changing it at the same time was always considered unsafe and bad style. The benefits of the new dict implementation are great enough to accept this kind of incompatibility. However, I wonder whether it would be possible and beneficial to safeguard the for loop with a check of the private version of the dict that has just been added in Python 3.6 as well (see &lt;a href=&#34;https://www.python.org/dev/peps/pep-0509/&#34;&gt;PEP509&lt;/a&gt;), and raise a RuntimeError if the version changes, similarly to how a change of the dictionary size is already detected and reported as an error. Then running programs like the one above would raise an error instead of failing in strange and nondeterministic ways.&lt;/p&gt;
-
-&lt;p&gt;To sum up the morale of this story: Never iterate a changing dictionary, even if you preserve its size and keys. Instead run the for loop over a copy of the keys or items of the dictionary.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -180,103 +55,7 @@ print(&amp;quot;Used names:&amp;quot;, &#39;, &#39;.join(sorted(used_names)))
 
 &lt;p&gt;The puzzle looked tricky already, but it turned out it was even trickier than I first thought.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;So we started to casually play around with this puzzle while eating Christmas cookies and watching Christmas movies. I found it was pretty easy to place the first 20 to 24 towers properly, but then things started to get complicated as the colors collided. Soon I gave up and concentrated more on the Christmas cookies, while my wife - who is much more patient - managed to stack 33 pieces properly.&lt;/p&gt;
-
-&lt;p&gt;I already knew I would never have that patience, so I had to cheat and use Python to solve the puzzle the next morning. I hacked in all the heights of the tower stubs and wrote a simple recursive brute force algorithm, fully confident of having solved the puzzle in much shorter time than my wife. But the program terminated with no solution. I checked the heights, checked the algorithm, then double-checked it, but still nothing.&lt;/p&gt;
-
-&lt;p&gt;Something seemed to be rotten in the state of Denmark. So I had to cheat again and google the 36 Cube. Sure enough, there even was a whole Wikipedia article about the puzzle with the following spoiler: &amp;ldquo;Careful inspection of the pieces reveals that two of the pieces are special. These two pieces will fit on certain parts of the base differently from other pieces of the same height.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Indeed, when I examined the towers and stubs more carefully, I found that the yellow tower of height six and the orange tower of height five were special, and could be placed on two special stubs on which the ordinary towers could not be placed. A really mean, but clever idea that gives the puzzle an additional twist. I like such puzzles that cannot be solved in a straightforward manner, but by &amp;ldquo;thinking around the corner&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;After adding these two exceptions to my Python program (listed at the bottom of this blog post), it found not only one, but even 96 solutions, and it didn&amp;rsquo;t take even a second to list them all. Python to the rescue!&lt;/p&gt;
-
-&lt;p&gt;Maybe I should not have cheated, but looking it up in Wikipedia also revealed the quite interesting background story of this puzzle. Allegedly, it goes back to Catherine the Great in the golden age of the Russian empire.&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-2.jpg&#34; alt=&#34;Catherine the Great&#34;&gt;
-
-&lt;p&gt;Like today, the Russian leaders were obsessed with the military, and so Catherine one day had the crazy idea that she absolutely needed to arrange 36 of her officers from six different regiments with six different ranks in a 6x6 grid so that each row and column of the grid contained only one officer of each rank and regiment.&lt;/p&gt;
-
-&lt;p&gt;If you think of the towers in the 36 Cube as officers, the different colors representing different regimes, and the different heights representing different ranks, then you see how Catherine&amp;rsquo;s puzzle is directly related to the 36 Cube. In fact, its inventor, Derrick Niederman,  got his inspiration from the 36 officers problem.&lt;/p&gt;
-
-&lt;p&gt;Back to Catherine, who also noticed that the puzzle was tricky. Different from certain political leaders today, she was still believing in the competency of experts, and so she asked one of them. That expert was none less than the famous Swiss mathematician Leonhard Euler, who, as luck would have it, was living in Petersburg at that time.&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-3.jpg&#34; alt=&#34;Leonhard Euler&#34;&gt;
-
-&lt;p&gt;So Euler started to search for a solution, but could not find one. Since he knew he was brilliant, he concluded that a solution could not exist, otherwise he would have found it. In fact, he found solutions for square grids with 3, 4, 5, 7, 8 and 9 rows. Such solutions are now called &lt;em&gt;Euler squares&lt;/em&gt; in his honor. However, he couldn&amp;rsquo;t come up with a 6x6 Euler square. Since Euler didn&amp;rsquo;t have a computer and probably didn&amp;rsquo;t want to waste too much time with it, he was not able to prove his conjecture that a solution does not exist. The first such proof was given in 1901 by the French amateur mathematician Gaston Tarry, and it was a really lengthy one that more or less systematically checked all possible combinations. I include his picture to pay homage to his diligent piece of work and all amateurs, even though he is not so famous:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-4.jpg&#34; alt=&#34;Gaston Tarry&#34;&gt;
-
-&lt;p&gt;In 1984, the professional Canadian mathematician Douglas Stinson gave a much shorter proof without using a computer. Today, with a computer and some Python you can easily prove that the problem is not solvable even before breakfast.&lt;/p&gt;
-
-&lt;p&gt;Here is the small Python program I wrote to find the 96 solutions of the 36 Cube:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#/usr/bin/python3
-
-&amp;quot;&amp;quot;&amp;quot;The 36 Tower Puzzle&amp;quot;&amp;quot;&amp;quot;
-
-# the colors of the tower
-colors = &#39;red yellow blue green violet orange&#39;.split()
-
-# the heights of the stubs
-# (stub of height 1 at upper left corner)
-heights = &#39;134520 250413 013254 541302 425031 302145&#39;
-heights = [list(map(int, row)) for row in heights.split()]
-
-# possible positions of the towers
-places = [[set() for height in range(6)] for color in range(6)]
-for row in range(6):
-    for column in range(6):
-        for color in range(6):
-            places[color][5 - heights[row][column]].add((row, column))
-
-# this is the crucial trick: two towers are special
-# if you comment out the following two lines, no solution is found
-places[1][4].add((1, 2))
-places[5][5].add((3, 2))
-
-# list of all towers
-towers = [(color, height) for color in range(6) for height in range(6)]
-
-# the board
-board = [[None] * 6 for row in range(6)]
-
-# list for storing the solutions
-solutions = []
-
-def stringify():
-    &amp;quot;&amp;quot;&amp;quot;convert the board to a readable string&amp;quot;&amp;quot;&amp;quot;
-    return &#39;\n&#39;.join(&#39;-&#39;.join(colors[color]
-        for color in board[row]) for row in range(6))
-
-def solve(tower=0):
-    &amp;quot;&amp;quot;&amp;quot;solve the puzzle recursively&amp;quot;&amp;quot;&amp;quot;
-    if tower == 36:
-        solution = stringify()
-        solutions.append(solution)
-        print(&amp;quot;\nSolution {}:&amp;quot;.format(len(solutions)))
-        print(solution)
-        return
-    color, height = towers[tower]
-    for row, column in places[color][height]:
-        if board[row][column] is None:
-            for row2 in range(6):
-                if board[row2][column] == color:
-                    break
-            else:
-                for column2 in range(6):
-                    if board[row][column2] == color:
-                        break
-                else:
-                    board[row][column] = color
-                    solve(tower + 1)
-                    board[row][column] = None
-
-print(&amp;quot;Solving...&amp;quot;)
-solve()
-print(&amp;quot;\nReady.&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -291,130 +70,7 @@ print(&amp;quot;\nReady.&amp;quot;)
 
 &lt;p&gt;One of the &lt;a href=&#34;https://docs.python.org/3.6/whatsnew/3.6.html&#34;&gt;many goodies&lt;/a&gt; packed into the new release are &lt;a href=&#34;https://docs.python.org/3.6/reference/lexical_analysis.html#f-strings&#34;&gt;formatted string literals&lt;/a&gt;, or simply called &amp;ldquo;f-strings&amp;rdquo;. In this blog post I&amp;rsquo;ll explain why this is good news.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;First, they are called f-strings because you need to prefix a string with the letter &amp;ldquo;f&amp;rdquo; in order to get an f-string, similar to how you create a raw string by prefixing it with &amp;ldquo;r&amp;rdquo;, or you can use the prefixes &amp;ldquo;b&amp;rdquo; and &amp;ldquo;u&amp;rdquo; to designate byte strings and unicode strings. Note that the &amp;ldquo;u&amp;rdquo; prefix was only necessary in Python 2 (&amp;ldquo;Legacy Python&amp;rdquo;), since native strings are the default now in Python 3.&lt;/p&gt;
-
-&lt;p&gt;The letter &amp;ldquo;f&amp;rdquo; also indicates that these strings are used for formatting. Now Python already provides several ways for formatting strings, so you may wonder why the Python gods introduced yet another way, in blatant violation of the &lt;a href=&#34;https://www.python.org/doc/humor/#the-zen-of-python&#34;&gt;Zen of Python&lt;/a&gt;, according to which there should be only one obvious way of doing things. In fact some people already complained about this. However, these people overlook that the Zen of Python also states that simple is better than complex and practicality beats purity - and yes, f-strings are really the most simple and practical way for formatting strings.&lt;/p&gt;
-
-&lt;h2 id=&#34;some-examples&#34;&gt;Some examples&lt;/h2&gt;
-
-&lt;p&gt;Look how easy it is:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; f&#39;He said his name is {name} and he is {age} years old.&#39;
-He said his name is Fred and he is 42 years old.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you see, this works pretty much like the &lt;code&gt;.format()&lt;/code&gt; method, however you can directly insert the names from the current scope in the format string. This is much simpler than the old way, and avoids duplication:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; &#39;He said his name is {name} and he is {age} years old.&#39;.format(
-...     name=name, age=age)
-He said his name is Fred and he is 42 years old.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Sure, you can omit the names inside the curly braces since Python 3.1, like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; &#39;He said his name is {} and he is {} years old.&#39;.format(name, age)
-&#39;He said his name is Fred and he is 42 years old.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;But still, this is longer and not as readable as the f-string notation.&lt;/p&gt;
-
-&lt;p&gt;And it gets even better than this, as f-strings also support any Python expressions inside the curly braces. You can also write triple-quoted f-strings that span multiple lines, like so:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; seven = 7
-&amp;gt;&amp;gt;&amp;gt; f&#39;&#39;&#39;He said his name is {name.upper()}
-...    and he is {6 * seven} years old.&#39;&#39;&#39;
-&#39;He said his name is FRED\n    and he is 42 years old.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Note that while you can create raw f-strings by using the prefix &amp;ldquo;fr&amp;rdquo;, you cannot create binary f-strings with &amp;ldquo;fb&amp;rdquo; in Python 3.6 (maybe this will be added in a future Python version). Formatting with f-strings is one of the new features in Python 3 that will not be ported back to Python 2, therefore a &amp;ldquo;fu&amp;rdquo; prefix to designate unicode is not necessary and not supported.&lt;/p&gt;
-
-&lt;h2 id=&#34;comparison-with-template-literals-in-javascript&#34;&gt;Comparison with template literals in JavaScript&lt;/h2&gt;
-
-&lt;p&gt;When we look beyond our Python back yard over to the JavaScript folks, we see that they introduced a very similar feature called &amp;ldquo;template strings&amp;rdquo; or &amp;ldquo;template literals&amp;rdquo; as part of the &lt;a href=&#34;http://www.ecma-international.org/ecma-262/6.0/&#34;&gt;ECMAScript 2015&lt;/a&gt; standard. It&amp;rsquo;s good to see the JavaScript and Python communities taking inspiration from each other. Instead of the prefix &amp;ldquo;f&amp;rdquo; and ordinary quotes, the JavaScript template strings are designated with reverse quotes (&amp;ldquo;backticks&amp;rdquo;), and they can span multi lines which ordinary JavaScript strings can&amp;rsquo;t. Therefore template scripts in JavaScript actually correspond to triple-quoted f-strings in Python. Another difference is that the interpolation syntax of template strings in JavaScript requires a dollar sign in front of the curly braces. Otherwise, they are pretty similar. So, in current JavaScript you can write this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt; seven = 7
-&amp;gt; console.log(`He said his name is ${name.toUpperCase()}
-    and he is ${6 * seven} years old`)
-He said his name is FRED
-  and he is 42 years old
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Note that backticks had been used as an alternative syntax for the &lt;code&gt;repr()&lt;/code&gt; method in Python before, but have been removed from the language with Python 3, since the backtick character causes too many problems (e.g. it can be difficult to distinguish in some fonts or difficult to enter on some keyboards), and I think it&amp;rsquo;s good that Python uses the &amp;ldquo;f&amp;rdquo;-prefix instead of another kind of quote. This makes it actually easier to switch between f-strings and ordinary strings. Another advantage of Python is that the concepts of a template string (prefix &amp;ldquo;f&amp;rdquo;) and a multi-line string (triple quotes) are cleanly separated and can be used independently of each other. And I like that I don&amp;rsquo;t have to enter that additional dollar sign.&lt;/p&gt;
-
-&lt;p&gt;What make things a bit more confusing is that JavaScript templates also have a syntax called &amp;ldquo;tagged templates&amp;rdquo; that looks like the prefix syntax of Python, but has a totally different semantics. The prefix (&amp;ldquo;tag&amp;rdquo;) in JavaScript actually is the name of a function that is called with the template string and its substitutions as parameters. There is also a standard function called &lt;code&gt;String.raw&lt;/code&gt; in JavaScript that can be used as a tag function. If you set &lt;code&gt;r = String.raw&lt;/code&gt;, you can use raw strings in JavaScript like in Python with a similar syntax (though not exactly the same, since you still need backticks instead of quotes).&lt;/p&gt;
-
-&lt;h2 id=&#34;comparison-with-template-strings-in-python&#34;&gt;Comparison with template strings in Python&lt;/h2&gt;
-
-&lt;p&gt;Python also provides an older kind of &lt;a href=&#34;https://docs.python.org/3/library/string.html#template-strings&#34;&gt;template strings&lt;/a&gt; as part of the standard library. These template strings also use the syntax with the dollar sign and the curly braces like JavaScript does, but you can usually omit the curly braces, which you cannot do in JavaScript. You use them like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from string import Template
-&amp;gt;&amp;gt;&amp;gt; t = Template(&#39;He said his name is $name and he is $age years old.&#39;)
-&amp;gt;&amp;gt;&amp;gt; t.substitute(name=&#39;Fred&#39;, age=42)
-&#39;He said his name is Fred and he is 42 years old.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;performance-considerations&#34;&gt;Performance considerations&lt;/h2&gt;
-
-&lt;p&gt;You may be worried that the new way of formatting strings might be slower than the conventional ways. Particularly the old template strings look like they might be faster when used more than once with different values, since the template string must only be parsed when the &lt;code&gt;Template()&lt;/code&gt; object is created and can then be reused. But it turns out the opposite is the case, and f-strings are really fast because they are pre-parsed as well and stored in efficient bytecode for faster execution.&lt;/p&gt;
-
-&lt;p&gt;To confirm this in practice, I ran a simple benchmark and found that using f-strings was distinctly faster than formatting with the &amp;ldquo;%&amp;rdquo; operator or simple string concatenation, twice as fast than the &lt;code&gt;.format()&lt;/code&gt; method and even 20 times faster than formatting with &lt;code&gt;Template()&lt;/code&gt;, which does not seem to be implemented very efficiently.&lt;/p&gt;
-
-&lt;p&gt;So you can also interpret the &amp;ldquo;f&amp;rdquo; in &amp;ldquo;f-strings&amp;rdquo; as &amp;ldquo;fast&amp;rdquo;. It&amp;rsquo;s good that Python still keeps the old ways for backward compatibility, but in new code you should definitely make use of these fantastic f-strings. Here is the code for the benchmark, if you want to test it yourself:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;import timeit
-
-format = &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return f&#39;He said his name is {name} and he is {age} years old.&#39;
-&amp;quot;&amp;quot;&amp;quot;, &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return &#39;He said his name is %s and he is %s years old.&#39; % (name, age)
-&amp;quot;&amp;quot;&amp;quot;, &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return &#39;He said his name is &#39; + name + &#39; and he is &#39; + str(
-        age) + &#39; years old.&#39;
-&amp;quot;&amp;quot;&amp;quot;,  &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return &#39;He said his name is {} and he is {} years old.&#39;.format(name, age)
-&amp;quot;&amp;quot;&amp;quot;, &amp;quot;&amp;quot;&amp;quot;
-from string import Template
-
-template = Template(&#39;He said his name is $name and he is $age years old.&#39;)
-
-def format(name, age):
-    return template.substitute(name=name, age=age)
-&amp;quot;&amp;quot;&amp;quot;
-
-test = &amp;quot;&amp;quot;&amp;quot;
-def test():
-    for name in (&#39;Fred&#39;, &#39;Barney&#39;, &#39;Gary&#39;, &#39;Rock&#39;, &#39;Perry&#39;, &#39;Jackie&#39;):
-        for age in range (20, 200):
-            format(name, age)
-&amp;quot;&amp;quot;&amp;quot;
-
-for fmt in format:
-    print(timeit.timeit(&#39;test()&#39;, fmt + test, number=10000))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Here is a diagram of the execution times of the various tested methods:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/f-strings-1.png&#34; alt=&#34;Benchmark results&#34;&gt;
-
-&lt;p&gt;As with all benchmarks, keep in mind that many factors play a role when formatting and this serves only as a rough guidance. Particularly, I noticed that when using &amp;ldquo;d&amp;rdquo; as a format specifier for the integer number, the prominence of the f-string execution time was largely diminished. Maybe there is still room for optimization here. But formatting with f-strings was still the fastest methods.&lt;/p&gt;
-
-&lt;h2 id=&#34;support-for-f-strings-in-pycharm&#34;&gt;Support for f-strings in PyCharm&lt;/h2&gt;
-
-&lt;p&gt;If you like the &lt;a href=&#34;https://www.jetbrains.com/pycharm/&#34;&gt;PyCharm&lt;/a&gt; IDE (I definitely do), you will be glad to hear that it fully supports Python 3.6 and f-strings. Code completion works with expressions embedded inside f-strings just like with ordinary expressions, and there is even a code intention that suggests to &amp;ldquo;convert to f-string literal&amp;rdquo;. This means if you have an old Python program that still uses the &lt;code&gt;.format()&lt;/code&gt; method, you can just press &lt;code&gt;Alt&lt;/code&gt;+&lt;code&gt;Enter&lt;/code&gt; and select that intention to convert everything to the new syntax. So you have no more excuses to not switch over.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -2,12 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blogs on Seasoned &amp; Agile</title>
-    <link>https://cito.github.io/blog/index.xml</link>
+    <link>https://cito.github.io/blog/</link>
     <description>Recent content in Blogs on Seasoned &amp; Agile</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 01 Feb 2017 19:00:00 +0100</lastBuildDate>
-    <atom:link href="https://cito.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://cito.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Web Extensions made with Angular</title>
@@ -19,222 +21,7 @@
 
 &lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-0.png&#34; alt=&#34;Web Extensions made with Angular&#34;&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;the-webextensions-api&#34;&gt;The WebExtensions API&lt;/h2&gt;
-
-&lt;p&gt;In the past, each web browser provided its own way of creating extensions (also called browser add-ons or plugins) to add functionality to the web browser &amp;ndash; if extensions were supported at all. In Firefox for instance, you had to use &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL&#34;&gt;XUL&lt;/a&gt; to create extensions. In 2015, however, Mozilla announced to deprecate the old way of building extensions and switch to a new extension API called WebExtensions. This step has been criticized by many users and developers, since Firefox had accumulated a rich pool of useful extensions over the years. However, the new API has several advantages over the old ways of building extensions:&lt;/p&gt;
-
-&lt;p&gt;First, it is more or less compatible across multiple browsers. This makes it easy for developers to create extensions that can be used with all popular browsers. Instead of learning different technologies, you only need to get acquainted with the WebExtensions API. Have a look at the &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Browser_support_for_JavaScript_APIs&#34;&gt;browser compatibility tables&lt;/a&gt; to see which parts are already implemented by the different browsers. Second, developing web extensions is even easier since the new API is based on the standard web technologies JavaScript, HTML and CSS. You don&amp;rsquo;t need to learn another syntax or markup language like XUL. The &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions&#34;&gt;WebExtensions docs&lt;/a&gt; on MDN explain everything very well and are a great reference. The new API has also some other advantages like improved security and being able to operate in a multi-process environment.&lt;/p&gt;
-
-&lt;h2 id=&#34;creating-webextensions-with-angular&#34;&gt;Creating WebExtensions with Angular&lt;/h2&gt;
-
-&lt;p&gt;Since WebExtensions are based on standard web technologies, you can resort to many existing frameworks and libraries for client side web applications when creating such web extensions. Here I want to show that it might be even feasible to use the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. version 2 and newer) for creating a web extension.&lt;/p&gt;
-
-&lt;p&gt;This is the result of a little coding experiment I did when I wanted to build &amp;ndash; or rather re-build &amp;ndash; a web extension for storing bookmarks using the &lt;a href=&#34;https://pinboard.in/&#34;&gt;Pinboard&lt;/a&gt; service. If you don&amp;rsquo;t know Pinboard, you may want to read the &lt;a href=&#34;https://cito.github.io/blog/pinboard-review&#34;&gt;review&lt;/a&gt; I posted this month. It is a really useful bookmark manager, and it also provides a web API for storing bookmarks that can be accessed by web apps or browser extensions.&lt;/p&gt;
-
-&lt;p&gt;Actually Pinboard does already provide an official extension for Firefox and other browsers. However, the official Firefox extension is still using the old XUL technology, so that it will stop working in Firefox in about a year when Mozilla will not support it any more, and I also found that it was annoyingly slow. Storing a bookmark should be a quick process &amp;ndash; I don&amp;rsquo;t want to wait several seconds for loading a web form. One of the reasons for the sluggishness of the official web extension is that it does not cache the list of tags that are provided as suggestions. My idea was to use the &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage&#34;&gt;Web Storage API&lt;/a&gt; of WebExtensions to cache this list, so that it doesn&amp;rsquo;t need to be retrieved newly for every link you want to add.&lt;/p&gt;
-
-&lt;p&gt;It seems other people had similar ideas, since I found an unofficial Firefox add-on called &lt;a href=&#34;https://github.com/lostsnow/pinboard-firefox&#34;&gt;Pinboard+&lt;/a&gt; which already did pretty much what I wanted and had been created using the WebExtension API. This Firefox extension was actually a port of Chrome extension called &lt;a href=&#34;https://github.com/clvrobj/Pinboard-Plus&#34;&gt;Pinboard Plus&lt;/a&gt;. But unfortunately, the Firefox port was not based on the latest version of Pinboard Plus and did not work reliably for me, and also fixing the bugs turned out to be not so easy since the extension was based on the old AngularJS (version 1.2), jQuery and Underscore.js libraries, which I felt made the code a bit convoluted and hard to maintain.&lt;/p&gt;
-
-&lt;p&gt;So I decided that it would be a good exercise to re-write Pinboard Plus as a modern Angular application using no additional libraries (well, of course Angular itself requires a few other libraries internally such as RxJS). I called this new extension &lt;a href=&#34;https://addons.mozilla.org/firefox/addon/pinboard-pin/&#34;&gt;Pinboard Pin&lt;/a&gt; and published the source code on &lt;a href=&#34;https://github.com/Cito/Pinboard-Pin&#34;&gt;GitHub&lt;/a&gt;. This rewrite was also intended as a proof-of-concept that modern Angular is a viable platform for building web extensions.&lt;/p&gt;
-
-&lt;p&gt;Of course, the Angular framework might be considered an overkill for building a simple web extension. But my simple Pinboard Pin extension already contains three forms with several input fields, uses validation and an auto-suggest feature for tags, and communication with the Pinboard API over HTTP, which are all things that are easy to implement using Angular.&lt;/p&gt;
-
-&lt;p&gt;The new Angular framework also allows writing the application in TypeScript. Type definitions for the Chrome specific web extensions API using the &lt;code&gt;chrome&lt;/code&gt; namespace are available in the &lt;code&gt;@types/chrome&lt;/code&gt; npm package. Unfortunately, I was not able to find typings for the more generic API using the &lt;code&gt;browser&lt;/code&gt; namespace. While the APIs are largely similar, there are a few differences. Particularly, the &lt;code&gt;chrome&lt;/code&gt; API uses callbacks where the &lt;code&gt;browser&lt;/code&gt; API uses Promises. Therefore, I added the necessary type definitions manually in &lt;code&gt;typings.d.ts&lt;/code&gt;, reusing parts and interfaces from the chrome specific typings. Of course you can also work without type definitions by simply saying:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;declare var browser: any;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;peculiarities-of-webextensions&#34;&gt;Peculiarities of WebExtensions&lt;/h2&gt;
-
-&lt;p&gt;Actually, the Angular framework is primarily targeting so-called &amp;ldquo;single page applications&amp;rdquo; (SPAs), i.e. applications which are based on a single HTML page. Therefore the &lt;a href=&#34;https://cli.angular.io/&#34;&gt;Angular CLI&lt;/a&gt; produces a single HTML page, usually called &lt;code&gt;index.html&lt;/code&gt;. Now WebExtensions are not exactly SPAs, but pretty similar.&lt;/p&gt;
-
-&lt;p&gt;One difference is that instead of a single page, WebExtensions feature different kinds of starting pages. The default popup that opens when clicking on the button of the browser extension must be specified as the property &lt;code&gt;default_popup&lt;/code&gt; of the &lt;code&gt;browser_action&lt;/code&gt; object in the &lt;code&gt;manifest.json&lt;/code&gt; file. Since we only have one HTML page, we must specify it here:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;quot;browser_action&amp;quot;: {
- &amp;quot;default_title&amp;quot;: &amp;quot;Pinboard Pin&amp;quot;,
- &amp;quot;default_icon&amp;quot;: {
-    &amp;quot;32&amp;quot;: &amp;quot;/img/pinboard_idle_32.png&amp;quot;,
-    &amp;quot;64&amp;quot;: &amp;quot;/img/pinboard_idle_64.png&amp;quot;,
- },
- &amp;quot;default_popup&amp;quot;: &amp;quot;/index.html&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We need to tell the Angular CLI that it must add the &lt;code&gt;manifest.json&lt;/code&gt; file that describes the web extension to the web browser and other necessary files from our &lt;code&gt;src&lt;/code&gt; directory to the &lt;code&gt;dist&lt;/code&gt; directory when it builds the web extension. This can be achieved by setting the &lt;code&gt;assets&lt;/code&gt; property of the &lt;code&gt;apps&lt;/code&gt; object item in the &lt;code&gt;angular-cli.json&lt;/code&gt; configuration file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;quot;apps&amp;quot;: [
-  {
-    &amp;quot;root&amp;quot;: &amp;quot;src&amp;quot;,
-    &amp;quot;outDir&amp;quot;: &amp;quot;dist&amp;quot;,
-    &amp;quot;assets&amp;quot;: [
-      &amp;quot;img&amp;quot;,
-      &amp;quot;js&amp;quot;,
-      &amp;quot;manifest.json&amp;quot;
-    ],
-    &amp;quot;index&amp;quot;: &amp;quot;index.html&amp;quot;,
-    &amp;quot;main&amp;quot;: &amp;quot;main.ts&amp;quot;,
-    &amp;quot;test&amp;quot;: &amp;quot;test.ts&amp;quot;,
-    &amp;quot;tsconfig&amp;quot;: &amp;quot;tsconfig.json&amp;quot;,
-    &amp;quot;prefix&amp;quot;: &amp;quot;app&amp;quot;,
-    &amp;quot;mobile&amp;quot;: false,
-    &amp;quot;styles&amp;quot;: [
-      &amp;quot;styles.css&amp;quot;
-    ],
-    &amp;quot;scripts&amp;quot;: [],
-    &amp;quot;environments&amp;quot;: {
-      &amp;quot;source&amp;quot;: &amp;quot;environments/environment.ts&amp;quot;,
-      &amp;quot;dev&amp;quot;: &amp;quot;environments/environment.ts&amp;quot;,
-      &amp;quot;prod&amp;quot;: &amp;quot;environments/environment.prod.ts&amp;quot;
-    }
-  }
-]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;img&lt;/code&gt; directory contains the icons in various sizes and variations (highlighted and normal), and the &lt;code&gt;js&lt;/code&gt; folder contains a &amp;ldquo;content script&amp;rdquo; that can be injected into the current page in order to retrieve its title, description and keywords. These are then used to pre-populate the input fields of the form for bookmarking the page.&lt;/p&gt;
-
-&lt;p&gt;In order to communicate with the Pinboard API, we need the user&amp;rsquo;s Pinboard API token. If the token has not yet been stored in the local storage area of the extension, we first need to show a login dialog that requests it from the user:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-1.png&#34; alt=&#34;Pinboard Pin login dialog&#34;&gt;
-
-&lt;p&gt;Only after the user has entered the API token and it has been validated, we want to show the actual popup for storing the current page as a bookmark:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-2.png&#34; alt=&#34;Pinboard Pin bookmark dialog&#34;&gt;
-
-&lt;p&gt;This can be easily solved with a so-called &amp;ldquo;guard&amp;rdquo; in Angular. We can use the same guard not only as an authentication guard, but also for navigating to the other pages that are part of our WebExtension. One of them is the options page showing a form where you can change the settings of the add-on:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-3.png&#34; alt=&#34;Pinboard Pin options dialog&#34;&gt;
-
-&lt;p&gt;This options page must be specified as the property &lt;code&gt;page&lt;/code&gt; of the &lt;code&gt;options_ui&lt;/code&gt; object in the &lt;code&gt;manifest.json&lt;/code&gt; file. Unfortunately, the Angular CLI creates only one &lt;code&gt;index.html&lt;/code&gt; page for us, and it cannot be easily configured to provide an additional &lt;code&gt;options.html&lt;/code&gt; page. But luckily, Firefox allows passing query parameters to the options page:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;quot;options_ui&amp;quot;: {
-  &amp;quot;page&amp;quot;: &amp;quot;/index.html?page=options&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So we simply use the Angular router to navigate to the options page by checking a query parameter in our guard for the default route. The code for the guard therefore looks like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;@Injectable()
-export class Guard implements CanActivate {
-
-  constructor(private pinboard: PinboardService, private router: Router) {}
-
-  canActivate(route: ActivatedRouteSnapshot,
-              state: RouterStateSnapshot): Observable&amp;lt;boolean&amp;gt;|boolean {
-
-    let page = route.queryParams[&#39;page&#39;];
-
-    if (!page || page == &#39;popup&#39;) {
-      return this.pinboard.needToken.map(needed =&amp;gt; {
-        if (!needed) return true;
-        this.router.navigate([&#39;/login&#39;]);
-        return false;
-      });
-    }
-
-    this.router.navigate([&#39;/&#39; + page]);
-    return false;
-  }
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;setting-up-the-angular-router&#34;&gt;Setting up the Angular router&lt;/h2&gt;
-
-&lt;p&gt;To use the authentication guard, we can define our app routes like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;const appRoutes: Routes = [
-  { path: &#39;login&#39;, component: LoginComponent },
-  { path: &#39;options&#39;, component: OptionsComponent },
-  { path: &#39;background&#39;, component: BackgroundComponent },
-  { path: &#39;**&#39;, component: PinPageComponent, canActivate: [Guard] }
-];
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you see, the default path is guarded. The guard only returns &lt;code&gt;true&lt;/code&gt; when no &lt;code&gt;page&lt;/code&gt; query parameter is specified and we already have the API token. In this case, the route is activated and the &lt;code&gt;PinPageComponent&lt;/code&gt; is shown, which is the main dialog for bookmarking a page with Pinboard. Otherwise, the guard blocks the route by returning &lt;code&gt;false&lt;/code&gt; and navigates to the &lt;code&gt;/login&lt;/code&gt; path instead. This path is not guarded and shows the &lt;code&gt;LoginComponent&lt;/code&gt; which is the dialog for entering the API token. Finally, if a &lt;code&gt;page&lt;/code&gt; query parameter has been specified, the guard also blocks the default route and navigates to the specified page instead. For the options page, it navigates to &lt;code&gt;/options&lt;/code&gt; which displays the options form with the settings shown above.&lt;/p&gt;
-
-&lt;p&gt;In the app routes above there is another route for a &lt;code&gt;background&lt;/code&gt; page that we haven&amp;rsquo;t talked about yet. A background page can be used for long-running background tasks. In the Pinboard Pin extension, it is used for always checking via the Pinboard API whether the active tab is already bookmarked in Pinboard and highlighting the Pinboard icon if this is the case. This is one of the additional features that can be enabled on the options page. Actually, you would only need a background &lt;em&gt;script&lt;/em&gt; for this purpose, not a background &lt;em&gt;page&lt;/em&gt;, but navigating to a page with a &lt;code&gt;BackgroundComponent&lt;/code&gt; in the way described above seems to be the easiest way to have TypeScript and the Angular service machinery available when doing our background work. In the &lt;code&gt;ngOnInit()&lt;/code&gt; method of the component, we add a listener for the &lt;code&gt;tabs.onUpdated&lt;/code&gt; event that requests the Pinboard API for the URL of the updated browser tab and sets the icon accordingly. The background page can be specified in the &lt;code&gt;manifest.json&lt;/code&gt; file like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;quot;background&amp;quot;: {
-  &amp;quot;page&amp;quot;: &amp;quot;/index.html?page=background&amp;quot;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;creating-angular-services-for-web-apis&#34;&gt;Creating Angular services for web APIs&lt;/h2&gt;
-
-&lt;p&gt;The guard and the components of the Pinboard extension inject a &lt;code&gt;PinboardService&lt;/code&gt; for storing and updating Pinboard bookmarks and suggesting tags using the Pinboard API. This service in turn uses the built-in &lt;code&gt;Http&lt;/code&gt; client and a &lt;code&gt;StorageService&lt;/code&gt; that is a thin wrapper around the WebExtensions storage API. The latter is used to translate the Promises used by the WebExtensions API to Observables, which are used everywhere else in this Angular application, so that the asynchronous operations can be more smoothly combined.&lt;/p&gt;
-
-&lt;p&gt;Here is the code for the crucial part of the Pinboard service:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;const apiUrl = &#39;https://api.pinboard.in/v1/&#39;;
-
-@Injectable()
-export class PinboardService {
-
-  constructor(private http: Http, private storage: StorageService) { }
-
-  // get an object via the Pinboard API
-  httpGet(method: string, params?: any): Observable&amp;lt;any&amp;gt; {
-    params = params || {};
-    if (!params.auth_token)
-      return this.storage.get(&#39;token&#39;).switchMap(token =&amp;gt; {
-          if (!token) Observable.throw(new Error(&#39;No API token!&#39;));
-          params.auth_token = token;
-          return this.httpGet(method, params);
-        });
-    params.format = &#39;json&#39;;
-    let search = new URLSearchParams();
-    for (let key in params) search.set(key, params[key]);
-    return this.http.get(
-      apiUrl + method, {search: search}).map(res =&amp;gt; res.json());
-  }
-
-  // get bookmark with the given url
-  get(url): Observable&amp;lt;any&amp;gt; {
-    return this.httpGet(&#39;posts/get&#39;, {url: url, meta: &#39;no&#39;});
-  }
-
-  // ...
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;httpGet()&lt;/code&gt; method is a universal method for communicating with the Pinboard API. It first checks whether the necessary API token has been provided as part of the parameters. If no, it requests the &lt;code&gt;StorageService&lt;/code&gt; to get the API token from the local storage of the browser extension. The API token is then added to the parameters and the &lt;code&gt;httpGet()&lt;/code&gt; method is called again. This time the request is sent via the &lt;code&gt;Http&lt;/code&gt; client, and the decoded JSON object in the response is returned.&lt;/p&gt;
-
-&lt;p&gt;The reactive extensions used in Angular are very convenient for combining the various asynchronous operations. They are particularly handy for implementing the auto-suggest feature that suggests suitable tags from Pinboard when entering text in the tag input field:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-4.png&#34; alt=&#34;Pinboard Pin auto-suggest tags&#34;&gt;
-
-&lt;p&gt;Here, we can make good use of the &lt;code&gt;debounceTime()&lt;/code&gt; and &lt;code&gt;distinctUntilChanged()&lt;/code&gt; methods of the Observable that reports the keyboard events on the tag input field, since we don&amp;rsquo;t want to check the suggested tags too frequently.&lt;/p&gt;
-
-&lt;h2 id=&#34;building-the-web-extension&#34;&gt;Building the web extension&lt;/h2&gt;
-
-&lt;p&gt;For development, you can build the extension with the Angular CLI using the command&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ng build --aot
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;--aot&lt;/code&gt; option evokes Angular&amp;rsquo;s &amp;ldquo;ahead of time compiler&amp;rdquo; which compiles and bundles all the TypeScript modules and Angular templates into a few files, primarily &lt;code&gt;main.bundle.js&lt;/code&gt;, containing the code of your application, and &lt;code&gt;vendor.bundle.js&lt;/code&gt;, containing the library code that is required by Angular. It also creates source map files which are useful for debugging the extension. You can load the extension into Firefox by navigating to the URL &lt;code&gt;about:debugging&lt;/code&gt;, clicking on the button &amp;ldquo;Load Temporary Add-on&amp;rdquo; and then selecting any file in the &lt;code&gt;dist&lt;/code&gt; folder that Angular CLI has built. You can also reload and debug the web extension using the corresponding buttons on the &lt;code&gt;about:debugging&lt;/code&gt; page.&lt;/p&gt;
-
-&lt;p&gt;Even better, you can use the &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Getting_started_with_web-ext&#34;&gt;web-ext tool&lt;/a&gt;. When you run this tool in the dist folder, it loads the extension, watches the dist folder for any changes, and reloads the extension automatically. This is very convenient during development.&lt;/p&gt;
-
-&lt;p&gt;When you want to ship the extension, you add the &lt;code&gt;--prod&lt;/code&gt; option in order to build an optimized version with minified bundles. This option also evokes the tree-shaking functionality that further reduces the size of the bundles by removing unused code. You can also add the &lt;code&gt;--sourcemap=false&lt;/code&gt; option in order to suppress the creation of the source map files:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ng build --aot --prod --sourcemap=false
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This command also produces gzipped versions of the bundles, which you should remove because they are of no use when packaging the application as a web extension. Another small problem is that the Angular CLI (or actually &lt;a href=&#34;https://webpack.github.io/&#34;&gt;webpack&lt;/a&gt;) creates random &lt;a href=&#34;https://webpack.github.io/docs/long-term-caching.html#option-2-one-hash-per-chunk&#34;&gt;&amp;ldquo;chunk hashes&amp;rdquo;&lt;/a&gt; for the various bundles it creates. These are useful for invalidating the browser cache when you deploy a web application. But for web extensions, they are not necessary, since these come with their own version number and do not live in the browser cache. These hashes are also obstructive for the Mozilla add-on review process, since the hashes can be different when the extension is built in another environment. The review process however requires a reproducible build output. So I simply run a script after the above build step that subsequently removes the chunk hashes again. Another solution would be to hack the &lt;code&gt;webpack-build-production.js&lt;/code&gt; configuration in &lt;code&gt;angular-cli/models&lt;/code&gt;, removing the &lt;code&gt;[chunkhash]&lt;/code&gt; parts in the file names. I avoided this so that reviewers can use the original Angular CLI. Hopefully Angular CLI will become a bit more configurable in the future, so that such hacks will not be necessary.&lt;/p&gt;
-
-&lt;p&gt;In order to package everything up into a distributable zip archive, you can again use the web-ext tool:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;web-ext build --source-dir=dist --artifacts-dir=.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Note that the build command of Angular CLI by default creates JavaScript code that is backward compatible with ECMAScript&amp;nbsp;5. Since the latest versions of Firefox already supports ECMAScript&amp;nbsp;6 pretty well, you may consider creating ECMAScript&amp;nbsp;6 code instead, because this will be smaller and a bit more efficient. In order to do this, you must set &lt;code&gt;target=&amp;quot;es6&amp;quot;&lt;/code&gt; instead of &lt;code&gt;target=&amp;quot;es5&amp;quot;&lt;/code&gt; in the configuration file &lt;code&gt;tsconfig.json&lt;/code&gt; in the &lt;code&gt;src&lt;/code&gt; directory. However, the current version of Angular CLI uses the &lt;a href=&#34;https://github.com/mishoo/UglifyJS2&#34;&gt;UglifyJS2&lt;/a&gt; library which is not yet compatible with ECMAScript&amp;nbsp;6. If you are adventurous, you can use the &lt;a href=&#34;https://github.com/mishoo/UglifyJS2/tree/harmony&#34;&gt;harmony branch&lt;/a&gt; of this library instead. This actually seemed to work when I tried it. However, it only produced an ECMAScript&amp;nbsp;6 version of the main bundle. The vendor bundle was still ECMAScript&amp;nbsp;5, because it is bundled from the library modules which are shipped with npm and are all ECMAScript&amp;nbsp;5 code. Since the vendor bundle makes up the lion&amp;rsquo;s share of the packaged application, using &lt;code&gt;target=&amp;quot;es6&amp;quot;&lt;/code&gt; does not have much of an effect and currently causes more trouble than it&amp;rsquo;s worth. If you have any ideas how to create an ECMAScript&amp;nbsp;6 vendor bundle, let me know. But probably we should just wait for Angular 4 next month &amp;ndash; I noticed that the changelog for the latest Angular 4.0.0-beta.5 says it now supports creating ES6 distributions.&lt;/p&gt;
-
-&lt;p&gt;The last step is to let Mozilla sign your web extension. This is now required in order to make the extension permanently installable in the Firefox browser. Signing is done through &lt;a href=&#34;http://addons.mozilla.org/&#34;&gt;addons.mozilla.org&lt;/a&gt; (AMO). You have two options: Distributing your web extension as a &amp;ldquo;listed&amp;rdquo; add-on on AMO, or distributing it yourself via a web page or application installer. The good news is that since last week it&amp;rsquo;s also possible to use both options, so you can pre-release web-extension to beta users without having these versions listed or reviewed on AMO. This mitigates the problem that getting your web extension reviewed as a listed add-on can take quite a while when it is packed and uglified like when it has been created as a bundle with the Angular CLI. This is because the reviewers need to check the source code and replicate the build step to verify the output is the same, and there are only a few reviewers who do such source code reviews. In my case it took over a month to get the Pinboard Pin extension &lt;a href=&#34;https://addons.mozilla.org/firefox/addon/pinboard-pin/&#34;&gt;listed&lt;/a&gt;. However, I believe this was also due to the winter holidays, and I assume in the future the review process will become smoother.&lt;/p&gt;
-
-&lt;p&gt;All in all, using the new Angular framework turned out to be a viable option for creating web extensions that can be time-saving and convenient when developing extensions with a somewhat sophisticated or complex UI.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -249,83 +36,7 @@ export class PinboardService {
 
 &lt;img class=&#34;center&#34; src=&#34;https://cito.github.io/img/overlay-icon-battle.png&#34; alt=&#34;Overlay Icons&#34;&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;The problem is: Windows has only 15 slots available for such overlay icons. Yes, even in the latest Windows 10, you still only have 15 slots. While it didn&amp;rsquo;t matter much in former times, when they were rarely used, it has become a real problem today. Several different cloud services are now fighting for these few slots, and if you&amp;rsquo;re a developer, you will probably like TortoiseGit and other clients for source repositories which also use the overlay icons to display the state of the files in the registry in the Windows explorer, which is a tremendously helpful. While all the Tortoise clients share the same icons, these are already 9 of the available slots.&lt;/p&gt;
-
-&lt;p&gt;This means that in the end, not all overlay icons will be displayed. Windows simply sorts the registered overlay icons alphabetically in the registry and uses only the first 15 of them. Soon, software vendors found that there is a simple trick to get their icons into the top 10 of the overlay icons in front of all the others, just by prepending the icon names with a blank. This of course spurred an absurd arms race of vendors prepending names with more and more blanks in order to overtrump others already using this trick.&lt;/p&gt;
-
-&lt;p&gt;The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.&lt;/p&gt;
-
-&lt;p&gt;Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#/usr/bin/python3
-
-import os
-import winreg as reg
-
-# names of all overlay icons that shall be boosted:
-
-boost = &amp;quot;&amp;quot;&amp;quot;
-    Tortoise1Normal
-    Tortoise2Modified
-    Tortoise3Conflict
-    Tortoise4Locked
-    Tortoise5ReadOnly
-    Tortoise6Deleted
-    Tortoise7Added
-    Tortoise8Ignored
-    Tortoise9Unversioned
-    DropboxExt01
-    DropboxExt02
-    DropboxExt03
-    DropboxExt04
-    DropboxExt05
-    DropboxExt06
-&amp;quot;&amp;quot;&amp;quot;
-
-boost = set(boost.split())
-
-with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
-        r&#39;SOFTWARE\Microsoft\Windows\CurrentVersion&#39;
-        r&#39;\Explorer\ShellIconOverlayIdentifiers&#39;) as base:
-
-    names = set()
-    renames = []
-    i = 0
-    while True:
-        try:
-            name = reg.EnumKey(base, i)
-        except OSError:
-            break
-        core = name.strip()
-        if core in names:
-            print(&#39;Delete&#39;, repr(core))
-            reg.DeleteKey(base, name)
-        else:
-            names.add(core)
-            if core in boost:
-                core = &#39; &#39; + core
-            if core != name:
-                renames.append((name, core))
-        i += 1
-
-    if renames:
-        for old_name, new_name in renames:
-            print(&#39;Rename&#39;, repr(old_name), &#39;to&#39;, repr(new_name))
-            value = reg.QueryValue(base, old_name)
-            reg.CreateKey(base, new_name)
-            reg.SetValue(base, new_name, reg.REG_SZ, value)
-            reg.DeleteKey(base, old_name)
-    else:
-        print(&#39;Nothing to rename&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.&lt;/p&gt;
-
-&lt;p&gt;Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &amp;ldquo;run as administrator&amp;rdquo; under the advanced options (do not set &amp;ldquo;run as administrator&amp;rdquo; under the compatibility section, because this would then apply to the Python executable in general).&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up, and you need to reboot Windows in order to make the changes effective. After all, you&amp;rsquo;re running a Windows computer.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -340,59 +51,7 @@ with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
 
 &lt;p&gt;It turned out that the program had been running a slippery slope all the time.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;Essentially, the program tried to find for a given list of field names, like&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;names = [&#39;alpha&#39;, &#39;bravo&#39;, &#39;charlie&#39;, &#39;delta&#39;]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;and a given format-string, like&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;fmtstr = &#39;show only {alpha}, {bravo} and {charlie}&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;which of the given field names where used in the string. The following code was used to examine this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;used_names = []
-d = dict.fromkeys(names)
-for k in d:
-    del d[k]
-    try:
-        fmtstr.format(**d)
-    except KeyError:
-        used_names.append(k)
-    d[k] = None
-
-print(&amp;quot;Used names:&amp;quot;, &#39;, &#39;.join(sorted(used_names)))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The code simply tries to format the string while successively omitting one of the given field names. If formatting fails with a KeyError, it knows that the field name is used.&lt;/p&gt;
-
-&lt;p&gt;When you run this code with Python versions before 3.6, it works as expected:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Used names: alpha, bravo, charlie
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;However, when you try to run it with Python 3.6, it will print out something very strange:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Used names: alpha, alpha, alpha, alpha, alpha, bravo, bravo, bravo, bravo
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;What&amp;rsquo;s happening here? Can you spot the problem?&lt;/p&gt;
-
-&lt;p&gt;If you look carefully, you probably see it: Yes, this is another instance of the dreaded &amp;ldquo;changing a mutable object while iterating it&amp;rdquo; problem, that you surely have already experienced sometime or other when getting an error message like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;RuntimeError: dictionary changed size during iteration
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In this case, however, the dictionary did not change its size. Actually it did not even change its keys between iterations. So you wouldn&amp;rsquo;t think there could be a problem with this code, and in fact it worked fine until recently. But in Python 3.6 the dict type has been reimplemented to use a more compact representation. This implementation does not pardon iterating over a changing dictionary even if you try to restore removed keys immediately, since it uses insertion order with an additional level of indirection, which causes hiccups when iterating while keys are removed and re-inserted, thereby changing the order and internal pointers of the dict.&lt;/p&gt;
-
-&lt;p&gt;Note that this problem is not fixed by iterating &lt;code&gt;d.keys()&lt;/code&gt; instead of &lt;code&gt;d&lt;/code&gt;, since in Python 3, &lt;code&gt;d.keys()&lt;/code&gt; returns a dynamic view of the keys in the dict which results in the same problem. Instead, iterate over &lt;code&gt;list(d)&lt;/code&gt;. This will produce a list from the keys of the dictionary that will not change during iteration. Or you can also iterate over &lt;code&gt;sorted(d)&lt;/code&gt; if a sorted order is important.&lt;/p&gt;
-
-&lt;p&gt;Just to make this clear: This is not a &lt;em&gt;bug&lt;/em&gt; in Python 3.6. Iterating an object and changing it at the same time was always considered unsafe and bad style. The benefits of the new dict implementation are great enough to accept this kind of incompatibility. However, I wonder whether it would be possible and beneficial to safeguard the for loop with a check of the private version of the dict that has just been added in Python 3.6 as well (see &lt;a href=&#34;https://www.python.org/dev/peps/pep-0509/&#34;&gt;PEP509&lt;/a&gt;), and raise a RuntimeError if the version changes, similarly to how a change of the dictionary size is already detected and reported as an error. Then running programs like the one above would raise an error instead of failing in strange and nondeterministic ways.&lt;/p&gt;
-
-&lt;p&gt;To sum up the morale of this story: Never iterate a changing dictionary, even if you preserve its size and keys. Instead run the for loop over a copy of the keys or items of the dictionary.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -409,103 +68,7 @@ print(&amp;quot;Used names:&amp;quot;, &#39;, &#39;.join(sorted(used_names)))
 
 &lt;p&gt;The puzzle looked tricky already, but it turned out it was even trickier than I first thought.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;So we started to casually play around with this puzzle while eating Christmas cookies and watching Christmas movies. I found it was pretty easy to place the first 20 to 24 towers properly, but then things started to get complicated as the colors collided. Soon I gave up and concentrated more on the Christmas cookies, while my wife - who is much more patient - managed to stack 33 pieces properly.&lt;/p&gt;
-
-&lt;p&gt;I already knew I would never have that patience, so I had to cheat and use Python to solve the puzzle the next morning. I hacked in all the heights of the tower stubs and wrote a simple recursive brute force algorithm, fully confident of having solved the puzzle in much shorter time than my wife. But the program terminated with no solution. I checked the heights, checked the algorithm, then double-checked it, but still nothing.&lt;/p&gt;
-
-&lt;p&gt;Something seemed to be rotten in the state of Denmark. So I had to cheat again and google the 36 Cube. Sure enough, there even was a whole Wikipedia article about the puzzle with the following spoiler: &amp;ldquo;Careful inspection of the pieces reveals that two of the pieces are special. These two pieces will fit on certain parts of the base differently from other pieces of the same height.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Indeed, when I examined the towers and stubs more carefully, I found that the yellow tower of height six and the orange tower of height five were special, and could be placed on two special stubs on which the ordinary towers could not be placed. A really mean, but clever idea that gives the puzzle an additional twist. I like such puzzles that cannot be solved in a straightforward manner, but by &amp;ldquo;thinking around the corner&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;After adding these two exceptions to my Python program (listed at the bottom of this blog post), it found not only one, but even 96 solutions, and it didn&amp;rsquo;t take even a second to list them all. Python to the rescue!&lt;/p&gt;
-
-&lt;p&gt;Maybe I should not have cheated, but looking it up in Wikipedia also revealed the quite interesting background story of this puzzle. Allegedly, it goes back to Catherine the Great in the golden age of the Russian empire.&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-2.jpg&#34; alt=&#34;Catherine the Great&#34;&gt;
-
-&lt;p&gt;Like today, the Russian leaders were obsessed with the military, and so Catherine one day had the crazy idea that she absolutely needed to arrange 36 of her officers from six different regiments with six different ranks in a 6x6 grid so that each row and column of the grid contained only one officer of each rank and regiment.&lt;/p&gt;
-
-&lt;p&gt;If you think of the towers in the 36 Cube as officers, the different colors representing different regimes, and the different heights representing different ranks, then you see how Catherine&amp;rsquo;s puzzle is directly related to the 36 Cube. In fact, its inventor, Derrick Niederman,  got his inspiration from the 36 officers problem.&lt;/p&gt;
-
-&lt;p&gt;Back to Catherine, who also noticed that the puzzle was tricky. Different from certain political leaders today, she was still believing in the competency of experts, and so she asked one of them. That expert was none less than the famous Swiss mathematician Leonhard Euler, who, as luck would have it, was living in Petersburg at that time.&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-3.jpg&#34; alt=&#34;Leonhard Euler&#34;&gt;
-
-&lt;p&gt;So Euler started to search for a solution, but could not find one. Since he knew he was brilliant, he concluded that a solution could not exist, otherwise he would have found it. In fact, he found solutions for square grids with 3, 4, 5, 7, 8 and 9 rows. Such solutions are now called &lt;em&gt;Euler squares&lt;/em&gt; in his honor. However, he couldn&amp;rsquo;t come up with a 6x6 Euler square. Since Euler didn&amp;rsquo;t have a computer and probably didn&amp;rsquo;t want to waste too much time with it, he was not able to prove his conjecture that a solution does not exist. The first such proof was given in 1901 by the French amateur mathematician Gaston Tarry, and it was a really lengthy one that more or less systematically checked all possible combinations. I include his picture to pay homage to his diligent piece of work and all amateurs, even though he is not so famous:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-4.jpg&#34; alt=&#34;Gaston Tarry&#34;&gt;
-
-&lt;p&gt;In 1984, the professional Canadian mathematician Douglas Stinson gave a much shorter proof without using a computer. Today, with a computer and some Python you can easily prove that the problem is not solvable even before breakfast.&lt;/p&gt;
-
-&lt;p&gt;Here is the small Python program I wrote to find the 96 solutions of the 36 Cube:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#/usr/bin/python3
-
-&amp;quot;&amp;quot;&amp;quot;The 36 Tower Puzzle&amp;quot;&amp;quot;&amp;quot;
-
-# the colors of the tower
-colors = &#39;red yellow blue green violet orange&#39;.split()
-
-# the heights of the stubs
-# (stub of height 1 at upper left corner)
-heights = &#39;134520 250413 013254 541302 425031 302145&#39;
-heights = [list(map(int, row)) for row in heights.split()]
-
-# possible positions of the towers
-places = [[set() for height in range(6)] for color in range(6)]
-for row in range(6):
-    for column in range(6):
-        for color in range(6):
-            places[color][5 - heights[row][column]].add((row, column))
-
-# this is the crucial trick: two towers are special
-# if you comment out the following two lines, no solution is found
-places[1][4].add((1, 2))
-places[5][5].add((3, 2))
-
-# list of all towers
-towers = [(color, height) for color in range(6) for height in range(6)]
-
-# the board
-board = [[None] * 6 for row in range(6)]
-
-# list for storing the solutions
-solutions = []
-
-def stringify():
-    &amp;quot;&amp;quot;&amp;quot;convert the board to a readable string&amp;quot;&amp;quot;&amp;quot;
-    return &#39;\n&#39;.join(&#39;-&#39;.join(colors[color]
-        for color in board[row]) for row in range(6))
-
-def solve(tower=0):
-    &amp;quot;&amp;quot;&amp;quot;solve the puzzle recursively&amp;quot;&amp;quot;&amp;quot;
-    if tower == 36:
-        solution = stringify()
-        solutions.append(solution)
-        print(&amp;quot;\nSolution {}:&amp;quot;.format(len(solutions)))
-        print(solution)
-        return
-    color, height = towers[tower]
-    for row, column in places[color][height]:
-        if board[row][column] is None:
-            for row2 in range(6):
-                if board[row2][column] == color:
-                    break
-            else:
-                for column2 in range(6):
-                    if board[row][column2] == color:
-                        break
-                else:
-                    board[row][column] = color
-                    solve(tower + 1)
-                    board[row][column] = None
-
-print(&amp;quot;Solving...&amp;quot;)
-solve()
-print(&amp;quot;\nReady.&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -520,130 +83,7 @@ print(&amp;quot;\nReady.&amp;quot;)
 
 &lt;p&gt;One of the &lt;a href=&#34;https://docs.python.org/3.6/whatsnew/3.6.html&#34;&gt;many goodies&lt;/a&gt; packed into the new release are &lt;a href=&#34;https://docs.python.org/3.6/reference/lexical_analysis.html#f-strings&#34;&gt;formatted string literals&lt;/a&gt;, or simply called &amp;ldquo;f-strings&amp;rdquo;. In this blog post I&amp;rsquo;ll explain why this is good news.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;First, they are called f-strings because you need to prefix a string with the letter &amp;ldquo;f&amp;rdquo; in order to get an f-string, similar to how you create a raw string by prefixing it with &amp;ldquo;r&amp;rdquo;, or you can use the prefixes &amp;ldquo;b&amp;rdquo; and &amp;ldquo;u&amp;rdquo; to designate byte strings and unicode strings. Note that the &amp;ldquo;u&amp;rdquo; prefix was only necessary in Python 2 (&amp;ldquo;Legacy Python&amp;rdquo;), since native strings are the default now in Python 3.&lt;/p&gt;
-
-&lt;p&gt;The letter &amp;ldquo;f&amp;rdquo; also indicates that these strings are used for formatting. Now Python already provides several ways for formatting strings, so you may wonder why the Python gods introduced yet another way, in blatant violation of the &lt;a href=&#34;https://www.python.org/doc/humor/#the-zen-of-python&#34;&gt;Zen of Python&lt;/a&gt;, according to which there should be only one obvious way of doing things. In fact some people already complained about this. However, these people overlook that the Zen of Python also states that simple is better than complex and practicality beats purity - and yes, f-strings are really the most simple and practical way for formatting strings.&lt;/p&gt;
-
-&lt;h2 id=&#34;some-examples&#34;&gt;Some examples&lt;/h2&gt;
-
-&lt;p&gt;Look how easy it is:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; f&#39;He said his name is {name} and he is {age} years old.&#39;
-He said his name is Fred and he is 42 years old.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you see, this works pretty much like the &lt;code&gt;.format()&lt;/code&gt; method, however you can directly insert the names from the current scope in the format string. This is much simpler than the old way, and avoids duplication:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; &#39;He said his name is {name} and he is {age} years old.&#39;.format(
-...     name=name, age=age)
-He said his name is Fred and he is 42 years old.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Sure, you can omit the names inside the curly braces since Python 3.1, like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; age = 42
-&amp;gt;&amp;gt;&amp;gt; &#39;He said his name is {} and he is {} years old.&#39;.format(name, age)
-&#39;He said his name is Fred and he is 42 years old.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;But still, this is longer and not as readable as the f-string notation.&lt;/p&gt;
-
-&lt;p&gt;And it gets even better than this, as f-strings also support any Python expressions inside the curly braces. You can also write triple-quoted f-strings that span multiple lines, like so:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt;&amp;gt;&amp;gt; seven = 7
-&amp;gt;&amp;gt;&amp;gt; f&#39;&#39;&#39;He said his name is {name.upper()}
-...    and he is {6 * seven} years old.&#39;&#39;&#39;
-&#39;He said his name is FRED\n    and he is 42 years old.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Note that while you can create raw f-strings by using the prefix &amp;ldquo;fr&amp;rdquo;, you cannot create binary f-strings with &amp;ldquo;fb&amp;rdquo; in Python 3.6 (maybe this will be added in a future Python version). Formatting with f-strings is one of the new features in Python 3 that will not be ported back to Python 2, therefore a &amp;ldquo;fu&amp;rdquo; prefix to designate unicode is not necessary and not supported.&lt;/p&gt;
-
-&lt;h2 id=&#34;comparison-with-template-literals-in-javascript&#34;&gt;Comparison with template literals in JavaScript&lt;/h2&gt;
-
-&lt;p&gt;When we look beyond our Python back yard over to the JavaScript folks, we see that they introduced a very similar feature called &amp;ldquo;template strings&amp;rdquo; or &amp;ldquo;template literals&amp;rdquo; as part of the &lt;a href=&#34;http://www.ecma-international.org/ecma-262/6.0/&#34;&gt;ECMAScript 2015&lt;/a&gt; standard. It&amp;rsquo;s good to see the JavaScript and Python communities taking inspiration from each other. Instead of the prefix &amp;ldquo;f&amp;rdquo; and ordinary quotes, the JavaScript template strings are designated with reverse quotes (&amp;ldquo;backticks&amp;rdquo;), and they can span multi lines which ordinary JavaScript strings can&amp;rsquo;t. Therefore template scripts in JavaScript actually correspond to triple-quoted f-strings in Python. Another difference is that the interpolation syntax of template strings in JavaScript requires a dollar sign in front of the curly braces. Otherwise, they are pretty similar. So, in current JavaScript you can write this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt; name = &#39;Fred&#39;
-&amp;gt; seven = 7
-&amp;gt; console.log(`He said his name is ${name.toUpperCase()}
-    and he is ${6 * seven} years old`)
-He said his name is FRED
-  and he is 42 years old
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Note that backticks had been used as an alternative syntax for the &lt;code&gt;repr()&lt;/code&gt; method in Python before, but have been removed from the language with Python 3, since the backtick character causes too many problems (e.g. it can be difficult to distinguish in some fonts or difficult to enter on some keyboards), and I think it&amp;rsquo;s good that Python uses the &amp;ldquo;f&amp;rdquo;-prefix instead of another kind of quote. This makes it actually easier to switch between f-strings and ordinary strings. Another advantage of Python is that the concepts of a template string (prefix &amp;ldquo;f&amp;rdquo;) and a multi-line string (triple quotes) are cleanly separated and can be used independently of each other. And I like that I don&amp;rsquo;t have to enter that additional dollar sign.&lt;/p&gt;
-
-&lt;p&gt;What make things a bit more confusing is that JavaScript templates also have a syntax called &amp;ldquo;tagged templates&amp;rdquo; that looks like the prefix syntax of Python, but has a totally different semantics. The prefix (&amp;ldquo;tag&amp;rdquo;) in JavaScript actually is the name of a function that is called with the template string and its substitutions as parameters. There is also a standard function called &lt;code&gt;String.raw&lt;/code&gt; in JavaScript that can be used as a tag function. If you set &lt;code&gt;r = String.raw&lt;/code&gt;, you can use raw strings in JavaScript like in Python with a similar syntax (though not exactly the same, since you still need backticks instead of quotes).&lt;/p&gt;
-
-&lt;h2 id=&#34;comparison-with-template-strings-in-python&#34;&gt;Comparison with template strings in Python&lt;/h2&gt;
-
-&lt;p&gt;Python also provides an older kind of &lt;a href=&#34;https://docs.python.org/3/library/string.html#template-strings&#34;&gt;template strings&lt;/a&gt; as part of the standard library. These template strings also use the syntax with the dollar sign and the curly braces like JavaScript does, but you can usually omit the curly braces, which you cannot do in JavaScript. You use them like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from string import Template
-&amp;gt;&amp;gt;&amp;gt; t = Template(&#39;He said his name is $name and he is $age years old.&#39;)
-&amp;gt;&amp;gt;&amp;gt; t.substitute(name=&#39;Fred&#39;, age=42)
-&#39;He said his name is Fred and he is 42 years old.&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;performance-considerations&#34;&gt;Performance considerations&lt;/h2&gt;
-
-&lt;p&gt;You may be worried that the new way of formatting strings might be slower than the conventional ways. Particularly the old template strings look like they might be faster when used more than once with different values, since the template string must only be parsed when the &lt;code&gt;Template()&lt;/code&gt; object is created and can then be reused. But it turns out the opposite is the case, and f-strings are really fast because they are pre-parsed as well and stored in efficient bytecode for faster execution.&lt;/p&gt;
-
-&lt;p&gt;To confirm this in practice, I ran a simple benchmark and found that using f-strings was distinctly faster than formatting with the &amp;ldquo;%&amp;rdquo; operator or simple string concatenation, twice as fast than the &lt;code&gt;.format()&lt;/code&gt; method and even 20 times faster than formatting with &lt;code&gt;Template()&lt;/code&gt;, which does not seem to be implemented very efficiently.&lt;/p&gt;
-
-&lt;p&gt;So you can also interpret the &amp;ldquo;f&amp;rdquo; in &amp;ldquo;f-strings&amp;rdquo; as &amp;ldquo;fast&amp;rdquo;. It&amp;rsquo;s good that Python still keeps the old ways for backward compatibility, but in new code you should definitely make use of these fantastic f-strings. Here is the code for the benchmark, if you want to test it yourself:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;import timeit
-
-format = &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return f&#39;He said his name is {name} and he is {age} years old.&#39;
-&amp;quot;&amp;quot;&amp;quot;, &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return &#39;He said his name is %s and he is %s years old.&#39; % (name, age)
-&amp;quot;&amp;quot;&amp;quot;, &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return &#39;He said his name is &#39; + name + &#39; and he is &#39; + str(
-        age) + &#39; years old.&#39;
-&amp;quot;&amp;quot;&amp;quot;,  &amp;quot;&amp;quot;&amp;quot;
-def format(name, age):
-    return &#39;He said his name is {} and he is {} years old.&#39;.format(name, age)
-&amp;quot;&amp;quot;&amp;quot;, &amp;quot;&amp;quot;&amp;quot;
-from string import Template
-
-template = Template(&#39;He said his name is $name and he is $age years old.&#39;)
-
-def format(name, age):
-    return template.substitute(name=name, age=age)
-&amp;quot;&amp;quot;&amp;quot;
-
-test = &amp;quot;&amp;quot;&amp;quot;
-def test():
-    for name in (&#39;Fred&#39;, &#39;Barney&#39;, &#39;Gary&#39;, &#39;Rock&#39;, &#39;Perry&#39;, &#39;Jackie&#39;):
-        for age in range (20, 200):
-            format(name, age)
-&amp;quot;&amp;quot;&amp;quot;
-
-for fmt in format:
-    print(timeit.timeit(&#39;test()&#39;, fmt + test, number=10000))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Here is a diagram of the execution times of the various tested methods:&lt;/p&gt;
-
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/f-strings-1.png&#34; alt=&#34;Benchmark results&#34;&gt;
-
-&lt;p&gt;As with all benchmarks, keep in mind that many factors play a role when formatting and this serves only as a rough guidance. Particularly, I noticed that when using &amp;ldquo;d&amp;rdquo; as a format specifier for the integer number, the prominence of the f-string execution time was largely diminished. Maybe there is still room for optimization here. But formatting with f-strings was still the fastest methods.&lt;/p&gt;
-
-&lt;h2 id=&#34;support-for-f-strings-in-pycharm&#34;&gt;Support for f-strings in PyCharm&lt;/h2&gt;
-
-&lt;p&gt;If you like the &lt;a href=&#34;https://www.jetbrains.com/pycharm/&#34;&gt;PyCharm&lt;/a&gt; IDE (I definitely do), you will be glad to hear that it fully supports Python 3.6 and f-strings. Code completion works with expressions embedded inside f-strings just like with ordinary expressions, and there is even a code intention that suggests to &amp;ldquo;convert to f-string literal&amp;rdquo;. This means if you have an old Python program that still uses the &lt;code&gt;.format()&lt;/code&gt; method, you can just press &lt;code&gt;Alt&lt;/code&gt;+&lt;code&gt;Enter&lt;/code&gt; and select that intention to convert everything to the new syntax. So you have no more excuses to not switch over.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -658,25 +98,7 @@ for fmt in format:
 
 &lt;p&gt;Every web browser has a built-in bookmark manager, usually opened with the keyboard shortcut &lt;code&gt;Ctrl&lt;/code&gt;+&lt;code&gt;Shift&lt;/code&gt;+&lt;code&gt;B&lt;/code&gt;. Modern browsers also allow syncing your bookmarks to the could, so that you can share your bookmarks for instance between your home desktop and your tablet or office computer. So why are online bookmark managers like Pinboard still interesting? Why would you even want to pay for them?&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;One reason might be to share links and lists of links with others. Many bookmark managers focus on this aspect of &amp;ldquo;social bookmarking&amp;rdquo;. However, this is not the most important aspect of Pinboard. Actually Pinboard even advertises itself as an an &amp;ldquo;antisocial site&amp;rdquo; or &amp;ldquo;social bookmarking for introverts&amp;rdquo; - over half our users don&amp;rsquo;t share any public content at all, and you can make private bookmarks the default setting. In any case you have full control over which links you want to make public and which should stay private. Pinboard is not mainly for discovering links, but for archiving them, kind of your personal treasure trove of links - or as the patron saint of introverts Gollum would call it, &amp;ldquo;my precious!&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Another feature is the &amp;ldquo;read later&amp;rdquo; flag that you can add to any bookmark. But this aspect is also not the most important one, and there are dedicated services such as &lt;a href=&#34;https://getpocket.com/&#34;&gt;Pocket&lt;/a&gt; or &lt;a href=&#34;https://www.instapaper.com/&#34;&gt;Instapaper&lt;/a&gt; which offer better solutions for not only keeping track of articles you want to read but also displaying them in a nice readable layout. The Safari web browser even comes with a &amp;ldquo;reading list&amp;rdquo; feature built-in. So I&amp;rsquo;m actually using Pocket as my &amp;ldquo;first line of defense&amp;rdquo; against the information flood from the Internet, and Pinboard only as my archive to store everything that I found useful and want to keep as a reference or read in more depth later.&lt;/p&gt;
-
-&lt;p&gt;One peculiar feature of Pinboard is that you can sync tweets from up to three Twitter accounts and save them to Pinboard. You can then search in your personal twitter archive on Pinboard. You can also choose to add links from these tweets as Pinboard bookmarks. This is definitely a useful feature, but not the reason why I&amp;rsquo;m using Pinboard.&lt;/p&gt;
-
-&lt;p&gt;What makes Pinboard particularly useful are the tags that can be added to the bookmarks, and the possibility to review your bookmarks by tag or combination of tags. For instance, if I want to see all links about 3D programming in Python, I can first click on the &amp;ldquo;3d&amp;rdquo; tag in my tag cloud on the right side of my Pinboard page. Now I see all bookmarks tagged with &amp;ldquo;3d&amp;rdquo;, along with a smaller tag cloud of tags like &amp;ldquo;python&amp;rdquo; with a plus sign that can be clicked to narrow down the list of bookmarks even further. There is another feature that allows combining several tags into a &amp;ldquo;bundle&amp;rdquo;. By clicking onto such a tag bundle, you will see all bookmarks with tags in that bundle (i.e. having at least one tag from that bundle). This allows grouping the tags into several larger areas of interest, like &amp;ldquo;science&amp;rdquo; or &amp;ldquo;politics&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;An interesting feature is the possibility to save arbitrary plain text or markdown formatted notes. Each such note will be an ad hoc web page with its own unique URL. You can tag notes with the same tags that are used for your bookmarks, and they will appear along with your bookmarks for these tags. Like normal bookmarks, notes can also be flagged as private or public.&lt;/p&gt;
-
-&lt;p&gt;Personally, I find Pinboard as a bookmark archive/manager service very useful. It does more or less one thing, but it does it pretty well. The web interface is not very nice and modern, but clean and functional, with bulk editing and a quick editing feature showing a preview of the bookmarked site. There is also a &lt;a href=&#34;http://m.pinboard.in/&#34;&gt;mobile website&lt;/a&gt;, a web &lt;a href=&#34;https://pinboard.in/api/&#34;&gt;API&lt;/a&gt; and there are several official and third-party browser add-ons and native apps supporting Pinboard. The browser add-ons also allow saving and restoring whole &amp;ldquo;tab sets&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;In 2015 the site moved to an annual subscription system, but the annual fee of $11 is still fair and helps the creator of this useful service make a living and pay for the servers. For an annual fee of $25 You can also choose to have all of your bookmarked pages archived and searchable within Pinboard.&lt;/p&gt;
-
-&lt;p&gt;My only complaint is that the website and some of the browser add-ons are getting a bit long in the tooth. Firefox has switched to a new add-on system, and the official add-on based on the old system feels very slow and will probably stop working end of next year when Firefox will move to the new system exclusively. So some overhaul of Pinboard seems overdue.&lt;/p&gt;
-
-&lt;p&gt;Meanwhile, I have created my own Firefox add-on for Pinboard called &lt;a href=&#34;https://github.com/Cito/Pinboard-Pin&#34;&gt;&amp;ldquo;Pinboard Pin&amp;rdquo;&lt;/a&gt; that is snappier than the original one and uses the new add-on system - I&amp;rsquo;ll write more about that in &lt;a href=&#34;https://cito.github.io/blog/web-ext-with-angular&#34;&gt;another blog post&lt;/a&gt;.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -689,13 +111,7 @@ for fmt in format:
 
 &lt;p&gt;It&amp;rsquo;s this time of the year again, and I decided to use some of the cold and long winter evenings to finally start blogging.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;It is a crazy time in which we are living. So many exciting developments, opportunities and scientific discoveries, so much technological progress. But on the other hand, so many negative developments in politics and society, so many horrible news. The last years already had been scary, and this year was even scarier. So much hatred and terror and war. And while technology could help solve many problems of mankind, it starts becoming scary in its own way, particularly the recent progress in &lt;a href=&#34;https://www.ted.com/talks/sam_harris_can_we_build_ai_without_losing_control_over_it&#34;&gt;AI&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;We are facing difficult new ethical questions and disruptive developments and divisions like never before. I believe education, communication and reflection are crucial in making the world sane again. Blogging can be a part of this. So my new year&amp;rsquo;s resolution is to start sharing my 2 cents with you on this blog.&lt;/p&gt;
-
-&lt;p&gt;For now there will be no comment section on my blog since I fear it might become another distraction and waste of time fighting spam. However, I greatly appreciate any personal feedback. Please use the buttons on the top to get in touch with me or learn more &lt;a href=&#34;about&#34;&gt;about me&lt;/a&gt; and my areas of interest.&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

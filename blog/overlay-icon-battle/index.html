@@ -15,16 +15,15 @@
 
 <meta name="author" content="Christoph Zwerschke">
 <meta name="date" content="2017-01-13 19:31:27 &#43;0100 CET">
+<meta name="last-modified" content="2017-10-31 12:46:25 &#43;0100 CET">
 <link rel="canonical" href="https://cito.github.io/blog/overlay-icon-battle/">
 
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body lang="en">
 <header id="site-header">
@@ -72,74 +71,87 @@
 <p>The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.</p>
 
 <p>Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#/usr/bin/python3</span>
 
-<pre><code>#/usr/bin/python3
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">winreg</span> <span class="kn">as</span> <span class="nn">reg</span>
 
-import os
-import winreg as reg
+<span class="c1"># names of all overlay icons that shall be boosted:</span>
 
-# names of all overlay icons that shall be boosted:
+<span class="n">boost</span> <span class="o">=</span> <span class="sa"></span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    Tortoise1Normal
+</span><span class="s2">    Tortoise2Modified
+</span><span class="s2">    Tortoise3Conflict
+</span><span class="s2">    Tortoise4Locked
+</span><span class="s2">    Tortoise5ReadOnly
+</span><span class="s2">    Tortoise6Deleted
+</span><span class="s2">    Tortoise7Added
+</span><span class="s2">    Tortoise8Ignored
+</span><span class="s2">    Tortoise9Unversioned
+</span><span class="s2">    DropboxExt01
+</span><span class="s2">    DropboxExt02
+</span><span class="s2">    DropboxExt03
+</span><span class="s2">    DropboxExt04
+</span><span class="s2">    DropboxExt05
+</span><span class="s2">    DropboxExt06
+</span><span class="s2">&#34;&#34;&#34;</span>
 
-boost = &quot;&quot;&quot;
-    Tortoise1Normal
-    Tortoise2Modified
-    Tortoise3Conflict
-    Tortoise4Locked
-    Tortoise5ReadOnly
-    Tortoise6Deleted
-    Tortoise7Added
-    Tortoise8Ignored
-    Tortoise9Unversioned
-    DropboxExt01
-    DropboxExt02
-    DropboxExt03
-    DropboxExt04
-    DropboxExt05
-    DropboxExt06
-&quot;&quot;&quot;
+<span class="n">boost</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">boost</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
 
-boost = set(boost.split())
 
-with reg.OpenKey(reg.HKEY_LOCAL_MACHINE,
-        r'SOFTWARE\Microsoft\Windows\CurrentVersion'
-        r'\Explorer\ShellIconOverlayIdentifiers') as base:
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">reg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span>
+            <span class="sa">r</span><span class="s1">&#39;SOFTWARE\Microsoft\Windows\CurrentVersion&#39;</span>
+            <span class="sa">r</span><span class="s1">&#39;\Explorer\ShellIconOverlayIdentifiers&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">base</span><span class="p">:</span>
 
-    names = set()
-    renames = []
-    i = 0
-    while True:
-        try:
-            name = reg.EnumKey(base, i)
-        except OSError:
-            break
-        core = name.strip()
-        if core in names:
-            print('Delete', repr(core))
-            reg.DeleteKey(base, name)
-        else:
-            names.add(core)
-            if core in boost:
-                core = ' ' + core
-            if core != name:
-                renames.append((name, core))
-        i += 1
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">renames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">EnumKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">core</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">core</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Delete&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">core</span><span class="p">))</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">core</span> <span class="ow">in</span> <span class="n">boost</span><span class="p">:</span>
+                    <span class="n">core</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">core</span>
+                <span class="k">if</span> <span class="n">core</span> <span class="o">!=</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">renames</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">core</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    if renames:
-        for old_name, new_name in renames:
-            print('Rename', repr(old_name), 'to', repr(new_name))
-            value = reg.QueryValue(base, old_name)
-            reg.CreateKey(base, new_name)
-            reg.SetValue(base, new_name, reg.REG_SZ, value)
-            reg.DeleteKey(base, old_name)
-    else:
-        print('Nothing to rename')
-</code></pre>
+        <span class="k">if</span> <span class="n">renames</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">old_name</span><span class="p">,</span> <span class="n">new_name</span> <span class="ow">in</span> <span class="n">renames</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Rename&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">old_name</span><span class="p">),</span> <span class="sa"></span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">new_name</span><span class="p">))</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">QueryValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">old_name</span><span class="p">)</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">CreateKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new_name</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">REG_SZ</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">old_name</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Restart Windows Explorer&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;taskkill /F /IM explorer.exe&#39;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;start explorer.exe&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Nothing to rename&#39;</span><span class="p">)</span>
 
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="sa"></span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></code></pre></div>
 <p>This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.</p>
 
 <p>Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a symlink to the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &ldquo;run as administrator&rdquo; under the advanced options (do not set &ldquo;run as administrator&rdquo; under the compatibility section, because this would then apply to the Python executable in general).</p>
 
-<p>Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up, and you need to reboot Windows in order to make the changes effective. After all, you&rsquo;re running a Windows computer.</p>
+<p>Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up.</p>
+
+<p>In order to make the changes effective, the Windows Explorer process must be restarted. Usually this happens only when rebooting Windows, or logging off and in again. To make this less troublesome, I have added two lines in the above script that forcefully terminate and restart the Windows Explorer process. This is another reason why the script must be run with elevated privileges.</p>
+
+<aside class="update">
+<span class="lastmod">Updated Tue Oct 31, 2017:</span>
+Charles Ruhs pointed out that instead of rebooting, one can simply restart the Windows Explorer.
+</aside>
 </section>
 </article>
 </main>

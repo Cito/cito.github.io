@@ -15,16 +15,15 @@
 
 <meta name="author" content="Christoph Zwerschke">
 <meta name="date" content="2017-01-07 19:52:45 &#43;0100 CET">
+<meta name="last-modified" content="2017-01-07 19:52:45 &#43;0100 CET">
 <link rel="canonical" href="https://cito.github.io/blog/never-iterate-a-changing-dict/">
 
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
 <link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body lang="en">
 <header id="site-header">
@@ -66,49 +65,31 @@
 <p></p>
 
 <p>Essentially, the program tried to find for a given list of field names, like</p>
-
-<pre><code>names = ['alpha', 'bravo', 'charlie', 'delta']
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sa"></span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;bravo&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;charlie&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;delta&#39;</span><span class="p">]</span></code></pre></div>
 <p>and a given format-string, like</p>
-
-<pre><code>fmtstr = 'show only {alpha}, {bravo} and {charlie}'
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">fmtstr</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;show only {alpha}, {bravo} and {charlie}&#39;</span></code></pre></div>
 <p>which of the given field names where used in the string. The following code was used to examine this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="n">used_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fmtstr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">used_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
 
-<pre><code>used_names = []
-d = dict.fromkeys(names)
-for k in d:
-    del d[k]
-    try:
-        fmtstr.format(**d)
-    except KeyError:
-        used_names.append(k)
-    d[k] = None
-
-print(&quot;Used names:&quot;, ', '.join(sorted(used_names)))
-</code></pre>
-
+    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;Used names:&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">used_names</span><span class="p">)))</span></code></pre></div>
 <p>The code simply tries to format the string while successively omitting one of the given field names. If formatting fails with a KeyError, it knows that the field name is used.</p>
 
 <p>When you run this code with Python versions before 3.6, it works as expected:</p>
-
-<pre><code>Used names: alpha, bravo, charlie
-</code></pre>
-
+<div class="highlight"><pre class="chroma">Used names: alpha, bravo, charlie</pre></div>
 <p>However, when you try to run it with Python 3.6, it will print out something very strange:</p>
-
-<pre><code>Used names: alpha, alpha, alpha, alpha, alpha, bravo, bravo, bravo, bravo
-</code></pre>
-
+<div class="highlight"><pre class="chroma">Used names: alpha, alpha, alpha, alpha, alpha, bravo, bravo, bravo, bravo</pre></div>
 <p>What&rsquo;s happening here? Can you spot the problem?</p>
 
 <p>If you look carefully, you probably see it: Yes, this is another instance of the dreaded &ldquo;changing a mutable object while iterating it&rdquo; problem, that you surely have already experienced sometime or other when getting an error message like this:</p>
-
-<pre><code>RuntimeError: dictionary changed size during iteration
-</code></pre>
-
+<div class="highlight"><pre class="chroma">RuntimeError: dictionary changed size during iteration</pre></div>
 <p>In this case, however, the dictionary did not change its size. Actually it did not even change its keys between iterations. So you wouldn&rsquo;t think there could be a problem with this code, and in fact it worked fine until recently. But in Python 3.6 the dict type has been reimplemented to use a more compact representation. This implementation does not pardon iterating over a changing dictionary even if you try to restore removed keys immediately, since it uses insertion order with an additional level of indirection, which causes hiccups when iterating while keys are removed and re-inserted, thereby changing the order and internal pointers of the dict.</p>
 
 <p>Note that this problem is not fixed by iterating <code>d.keys()</code> instead of <code>d</code>, since in Python 3, <code>d.keys()</code> returns a dynamic view of the keys in the dict which results in the same problem. Instead, iterate over <code>list(d)</code>. This will produce a list from the keys of the dictionary that will not change during iteration. Or you can also iterate over <code>sorted(d)</code> if a sorted order is important.</p>
