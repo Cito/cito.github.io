@@ -15,7 +15,7 @@
 
 <meta name="author" content="Christoph Zwerschke">
 <meta name="date" content="2017-01-13 19:31:27 &#43;0100 CET">
-<meta name="last-modified" content="2017-10-31 12:46:25 &#43;0100 CET">
+<meta name="last-modified" content="2017-01-13 19:31:27 &#43;0100 CET">
 <link rel="canonical" href="https://cito.github.io/blog/overlay-icon-battle/">
 
 <link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
@@ -45,7 +45,7 @@
 
 <header>
 <div>Fri Jan 13, 2017</div>
-<div>4 minute read</div>
+<div>5 minute read</div>
 <ul class="tags">
   
     <li> <a href="https://cito.github.io//tags/python">Python</a> </li>
@@ -70,9 +70,10 @@
 
 <p>The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.</p>
 
-<p>Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use:</p>
+<p>Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use. Before applying the changes, it also creates a backup file of the unaltered settings that can be loaded with the registry editor in case you change your mind and want to restore everything:</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#/usr/bin/python3</span>
 
+<span class="kn">import</span> <span class="nn">codecs</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">winreg</span> <span class="kn">as</span> <span class="nn">reg</span>
 
@@ -98,24 +99,30 @@
 
 <span class="n">boost</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">boost</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
 
+<span class="n">backup_filename</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;IconOverlayBackup.reg&#39;</span>
+
+<span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">r</span><span class="s1">&#39;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion&#39;</span>
+       <span class="sa">r</span><span class="s1">&#39;\Explorer\ShellIconOverlayIdentifiers&#39;</span><span class="p">)</span>
+<span class="n">sub_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="k">with</span> <span class="n">reg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span>
-            <span class="sa">r</span><span class="s1">&#39;SOFTWARE\Microsoft\Windows\CurrentVersion&#39;</span>
-            <span class="sa">r</span><span class="s1">&#39;\Explorer\ShellIconOverlayIdentifiers&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">base</span><span class="p">:</span>
 
+    <span class="k">with</span> <span class="n">reg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="n">sub_key</span><span class="p">)</span> <span class="k">as</span> <span class="n">base</span><span class="p">:</span>
+        <span class="n">backup</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">deletes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">renames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">EnumKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">QueryValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
                 <span class="k">break</span>
+            <span class="n">backup</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
             <span class="n">core</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">core</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Delete&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">core</span><span class="p">))</span>
-                <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">deletes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">core</span> <span class="ow">in</span> <span class="n">boost</span><span class="p">:</span>
@@ -124,16 +131,31 @@
                     <span class="n">renames</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">core</span><span class="p">))</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">renames</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">deletes</span> <span class="ow">or</span> <span class="n">renames</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Write backup file&#39;</span><span class="p">,</span> <span class="n">backup_filename</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">backup_filename</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;utf_16_le&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backup_file</span><span class="p">:</span>
+                <span class="n">wr</span> <span class="o">=</span> <span class="n">backup_file</span><span class="o">.</span><span class="n">write</span>
+                <span class="n">wr</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;</span><span class="se">\ufeff</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">wr</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Windows Registry Editor Version 5.00</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">wr</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;[{}]</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">backup</span><span class="p">:</span>
+                    <span class="n">wr</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;[{}</span><span class="se">\\</span><span class="s1">{}]</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                    <span class="n">wr</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;@=&#34;{}&#34;</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">deletes</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Delete&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">old_name</span><span class="p">,</span> <span class="n">new_name</span> <span class="ow">in</span> <span class="n">renames</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Rename&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">old_name</span><span class="p">),</span> <span class="sa"></span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">new_name</span><span class="p">))</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">QueryValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">old_name</span><span class="p">)</span>
                 <span class="n">reg</span><span class="o">.</span><span class="n">CreateKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
                 <span class="n">reg</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new_name</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">REG_SZ</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
                 <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">old_name</span><span class="p">)</span>
+
             <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Restart Windows Explorer&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;taskkill /F /IM explorer.exe&#39;</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;start explorer.exe&#39;</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Nothing to rename&#39;</span><span class="p">)</span>
 
@@ -148,10 +170,18 @@
 
 <p>In order to make the changes effective, the Windows Explorer process must be restarted. Usually this happens only when rebooting Windows, or logging off and in again. To make this less troublesome, I have added two lines in the above script that forcefully terminate and restart the Windows Explorer process. This is another reason why the script must be run with elevated privileges.</p>
 
-<aside class="update">
+<p>By the way, another notorious Windows problem with desktop icons is that it sometimes completely jumbles or forgets the position of the icons on the desktop, particularly when the Windows Explorer process restarts, which can be pretty annoying when you just carefully arranged everything to your likes. Whenever this happens, I restore the icons with <a href="http://www.softwareok.com/?seite=Freeware/DesktopOK">DesktopOK</a>, a small but very useful utility provided by Nenad Hrg as freeware.</p>
+
+<p><aside class="update">
 <span class="lastmod">Updated Tue Oct 31, 2017:</span>
 Charles Ruhs pointed out that instead of rebooting, one can simply restart the Windows Explorer.
 </aside>
+
+<aside class="update">
+<span class="lastmod">Updated Fri Jan 13, 2017:</span>
+Robert van Drie suggested to create a backup of the current settings.
+</aside>
+</p>
 </section>
 </article>
 </main>
