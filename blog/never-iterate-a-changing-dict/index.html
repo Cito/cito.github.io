@@ -10,7 +10,7 @@
 
 <meta name="description" content="When running a for loop over a Python dict, the dict must never be changed.">
 
-<meta name="description" content="[Python, Programming]">
+<meta name="description" content="[python, programming, dictionaries]">
 
 
 <meta name="author" content="Christoph Zwerschke">
@@ -65,21 +65,21 @@
 <p></p>
 
 <p>Essentially, the program tried to find for a given list of field names, like</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sa"></span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;bravo&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;charlie&#39;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;delta&#39;</span><span class="p">]</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;bravo&#39;</span><span class="p">,</span> <span class="s1">&#39;charlie&#39;</span><span class="p">,</span> <span class="s1">&#39;delta&#39;</span><span class="p">]</span></code></pre></div>
 <p>and a given format-string, like</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="n">fmtstr</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;show only {alpha}, {bravo} and {charlie}&#39;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="n">fmtstr</span> <span class="o">=</span> <span class="s1">&#39;show only </span><span class="si">{alpha}</span><span class="s1">, </span><span class="si">{bravo}</span><span class="s1"> and </span><span class="si">{charlie}</span><span class="s1">&#39;</span></code></pre></div>
 <p>which of the given field names where used in the string. The following code was used to examine this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">    <span class="n">used_names</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3">    <span class="n">used_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
         <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">fmtstr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">fmtstr</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">used_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-        <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;Used names:&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">used_names</span><span class="p">)))</span></code></pre></div>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Used names:&#34;</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">used_names</span><span class="p">)))</span></code></pre></div>
 <p>The code simply tries to format the string while successively omitting one of the given field names. If formatting fails with a KeyError, it knows that the field name is used.</p>
 
 <p>When you run this code with Python versions before 3.6, it works as expected:</p>

@@ -10,7 +10,7 @@
 
 <meta name="description" content="How I solved the 36 towers puzzle with Python.">
 
-<meta name="description" content="Python, Programming, Puzzles, Math">
+<meta name="description" content="[puzzles, math, euler, python, programming]">
 
 
 <meta name="author" content="Christoph Zwerschke">
@@ -99,16 +99,16 @@
 <p>In 1984, the professional Canadian mathematician Douglas Stinson gave a much shorter proof without using a computer. Today, with a computer and some Python you can easily prove that the problem is not solvable even before breakfast.</p>
 
 <p>Here is the small Python program I wrote to find the 96 solutions of the 36 Cube:</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1">#/usr/bin/python3</span>
+<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="c1">#/usr/bin/python3</span>
 
-<span class="sa"></span><span class="s2">&#34;&#34;&#34;The 36 Tower Puzzle&#34;&#34;&#34;</span>
+<span class="s2">&#34;&#34;&#34;The 36 Tower Puzzle&#34;&#34;&#34;</span>
 
 <span class="c1"># the colors of the tower</span>
-<span class="n">colors</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;red yellow blue green violet orange&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="s1">&#39;red yellow blue green violet orange&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
 <span class="c1"># the heights of the stubs</span>
 <span class="c1"># (stub of height 1 at upper left corner)</span>
-<span class="n">heights</span> <span class="o">=</span> <span class="sa"></span><span class="s1">&#39;134520 250413 013254 541302 425031 302145&#39;</span>
+<span class="n">heights</span> <span class="o">=</span> <span class="s1">&#39;134520 250413 013254 541302 425031 302145&#39;</span>
 <span class="n">heights</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">heights</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
 
 <span class="c1"># possible positions of the towers</span>
@@ -127,27 +127,27 @@
 <span class="n">towers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">color</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
 
 <span class="c1"># the board</span>
-<span class="n">board</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+<span class="n">board</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
 
 <span class="c1"># list for storing the solutions</span>
 <span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="k">def</span> <span class="nf">stringify</span><span class="p">():</span>
-    <span class="sa"></span><span class="s2">&#34;&#34;&#34;convert the board to a readable string&#34;&#34;&#34;</span>
-    <span class="k">return</span> <span class="sa"></span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color</span><span class="p">]</span>
+    <span class="s2">&#34;&#34;&#34;convert the board to a readable string&#34;&#34;&#34;</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">tower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sa"></span><span class="s2">&#34;&#34;&#34;solve the puzzle recursively&#34;&#34;&#34;</span>
+    <span class="s2">&#34;&#34;&#34;solve the puzzle recursively&#34;&#34;&#34;</span>
     <span class="k">if</span> <span class="n">tower</span> <span class="o">==</span> <span class="mi">36</span><span class="p">:</span>
         <span class="n">solution</span> <span class="o">=</span> <span class="n">stringify</span><span class="p">()</span>
         <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Solution {}:&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solutions</span><span class="p">)))</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Solution </span><span class="si">{}</span><span class="s2">:&#34;</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solutions</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="n">color</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">towers</span><span class="p">[</span><span class="n">tower</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">places</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="n">height</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">row2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row2</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
                     <span class="k">break</span>
@@ -158,11 +158,11 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
                     <span class="n">solve</span><span class="p">(</span><span class="n">tower</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                    <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+                    <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;Solving...&#34;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Solving...&#34;</span><span class="p">)</span>
 <span class="n">solve</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="sa"></span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Ready.&#34;</span><span class="p">)</span></code></pre></div>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Ready.&#34;</span><span class="p">)</span></code></pre></div>
 </section>
 </article>
 </main>
