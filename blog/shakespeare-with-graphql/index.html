@@ -339,7 +339,6 @@ psql shakespeare &lt; shakespeare.sql</code></pre></div>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">pip install aiohttp asyncpg GraphQL-core-next</code></pre></div>
 <p>Creating the GraphQL server with <code>aiohttp</code> is not too complicated. You can copy the following code and save it as <code>server.py</code> along with the <code>resolvers.py</code> and <code>schema.py</code> files you already created. Again, I&rsquo;ll explain how it works below.</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># server.py</span>
-<span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
 <span class="kn">import</span> <span class="nn">asyncpg</span>
@@ -362,7 +361,7 @@ psql shakespeare &lt; shakespeare.sql</code></pre></div>
     <span class="k">if</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s1">&#39;application/graphql&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">await</span> <span class="n">request</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s1">&#39;application/json&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">await</span> <span class="n">request</span><span class="o">.</span><span class="n">text</span><span class="p">())[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">await</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">())[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
 
 
 <span class="n">async</span> <span class="k">def</span> <span class="nf">graphql_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
@@ -375,8 +374,7 @@ psql shakespeare &lt; shakespeare.sql</code></pre></div>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="n">errors</span><span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span>
-        <span class="n">text</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
