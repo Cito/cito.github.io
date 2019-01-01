@@ -1,187 +1,64 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-<head>
-<meta charset="utf-8">
-<base href="https://cito.github.io/">
+<!doctype html><html class=no-js lang=en><head><meta charset=utf-8><base href=https://cito.github.io/><title>Python and the 36 Towers | Seasoned &amp; Agile</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="How I solved the 36 towers puzzle with Python."><meta name=description content="[puzzles, math, euler, python, programming]"><meta name=author content="Christoph Zwerschke"><meta name=date content="2016-12-27 17:10:27 &#43;0100 CET"><meta name=last-modified content="2016-12-27 17:10:27 &#43;0100 CET"><link rel=canonical href=https://cito.github.io/blog/python-36-towers/><link rel=stylesheet type=text/css href=https://cito.github.io/css/font-awesome.min.css><link rel=stylesheet type=text/css href=https://cito.github.io/css/syntax.min.css><link rel=stylesheet type=text/css href=https://cito.github.io/css/main.min.css><link rel=icon type=image/png sizes=32x32 href=https://cito.github.io/img/favicon32.png><link rel=icon type=image/png sizes=96x96 href=https://cito.github.io/img/favicon96.png><link rel=icon type=image/png sizes=16x16 href=https://cito.github.io/img/favicon16.png></head><body lang=en><header id=site-header><a href=https://cito.github.io/ class=title>Seasoned &amp; Agile</a><nav><ul><li><a href=https://cito.github.io/about/ title="About Me" rel=me><i class="fa fa-user-circle"></i></a></li><li><a href=https://cito.github.io/tags/ title=Tags><i class="fa fa-tags"></i></a></li><li><a href=https://github.com/cito title="~ GitHub ~"><i class="fa fa-github"></i></a></li><li><a href=https://plus.google.com/+ChristophZwerschke title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li><li><a href=https://twitter.com/CitoZwer title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li><li><a href=mailto:cito@online.de title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li><li><a href title=RSS><i class="fa fa-rs"></i></a></li></ul></nav></header><main id=site-main role=main><article><header><div>Tue Dec 27, 2016</div><div>6 minute read</div><ul class=tags><li><a href=https://cito.github.io//tags/python>Python</a></li><li><a href=https://cito.github.io//tags/programming>Programming</a></li><li><a href=https://cito.github.io//tags/puzzles>Puzzles</a></li><li><a href=https://cito.github.io//tags/math>Math</a></li></ul></header><section><h1 class=title>Python and the 36 Towers</h1><p>This year my brother&rsquo;s family sent us a puzzle in their Christmas package, mentioning that they already solved it and we should give it a try over the Christmas holidays, too. The puzzle is called &ldquo;36 Cube&rdquo; and looks like this:</p><img class="center half" src=https://cito.github.io/img/python-36-towers-1.jpg alt="36 Cube"><p>The &ldquo;36 Cube&rdquo; consists of a board with a 6x6 grid of tower stubs and 36 towers in 6 different heights and colors which need to be stacked on the stubs so that they all have the same height, forming a cube like in the picture. Also, no two towers of the same color may appear in the same row or column - similar to a Sudoku puzzle.</p><p>The puzzle looked tricky already, but it turned out it was even trickier than I first thought.</p><p>So we started to casually play around with this puzzle while eating Christmas cookies and watching Christmas movies. I found it was pretty easy to place the first 20 to 24 towers properly, but then things started to get complicated as the colors collided. Soon I gave up and concentrated more on the Christmas cookies, while my wife - who is much more patient - managed to stack 33 pieces properly.</p><p>I already knew I would never have that patience, so I had to cheat and use Python to solve the puzzle the next morning. I hacked in all the heights of the tower stubs and wrote a simple recursive brute force algorithm, fully confident of having solved the puzzle in much shorter time than my wife. But the program terminated with no solution. I checked the heights, checked the algorithm, then double-checked it, but still nothing.</p><p>Something seemed to be rotten in the state of Denmark. So I had to cheat again and google the 36 Cube. Sure enough, there even was a whole Wikipedia article about the puzzle with the following spoiler: &ldquo;Careful inspection of the pieces reveals that two of the pieces are special. These two pieces will fit on certain parts of the base differently from other pieces of the same height.&rdquo;</p><p>Indeed, when I examined the towers and stubs more carefully, I found that the yellow tower of height six and the orange tower of height five were special, and could be placed on two special stubs on which the ordinary towers could not be placed. A really mean, but clever idea that gives the puzzle an additional twist. I like such puzzles that cannot be solved in a straightforward manner, but by &ldquo;thinking around the corner&rdquo;.</p><p>After adding these two exceptions to my Python program (listed at the bottom of this blog post), it found not only one, but even 96 solutions, and it didn&rsquo;t take even a second to list them all. Python to the rescue!</p><p>Maybe I should not have cheated, but looking it up in Wikipedia also revealed the quite interesting background story of this puzzle. Allegedly, it goes back to Catherine the Great in the golden age of the Russian empire.</p><img class="center half" src=https://cito.github.io/img/python-36-towers-2.jpg alt="Catherine the Great"><p>Like today, the Russian leaders were obsessed with the military, and so Catherine one day had the crazy idea that she absolutely needed to arrange 36 of her officers from six different regiments with six different ranks in a 6x6 grid so that each row and column of the grid contained only one officer of each rank and regiment.</p><p>If you think of the towers in the 36 Cube as officers, the different colors representing different regimes, and the different heights representing different ranks, then you see how Catherine&rsquo;s puzzle is directly related to the 36 Cube. In fact, its inventor, Derrick Niederman, got his inspiration from the 36 officers problem.</p><p>Back to Catherine, who also noticed that the puzzle was tricky. Different from certain political leaders today, she was still believing in the competency of experts, and so she asked one of them. That expert was none less than the famous Swiss mathematician Leonhard Euler, who, as luck would have it, was living in Petersburg at that time.</p><img class="center half" src=https://cito.github.io/img/python-36-towers-3.jpg alt="Leonhard Euler"><p>So Euler started to search for a solution, but could not find one. Since he knew he was brilliant, he concluded that a solution could not exist, otherwise he would have found it. In fact, he found solutions for square grids with 3, 4, 5, 7, 8 and 9 rows. Such solutions are now called <em>Euler squares</em> in his honor. However, he couldn&rsquo;t come up with a 6x6 Euler square. Since Euler didn&rsquo;t have a computer and probably didn&rsquo;t want to waste too much time with it, he was not able to prove his conjecture that a solution does not exist. The first such proof was given in 1901 by the French amateur mathematician Gaston Tarry, and it was a really lengthy one that more or less systematically checked all possible combinations. I include his picture to pay homage to his diligent piece of work and all amateurs, even though he is not so famous:</p><img class="center half" src=https://cito.github.io/img/python-36-towers-4.jpg alt="Gaston Tarry"><p>In 1984, the professional Canadian mathematician Douglas Stinson gave a much shorter proof without using a computer. Today, with a computer and some Python you can easily prove that the problem is not solvable even before breakfast.</p><p>Here is the small Python program I wrote to find the 96 solutions of the 36 Cube:</p><div class=highlight><pre class=chroma><code class=language-python3 data-lang=python3><span class=c1>#/usr/bin/python3</span>
 
-<title>Python and the 36 Towers | Seasoned &amp; Agile</title>
+<span class=s2>&#34;&#34;&#34;The 36 Tower Puzzle&#34;&#34;&#34;</span>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<span class=c1># the colors of the tower</span>
+<span class=n>colors</span> <span class=o>=</span> <span class=s1>&#39;red yellow blue green violet orange&#39;</span><span class=o>.</span><span class=n>split</span><span class=p>()</span>
 
-<meta name="description" content="How I solved the 36 towers puzzle with Python.">
+<span class=c1># the heights of the stubs</span>
+<span class=c1># (stub of height 1 at upper left corner)</span>
+<span class=n>heights</span> <span class=o>=</span> <span class=s1>&#39;134520 250413 013254 541302 425031 302145&#39;</span>
+<span class=n>heights</span> <span class=o>=</span> <span class=p>[</span><span class=nb>list</span><span class=p>(</span><span class=nb>map</span><span class=p>(</span><span class=nb>int</span><span class=p>,</span> <span class=n>row</span><span class=p>))</span> <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=n>heights</span><span class=o>.</span><span class=n>split</span><span class=p>()]</span>
 
-<meta name="description" content="[puzzles, math, euler, python, programming]">
+<span class=c1># possible positions of the towers</span>
+<span class=n>places</span> <span class=o>=</span> <span class=p>[[</span><span class=nb>set</span><span class=p>()</span> <span class=k>for</span> <span class=n>height</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>)]</span> <span class=k>for</span> <span class=n>color</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>)]</span>
+<span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>):</span>
+    <span class=k>for</span> <span class=n>column</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>):</span>
+        <span class=k>for</span> <span class=n>color</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>):</span>
+            <span class=n>places</span><span class=p>[</span><span class=n>color</span><span class=p>][</span><span class=mi>5</span> <span class=o>-</span> <span class=n>heights</span><span class=p>[</span><span class=n>row</span><span class=p>][</span><span class=n>column</span><span class=p>]]</span><span class=o>.</span><span class=n>add</span><span class=p>((</span><span class=n>row</span><span class=p>,</span> <span class=n>column</span><span class=p>))</span>
 
+<span class=c1># this is the crucial trick: two towers are special</span>
+<span class=c1># if you comment out the following two lines, no solution is found</span>
+<span class=n>places</span><span class=p>[</span><span class=mi>1</span><span class=p>][</span><span class=mi>4</span><span class=p>]</span><span class=o>.</span><span class=n>add</span><span class=p>((</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>))</span>
+<span class=n>places</span><span class=p>[</span><span class=mi>5</span><span class=p>][</span><span class=mi>5</span><span class=p>]</span><span class=o>.</span><span class=n>add</span><span class=p>((</span><span class=mi>3</span><span class=p>,</span> <span class=mi>2</span><span class=p>))</span>
 
-<meta name="author" content="Christoph Zwerschke">
-<meta name="date" content="2016-12-27 17:10:27 &#43;0100 CET">
-<meta name="last-modified" content="2016-12-27 17:10:27 &#43;0100 CET">
-<link rel="canonical" href="https://cito.github.io/blog/python-36-towers/">
+<span class=c1># list of all towers</span>
+<span class=n>towers</span> <span class=o>=</span> <span class=p>[(</span><span class=n>color</span><span class=p>,</span> <span class=n>height</span><span class=p>)</span> <span class=k>for</span> <span class=n>color</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>)</span> <span class=k>for</span> <span class=n>height</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>)]</span>
 
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
-<link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
-</head>
-<body lang="en">
-<header id="site-header">
-<a href="https://cito.github.io/" class="title">Seasoned &amp; Agile</a>
-<nav><ul>
-<li><a href="https://cito.github.io/about/" title="About Me" rel="me"><i class="fa fa-user-circle"></i></a></li>
-<li><a href="https://cito.github.io/tags/" title="Tags"><i class="fa fa-tags"></i></a></li>
-<li><a href="https://github.com/cito" title="~ GitHub ~"><i class="fa fa-github"></i></a></li>
-<li><a href="https://plus.google.com/+ChristophZwerschke" title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li>
-<li><a href="https://twitter.com/CitoZwer" title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li>
-<li><a href="mailto:cito@online.de" title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li>
-<li><a href="" title="RSS"><i class="fa fa-rs"></i></a></li>
-</ul></nav>
-</header>
+<span class=c1># the board</span>
+<span class=n>board</span> <span class=o>=</span> <span class=p>[[</span><span class=kc>None</span><span class=p>]</span> <span class=o>*</span> <span class=mi>6</span> <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>)]</span>
 
+<span class=c1># list for storing the solutions</span>
+<span class=n>solutions</span> <span class=o>=</span> <span class=p>[]</span>
 
-<main id="site-main" role="main">
-<article>
+<span class=k>def</span> <span class=nf>stringify</span><span class=p>():</span>
+    <span class=s2>&#34;&#34;&#34;convert the board to a readable string&#34;&#34;&#34;</span>
+    <span class=k>return</span> <span class=s1>&#39;</span><span class=se>\n</span><span class=s1>&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=s1>&#39;-&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>colors</span><span class=p>[</span><span class=n>color</span><span class=p>]</span>
+        <span class=k>for</span> <span class=n>color</span> <span class=ow>in</span> <span class=n>board</span><span class=p>[</span><span class=n>row</span><span class=p>])</span> <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>))</span>
 
-<header>
-<div>Tue Dec 27, 2016</div>
-<div>6 minute read</div>
-<ul class="tags">
-  
-    <li> <a href="https://cito.github.io//tags/python">Python</a> </li>
-  
-    <li> <a href="https://cito.github.io//tags/programming">Programming</a> </li>
-  
-    <li> <a href="https://cito.github.io//tags/puzzles">Puzzles</a> </li>
-  
-    <li> <a href="https://cito.github.io//tags/math">Math</a> </li>
-  
-</ul>
-</header>
-<section>
-<h1 class="title">Python and the 36 Towers</h1>
-<p>This year my brother&rsquo;s family sent us a puzzle in their Christmas package, mentioning that they already solved it and we should give it a try over the Christmas holidays, too. The puzzle is called &ldquo;36 Cube&rdquo; and looks like this:</p>
+<span class=k>def</span> <span class=nf>solve</span><span class=p>(</span><span class=n>tower</span><span class=o>=</span><span class=mi>0</span><span class=p>):</span>
+    <span class=s2>&#34;&#34;&#34;solve the puzzle recursively&#34;&#34;&#34;</span>
+    <span class=k>if</span> <span class=n>tower</span> <span class=o>==</span> <span class=mi>36</span><span class=p>:</span>
+        <span class=n>solution</span> <span class=o>=</span> <span class=n>stringify</span><span class=p>()</span>
+        <span class=n>solutions</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>solution</span><span class=p>)</span>
+        <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>Solution </span><span class=si>{}</span><span class=s2>:&#34;</span><span class=o>.</span><span class=nb>format</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>solutions</span><span class=p>)))</span>
+        <span class=nb>print</span><span class=p>(</span><span class=n>solution</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=n>color</span><span class=p>,</span> <span class=n>height</span> <span class=o>=</span> <span class=n>towers</span><span class=p>[</span><span class=n>tower</span><span class=p>]</span>
+    <span class=k>for</span> <span class=n>row</span><span class=p>,</span> <span class=n>column</span> <span class=ow>in</span> <span class=n>places</span><span class=p>[</span><span class=n>color</span><span class=p>][</span><span class=n>height</span><span class=p>]:</span>
+        <span class=k>if</span> <span class=n>board</span><span class=p>[</span><span class=n>row</span><span class=p>][</span><span class=n>column</span><span class=p>]</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>for</span> <span class=n>row2</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>):</span>
+                <span class=k>if</span> <span class=n>board</span><span class=p>[</span><span class=n>row2</span><span class=p>][</span><span class=n>column</span><span class=p>]</span> <span class=o>==</span> <span class=n>color</span><span class=p>:</span>
+                    <span class=k>break</span>
+            <span class=k>else</span><span class=p>:</span>
+                <span class=k>for</span> <span class=n>column2</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>6</span><span class=p>):</span>
+                    <span class=k>if</span> <span class=n>board</span><span class=p>[</span><span class=n>row</span><span class=p>][</span><span class=n>column2</span><span class=p>]</span> <span class=o>==</span> <span class=n>color</span><span class=p>:</span>
+                        <span class=k>break</span>
+                <span class=k>else</span><span class=p>:</span>
+                    <span class=n>board</span><span class=p>[</span><span class=n>row</span><span class=p>][</span><span class=n>column</span><span class=p>]</span> <span class=o>=</span> <span class=n>color</span>
+                    <span class=n>solve</span><span class=p>(</span><span class=n>tower</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
+                    <span class=n>board</span><span class=p>[</span><span class=n>row</span><span class=p>][</span><span class=n>column</span><span class=p>]</span> <span class=o>=</span> <span class=kc>None</span>
 
-<img class="center half" src="https://cito.github.io/img/python-36-towers-1.jpg" alt="36 Cube">
-
-<p>The &ldquo;36 Cube&rdquo; consists of a board with a 6x6 grid of tower stubs and 36 towers in 6 different heights and colors which need to be stacked on the stubs so that they all have the same height, forming a cube like in the picture. Also, no two towers of the same color may appear in the same row or column - similar to a Sudoku puzzle.</p>
-
-<p>The puzzle looked tricky already, but it turned out it was even trickier than I first thought.</p>
-
-<p></p>
-
-<p>So we started to casually play around with this puzzle while eating Christmas cookies and watching Christmas movies. I found it was pretty easy to place the first 20 to 24 towers properly, but then things started to get complicated as the colors collided. Soon I gave up and concentrated more on the Christmas cookies, while my wife - who is much more patient - managed to stack 33 pieces properly.</p>
-
-<p>I already knew I would never have that patience, so I had to cheat and use Python to solve the puzzle the next morning. I hacked in all the heights of the tower stubs and wrote a simple recursive brute force algorithm, fully confident of having solved the puzzle in much shorter time than my wife. But the program terminated with no solution. I checked the heights, checked the algorithm, then double-checked it, but still nothing.</p>
-
-<p>Something seemed to be rotten in the state of Denmark. So I had to cheat again and google the 36 Cube. Sure enough, there even was a whole Wikipedia article about the puzzle with the following spoiler: &ldquo;Careful inspection of the pieces reveals that two of the pieces are special. These two pieces will fit on certain parts of the base differently from other pieces of the same height.&rdquo;</p>
-
-<p>Indeed, when I examined the towers and stubs more carefully, I found that the yellow tower of height six and the orange tower of height five were special, and could be placed on two special stubs on which the ordinary towers could not be placed. A really mean, but clever idea that gives the puzzle an additional twist. I like such puzzles that cannot be solved in a straightforward manner, but by &ldquo;thinking around the corner&rdquo;.</p>
-
-<p>After adding these two exceptions to my Python program (listed at the bottom of this blog post), it found not only one, but even 96 solutions, and it didn&rsquo;t take even a second to list them all. Python to the rescue!</p>
-
-<p>Maybe I should not have cheated, but looking it up in Wikipedia also revealed the quite interesting background story of this puzzle. Allegedly, it goes back to Catherine the Great in the golden age of the Russian empire.</p>
-
-<img class="center half" src="https://cito.github.io/img/python-36-towers-2.jpg" alt="Catherine the Great">
-
-<p>Like today, the Russian leaders were obsessed with the military, and so Catherine one day had the crazy idea that she absolutely needed to arrange 36 of her officers from six different regiments with six different ranks in a 6x6 grid so that each row and column of the grid contained only one officer of each rank and regiment.</p>
-
-<p>If you think of the towers in the 36 Cube as officers, the different colors representing different regimes, and the different heights representing different ranks, then you see how Catherine&rsquo;s puzzle is directly related to the 36 Cube. In fact, its inventor, Derrick Niederman,  got his inspiration from the 36 officers problem.</p>
-
-<p>Back to Catherine, who also noticed that the puzzle was tricky. Different from certain political leaders today, she was still believing in the competency of experts, and so she asked one of them. That expert was none less than the famous Swiss mathematician Leonhard Euler, who, as luck would have it, was living in Petersburg at that time.</p>
-
-<img class="center half" src="https://cito.github.io/img/python-36-towers-3.jpg" alt="Leonhard Euler">
-
-<p>So Euler started to search for a solution, but could not find one. Since he knew he was brilliant, he concluded that a solution could not exist, otherwise he would have found it. In fact, he found solutions for square grids with 3, 4, 5, 7, 8 and 9 rows. Such solutions are now called <em>Euler squares</em> in his honor. However, he couldn&rsquo;t come up with a 6x6 Euler square. Since Euler didn&rsquo;t have a computer and probably didn&rsquo;t want to waste too much time with it, he was not able to prove his conjecture that a solution does not exist. The first such proof was given in 1901 by the French amateur mathematician Gaston Tarry, and it was a really lengthy one that more or less systematically checked all possible combinations. I include his picture to pay homage to his diligent piece of work and all amateurs, even though he is not so famous:</p>
-
-<img class="center half" src="https://cito.github.io/img/python-36-towers-4.jpg" alt="Gaston Tarry">
-
-<p>In 1984, the professional Canadian mathematician Douglas Stinson gave a much shorter proof without using a computer. Today, with a computer and some Python you can easily prove that the problem is not solvable even before breakfast.</p>
-
-<p>Here is the small Python program I wrote to find the 96 solutions of the 36 Cube:</p>
-<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="c1">#/usr/bin/python3</span>
-
-<span class="s2">&#34;&#34;&#34;The 36 Tower Puzzle&#34;&#34;&#34;</span>
-
-<span class="c1"># the colors of the tower</span>
-<span class="n">colors</span> <span class="o">=</span> <span class="s1">&#39;red yellow blue green violet orange&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-
-<span class="c1"># the heights of the stubs</span>
-<span class="c1"># (stub of height 1 at upper left corner)</span>
-<span class="n">heights</span> <span class="o">=</span> <span class="s1">&#39;134520 250413 013254 541302 425031 302145&#39;</span>
-<span class="n">heights</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">heights</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
-
-<span class="c1"># possible positions of the towers</span>
-<span class="n">places</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
-<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-            <span class="n">places</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="mi">5</span> <span class="o">-</span> <span class="n">heights</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">))</span>
-
-<span class="c1"># this is the crucial trick: two towers are special</span>
-<span class="c1"># if you comment out the following two lines, no solution is found</span>
-<span class="n">places</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">places</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-
-<span class="c1"># list of all towers</span>
-<span class="n">towers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">color</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
-
-<span class="c1"># the board</span>
-<span class="n">board</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
-
-<span class="c1"># list for storing the solutions</span>
-<span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">def</span> <span class="nf">stringify</span><span class="p">():</span>
-    <span class="s2">&#34;&#34;&#34;convert the board to a readable string&#34;&#34;&#34;</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">tower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="s2">&#34;&#34;&#34;solve the puzzle recursively&#34;&#34;&#34;</span>
-    <span class="k">if</span> <span class="n">tower</span> <span class="o">==</span> <span class="mi">36</span><span class="p">:</span>
-        <span class="n">solution</span> <span class="o">=</span> <span class="n">stringify</span><span class="p">()</span>
-        <span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Solution </span><span class="si">{}</span><span class="s2">:&#34;</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">solutions</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
-        <span class="k">return</span>
-    <span class="n">color</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">towers</span><span class="p">[</span><span class="n">tower</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">places</span><span class="p">[</span><span class="n">color</span><span class="p">][</span><span class="n">height</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">row2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row2</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">column2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column2</span><span class="p">]</span> <span class="o">==</span> <span class="n">color</span><span class="p">:</span>
-                        <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
-                    <span class="n">solve</span><span class="p">(</span><span class="n">tower</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                    <span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Solving...&#34;</span><span class="p">)</span>
-<span class="n">solve</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Ready.&#34;</span><span class="p">)</span></code></pre></div>
-</section>
-</article>
-</main>
-
-<aside class="rel">
-<p>
-
-<a href="https://cito.github.io/blog/never-iterate-a-changing-dict/"> <i class="fa fa-long-arrow-left"></i> Never Iterate a Changing Dict</a>
-
-</p>
-<p>
-
-<a href="https://cito.github.io/blog/f-strings/">The new f-strings in Python 3.6 <i class="fa fa-long-arrow-right"></i> </a>
-
-</p>
-</aside>
-
-<footer id="site-footer">
-<p>&copy; 2016-2018 Christoph Zwerschke. All rights reserved.</p>
-</footer>
-</body>
-</html>
+<span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Solving...&#34;</span><span class=p>)</span>
+<span class=n>solve</span><span class=p>()</span>
+<span class=nb>print</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>Ready.&#34;</span><span class=p>)</span></code></pre></div></section></article></main><aside class=rel><p><a href=https://cito.github.io/blog/f-strings/><i class="fa fa-long-arrow-left"></i>The new f-strings in Python 3.6</a></p><p><a href=https://cito.github.io/blog/never-iterate-a-changing-dict/>Never Iterate a Changing Dict <i class="fa fa-long-arrow-right"></i></a></p></aside><footer id=site-footer><p>&copy; 2016-2019 Christoph Zwerschke. All rights reserved.</p></footer></body></html>

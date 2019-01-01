@@ -1,92 +1,7 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-<head>
-<meta charset="utf-8">
-<base href="https://cito.github.io/">
-
-<title>Using GraphQL or REST, that is the question | Seasoned &amp; Agile</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<meta name="description" content="We create a GraphQL API for Shakespeare&#39;s work using GraphQL-core-next, asyncio, asyncpg and PostgreSQL">
-
-<meta name="description" content="[graphql, asyncio, asyncpg, python, concurrent, graphql-core-next, shakespeare, hamlet, tutorial]">
-
-
-<meta name="author" content="Christoph Zwerschke">
-<meta name="date" content="2018-08-17 17:00:00 &#43;0100 &#43;0100">
-<meta name="last-modified" content="2018-08-17 17:00:00 &#43;0100 &#43;0100">
-<link rel="canonical" href="https://cito.github.io/blog/shakespeare-with-graphql/">
-
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
-<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
-<link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
-</head>
-<body lang="en">
-<header id="site-header">
-<a href="https://cito.github.io/" class="title">Seasoned &amp; Agile</a>
-<nav><ul>
-<li><a href="https://cito.github.io/about/" title="About Me" rel="me"><i class="fa fa-user-circle"></i></a></li>
-<li><a href="https://cito.github.io/tags/" title="Tags"><i class="fa fa-tags"></i></a></li>
-<li><a href="https://github.com/cito" title="~ GitHub ~"><i class="fa fa-github"></i></a></li>
-<li><a href="https://plus.google.com/+ChristophZwerschke" title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li>
-<li><a href="https://twitter.com/CitoZwer" title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li>
-<li><a href="mailto:cito@online.de" title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li>
-<li><a href="" title="RSS"><i class="fa fa-rs"></i></a></li>
-</ul></nav>
-</header>
-
-
-<main id="site-main" role="main">
-<article>
-
-<header>
-<div>Fri Aug 17, 2018</div>
-<div>18 minute read</div>
-<ul class="tags">
-  
-    <li> <a href="https://cito.github.io//tags/graphql">GraphQL</a> </li>
-  
-    <li> <a href="https://cito.github.io//tags/postgresql">PostgreSQL</a> </li>
-  
-    <li> <a href="https://cito.github.io//tags/python">Python</a> </li>
-  
-    <li> <a href="https://cito.github.io//tags/programming">Programming</a> </li>
-  
-</ul>
-</header>
-<section>
-<h1 class="title">Using GraphQL or REST, that is the question</h1>
-<img class="center half" src="https://cito.github.io/img/shakespeare-with-graphql-0.jpg" alt="Hamlet">
-
-<p>This blog has been dormant for too long &ndash; it&rsquo;s time to post another article. In order to live up to the blog title, this article will combine some old and seasoned stuff (PostgreSQL and Shakespeare&rsquo;s works) with the latest trends for agile developers (GraphQL, asyncio and type hints for Python).</p>
-
-<p></p>
-
-<p><a href="https://graphql.org/">GraphQL</a> is a new query language for building APIs that looked quite intriguing to me when I first came across it, as it promised to solve several drawbacks of the typical REST APIs I was using so far. After tinkering with it for a while, I became hooked, and as a Pythonista, I wanted to use GraphQL for my Python backends, too. This was not a real problem: GraphQL has been ported to many <a href="https://graphql.org/code/">programming languages</a> already, and Python is one of them. The most well-known GraphQL library for Python is called <a href="http://graphene-python.org/">Graphene</a>. Graphene is built upon <a href="https://github.com/graphql-python/graphql-core">GraphQL-core</a>, which is a Python port of <a href="https://github.com/graphql/graphql-js">GraphQL.js</a>, the reference implementation for GraphQL written in JavaScript.</p>
-
-<p>One thing that bothered me a bit though was that GraphQL.js advanced in a faster pace than GraphQL-core. It is currently at version 0.14 (now renamed to version 14) while GraphQL-core decoupled from the development of GraphQL.js at version 0.6. I wondered if I could re-implement GraphQL-core based on the latest GraphQL.js code, while also using the latest features available in Python 3.6, like asyncio, f-strings and type hints, which could not be used by GraphQL-core since it tried to be backward compatible with Python 2. Since that seemed to be a good opportunity to learn GraphQL and all of these new Python features at the same time, I tinkered with this in my spare time in the last months. Re-implementing GraphQL-core took way longer than I thought, since GraphQL.js is actually quite extensive, and I wanted to port everything faithfully, including the complete test suite. Kudos to Syrus Akbary who already created not only GraphQL-core, but also Graphene and other GraphQL libraries before I even started my tinkering with GraphQL. Recently he suggested to join forces and publish my new implementation of the library for Python 3.6+ as <a href="https://github.com/graphql-python/graphql-core-next/">GraphQL-core-next</a> under the <a href="https://github.com/graphql-python">GraphQL-Python</a> umbrella.</p>
-
-<p>In this article I want to exemplify how GraphQL-core-next can be used to create a GraphQL API for a PostgreSQL database that stores Shakespeare&rsquo;s works, running on an asynchronous Python backend server. Sounds exciting? Then grab your keyboard and code along with me!</p>
-
-<h2 id="the-database">The database</h2>
-
-<p>For our example, I chose <a href="https://www.postgresql.org/">PostgreSQL</a> as the database engine for the backend. Of course you can also use any other SQL or NoSQL database to build a GraphQL server. Actually, you don&rsquo;t even need a database. For instance you could fetch the data from another web service, maybe a legacy system that you want to make accessible via GraphQL. However, I really like the PostgreSQL database for my Python backends, as it is very reliable, fast and flexible.</p>
-
-<p>If you want to follow along, make sure you have PostgreSQL installed and running on your local machine. It is available on most Linux distributions and macOS, and you can also <a href="https://www.postgresql.org/download/">download</a> and easily install binary packages for Windows, Linux and macOS.</p>
-
-<p>For the database content, I chose the data from <a href="https://github.com/catherinedevlin/opensourceshakespeare">Open Source Shakespeare</a>, which has been put <a href="https://github.com/catherinedevlin/opensourceshakespeare">into a PostgreSQL database schema</a> by Catherine Devlin. After downloading the <a href="https://raw.githubusercontent.com/catherinedevlin/opensourceshakespeare/master/shakespeare.sql">shakespeare.sql</a> file, you can create a new database <code>shakespeare</code> and import the database schema along with all of the data like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">createdb shakespeare
-psql shakespeare &lt; shakespeare.sql</code></pre></div>
-<p>You can also use <a href="https://www.pgadmin.org/">pgAdmin</a> to create the database, import the data, and examine the database. You should be able to run SQL queries like this one using pgAdmin or <code>psql</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="k">substring</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span> <span class="k">from</span> <span class="n">paragraph</span>
-<span class="k">where</span> <span class="n">workid</span><span class="o">=</span><span class="s1">&#39;hamlet&#39;</span> <span class="k">and</span> <span class="n">charid</span><span class="o">=</span><span class="s1">&#39;hamlet&#39;</span>
-<span class="k">and</span> <span class="n">plaintext</span> <span class="k">like</span> <span class="s1">&#39;%is the question%&#39;</span></code></pre></div>
-<p>The database contains six tables, but for simplicity sake, we will restrict ourselves to only the two tables <code>work</code> and <code>character</code> and their association table <code>character_work</code>. Our goal for this small tutorial is to create a GraphQL API for requesting the data in these tables. This API will then allow us to execute GraphQL queries like this one:</p>
-<div class="highlight"><pre class="chroma"><code class="language-graphql" data-lang="graphql">{
+<!doctype html><html class=no-js lang=en><head><meta charset=utf-8><base href=https://cito.github.io/><title>Using GraphQL or REST, that is the question | Seasoned &amp; Agile</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="We create a GraphQL API for Shakespeare's work using GraphQL-core-next, asyncio, asyncpg and PostgreSQL"><meta name=description content="[graphql, asyncio, asyncpg, python, concurrent, graphql-core-next, shakespeare, hamlet, tutorial]"><meta name=author content="Christoph Zwerschke"><meta name=date content="2018-08-17 17:00:00 &#43;0100 &#43;0100"><meta name=last-modified content="2018-08-17 17:00:00 &#43;0100 &#43;0100"><link rel=canonical href=https://cito.github.io/blog/shakespeare-with-graphql/><link rel=stylesheet type=text/css href=https://cito.github.io/css/font-awesome.min.css><link rel=stylesheet type=text/css href=https://cito.github.io/css/syntax.min.css><link rel=stylesheet type=text/css href=https://cito.github.io/css/main.min.css><link rel=icon type=image/png sizes=32x32 href=https://cito.github.io/img/favicon32.png><link rel=icon type=image/png sizes=96x96 href=https://cito.github.io/img/favicon96.png><link rel=icon type=image/png sizes=16x16 href=https://cito.github.io/img/favicon16.png></head><body lang=en><header id=site-header><a href=https://cito.github.io/ class=title>Seasoned &amp; Agile</a><nav><ul><li><a href=https://cito.github.io/about/ title="About Me" rel=me><i class="fa fa-user-circle"></i></a></li><li><a href=https://cito.github.io/tags/ title=Tags><i class="fa fa-tags"></i></a></li><li><a href=https://github.com/cito title="~ GitHub ~"><i class="fa fa-github"></i></a></li><li><a href=https://plus.google.com/+ChristophZwerschke title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li><li><a href=https://twitter.com/CitoZwer title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li><li><a href=mailto:cito@online.de title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li><li><a href title=RSS><i class="fa fa-rs"></i></a></li></ul></nav></header><main id=site-main role=main><article><header><div>Fri Aug 17, 2018</div><div>18 minute read</div><ul class=tags><li><a href=https://cito.github.io//tags/graphql>GraphQL</a></li><li><a href=https://cito.github.io//tags/postgresql>PostgreSQL</a></li><li><a href=https://cito.github.io//tags/python>Python</a></li><li><a href=https://cito.github.io//tags/programming>Programming</a></li></ul></header><section><h1 class=title>Using GraphQL or REST, that is the question</h1><img class="center half" src=https://cito.github.io/img/shakespeare-with-graphql-0.jpg alt=Hamlet><p>This blog has been dormant for too long &ndash; it&rsquo;s time to post another article. In order to live up to the blog title, this article will combine some old and seasoned stuff (PostgreSQL and Shakespeare&rsquo;s works) with the latest trends for agile developers (GraphQL, asyncio and type hints for Python).</p><p><a href=https://graphql.org/>GraphQL</a> is a new query language for building APIs that looked quite intriguing to me when I first came across it, as it promised to solve several drawbacks of the typical REST APIs I was using so far. After tinkering with it for a while, I became hooked, and as a Pythonista, I wanted to use GraphQL for my Python backends, too. This was not a real problem: GraphQL has been ported to many <a href=https://graphql.org/code/>programming languages</a> already, and Python is one of them. The most well-known GraphQL library for Python is called <a href=http://graphene-python.org/>Graphene</a>. Graphene is built upon <a href=https://github.com/graphql-python/graphql-core>GraphQL-core</a>, which is a Python port of <a href=https://github.com/graphql/graphql-js>GraphQL.js</a>, the reference implementation for GraphQL written in JavaScript.</p><p>One thing that bothered me a bit though was that GraphQL.js advanced in a faster pace than GraphQL-core. It is currently at version 0.14 (now renamed to version 14) while GraphQL-core decoupled from the development of GraphQL.js at version 0.6. I wondered if I could re-implement GraphQL-core based on the latest GraphQL.js code, while also using the latest features available in Python 3.6, like asyncio, f-strings and type hints, which could not be used by GraphQL-core since it tried to be backward compatible with Python 2. Since that seemed to be a good opportunity to learn GraphQL and all of these new Python features at the same time, I tinkered with this in my spare time in the last months. Re-implementing GraphQL-core took way longer than I thought, since GraphQL.js is actually quite extensive, and I wanted to port everything faithfully, including the complete test suite. Kudos to Syrus Akbary who already created not only GraphQL-core, but also Graphene and other GraphQL libraries before I even started my tinkering with GraphQL. Recently he suggested to join forces and publish my new implementation of the library for Python 3.6+ as <a href=https://github.com/graphql-python/graphql-core-next/>GraphQL-core-next</a> under the <a href=https://github.com/graphql-python>GraphQL-Python</a> umbrella.</p><p>In this article I want to exemplify how GraphQL-core-next can be used to create a GraphQL API for a PostgreSQL database that stores Shakespeare&rsquo;s works, running on an asynchronous Python backend server. Sounds exciting? Then grab your keyboard and code along with me!</p><h2 id=the-database>The database</h2><p>For our example, I chose <a href=https://www.postgresql.org/>PostgreSQL</a> as the database engine for the backend. Of course you can also use any other SQL or NoSQL database to build a GraphQL server. Actually, you don&rsquo;t even need a database. For instance you could fetch the data from another web service, maybe a legacy system that you want to make accessible via GraphQL. However, I really like the PostgreSQL database for my Python backends, as it is very reliable, fast and flexible.</p><p>If you want to follow along, make sure you have PostgreSQL installed and running on your local machine. It is available on most Linux distributions and macOS, and you can also <a href=https://www.postgresql.org/download/>download</a> and easily install binary packages for Windows, Linux and macOS.</p><p>For the database content, I chose the data from <a href=https://github.com/catherinedevlin/opensourceshakespeare>Open Source Shakespeare</a>, which has been put <a href=https://github.com/catherinedevlin/opensourceshakespeare>into a PostgreSQL database schema</a> by Catherine Devlin. After downloading the <a href=https://raw.githubusercontent.com/catherinedevlin/opensourceshakespeare/master/shakespeare.sql>shakespeare.sql</a> file, you can create a new database <code>shakespeare</code> and import the database schema along with all of the data like this:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>createdb shakespeare
+psql shakespeare &lt; shakespeare.sql</code></pre></div><p>You can also use <a href=https://www.pgadmin.org/>pgAdmin</a> to create the database, import the data, and examine the database. You should be able to run SQL queries like this one using pgAdmin or <code>psql</code>:</p><div class=highlight><pre class=chroma><code class=language-sql data-lang=sql><span class=k>select</span> <span class=k>substring</span><span class=p>(</span><span class=n>plaintext</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>42</span><span class=p>)</span> <span class=k>from</span> <span class=n>paragraph</span>
+<span class=k>where</span> <span class=n>workid</span><span class=o>=</span><span class=s1>&#39;hamlet&#39;</span> <span class=k>and</span> <span class=n>charid</span><span class=o>=</span><span class=s1>&#39;hamlet&#39;</span>
+<span class=k>and</span> <span class=n>plaintext</span> <span class=k>like</span> <span class=s1>&#39;%is the question%&#39;</span></code></pre></div><p>The database contains six tables, but for simplicity sake, we will restrict ourselves to only the two tables <code>work</code> and <code>character</code> and their association table <code>character_work</code>. Our goal for this small tutorial is to create a GraphQL API for requesting the data in these tables. This API will then allow us to execute GraphQL queries like this one:</p><div class=highlight><pre class=chroma><code class=language-graphql data-lang=graphql>{
   works {
     id
     title
@@ -98,334 +13,235 @@ psql shakespeare &lt; shakespeare.sql</code></pre></div>
       description
     }
   }
-}</code></pre></div>
-<p>This GraphQL query is pretty self explanatory. It asks for all the works of shakespeare, with their title, year and genre, and all the characters appearing in these works, with their name and description. In a REST API, to get all this information, you would first have to request a list with the work IDs, then send separate requests for getting the details and list of character IDs for each work, and then send another heap of requests for getting the names of all these characters. You would have to send each of these REST requests to a different endpoint. In GraphQL, you&rsquo;re using the same endpoint for all of your queries.</p>
-
-<p>If you want to get the details for a single character with a given ID, similar to a GET request in a REST API, you could use the following GraphQL query:</p>
-<div class="highlight"><pre class="chroma"><code class="language-graphql" data-lang="graphql">{
+}</code></pre></div><p>This GraphQL query is pretty self explanatory. It asks for all the works of shakespeare, with their title, year and genre, and all the characters appearing in these works, with their name and description. In a REST API, to get all this information, you would first have to request a list with the work IDs, then send separate requests for getting the details and list of character IDs for each work, and then send another heap of requests for getting the names of all these characters. You would have to send each of these REST requests to a different endpoint. In GraphQL, you&rsquo;re using the same endpoint for all of your queries.</p><p>If you want to get the details for a single character with a given ID, similar to a GET request in a REST API, you could use the following GraphQL query:</p><div class=highlight><pre class=chroma><code class=language-graphql data-lang=graphql>{
   character(id:&#34;hamlet&#34;) {
     name
     description
   }
-}</code></pre></div>
-<p>As the result of this query, the GraphQL API would then return the following JSON document:</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
-  <span class="nt">&#34;data&#34;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&#34;character&#34;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Hamlet&#34;</span><span class="p">,</span>
-      <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;son of the former king and nephew to the present king&#34;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>Contrary to a GET request in a REST API, we only get the fields in the result that we have explicitly requested, and in the same structure that has been specified in the request. This is one of the many really nice features of GraphQL.</p>
+}</code></pre></div><p>As the result of this query, the GraphQL API would then return the following JSON document:</p><div class=highlight><pre class=chroma><code class=language-json data-lang=json><span class=p>{</span>
+  <span class=nt>&#34;data&#34;</span><span class=p>:</span> <span class=p>{</span>
+    <span class=nt>&#34;character&#34;</span><span class=p>:</span> <span class=p>{</span>
+      <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;Hamlet&#34;</span><span class=p>,</span>
+      <span class=nt>&#34;description&#34;</span><span class=p>:</span> <span class=s2>&#34;son of the former king and nephew to the present king&#34;</span>
+    <span class=p>}</span>
+  <span class=p>}</span>
+<span class=p>}</span></code></pre></div><p>Contrary to a GET request in a REST API, we only get the fields in the result that we have explicitly requested, and in the same structure that has been specified in the request. This is one of the many really nice features of GraphQL.</p><p>Using mutations instead of queries, it is also possible to add or edit data in the database via a GraphQL API, just as you can do with POST or PUT requests via a REST API. With GraphQL you can also push data from the server to the client using subscriptions. Again, we will not cover these aspects of GraphQL APIs in this article to keep things simple. We will also not talk about authentication, authorization or other security aspects in this article, but of course there are ways to deal with that in a GraphQL API as well, and you&rsquo;re well advised to think about these aspects very carefully when implementing GraphQL APIs for serious applications.</p><h2 id=the-resolvers>The resolvers</h2><p>In a GraphQL server, the so-called &ldquo;resolver&rdquo; functions are doing all the work of fetching the actual data. Each resolver function is responsible for one data field, which can have an object type that needs to be further resolved, like the <code>work</code> object, or have a leaf type that resolves to a scalar value like the <code>name</code> of a character.</p><p>The resolver functions can be synchronous or asynchronous. Since we want to build an asynchronous HTTP server, we need to use asynchronous resolver functions which are implemented with <code>async def</code> instead of the usual <code>def</code> keyword in newer Python versions. The resolver functions eventually must fetch the data from the database using an asynchronous PostgreSQL interface. I chose <a href=https://github.com/MagicStack/asyncpg>asyncpg</a> for this example, but you can also use <a href=https://github.com/aio-libs/aiopg>aiopg</a> with only minor changes to the code.</p><p>Let&rsquo;s put all the resolvers into one Python module <code>resolvers.py</code>. If you want to follow along, create this file now and put the following code into it. Don&rsquo;t worry, I will explain in more detail what&rsquo;s going on in this module below. Make sure you have Python 3.6 or newer installed, because we are making use of some recent features and because this is also required by GraphQL-core-next.</p><div class=highlight><pre class=chroma><code class=language-python3 data-lang=python3><span class=c1># resolvers.py</span>
 
-<p>Using mutations instead of queries, it is also possible to add or edit data in the database via a GraphQL API, just as you can do with POST or PUT requests via a REST API. With GraphQL you can also push data from the server to the client using subscriptions. Again, we will not cover these aspects of GraphQL APIs in this article to keep things simple. We will also not talk about authentication, authorization or other security aspects in this article, but of course there are ways to deal with that in a GraphQL API as well, and you&rsquo;re well advised to think about these aspects very carefully when implementing GraphQL APIs for serious applications.</p>
+<span class=c1># Helper functions to fetch rows from the database</span>
 
-<h2 id="the-resolvers">The resolvers</h2>
+<span class=k>async</span> <span class=k>def</span> <span class=nf>fetch_row</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>query</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>):</span>
+    <span class=s2>&#34;&#34;&#34;Fetch a single row from the database&#34;&#34;&#34;</span>
+    <span class=n>query</span> <span class=o>+=</span> <span class=s2>&#34; order by 1&#34;</span>
+    <span class=k>async</span> <span class=k>with</span> <span class=n>info</span><span class=o>.</span><span class=n>context</span><span class=p>[</span><span class=s1>&#39;db&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>acquire</span><span class=p>()</span> <span class=k>as</span> <span class=n>con</span><span class=p>:</span>
+        <span class=n>row</span> <span class=o>=</span> <span class=k>await</span> <span class=n>con</span><span class=o>.</span><span class=n>fetchrow</span><span class=p>(</span><span class=n>query</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>)</span>
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>row</span><span class=p>:</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s1>&#39;Not found&#39;</span><span class=p>)</span>
+    <span class=k>return</span> <span class=nb>dict</span><span class=p>(</span><span class=n>row</span><span class=p>)</span> <span class=k>if</span> <span class=n>row</span> <span class=k>else</span> <span class=kc>None</span>
 
-<p>In a GraphQL server, the so-called &ldquo;resolver&rdquo; functions are doing all the work of fetching the actual data. Each resolver function is responsible for one data field, which can have an object type that needs to be further resolved, like the <code>work</code> object, or have a leaf type that resolves to a scalar value like the <code>name</code> of a character.</p>
 
-<p>The resolver functions can be synchronous or asynchronous. Since we want to build an asynchronous HTTP server, we need to use asynchronous resolver functions which are implemented with <code>async def</code> instead of the usual <code>def</code> keyword in newer Python versions. The resolver functions eventually must fetch the data from the database using an asynchronous PostgreSQL interface. I chose <a href="https://github.com/MagicStack/asyncpg">asyncpg</a> for this example, but you can also use <a href="https://github.com/aio-libs/aiopg">aiopg</a> with only minor changes to the code.</p>
+<span class=k>async</span> <span class=k>def</span> <span class=nf>fetch_rows</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>query</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>):</span>
+    <span class=s2>&#34;&#34;&#34;Fetch a list of rows from the database&#34;&#34;&#34;</span>
+    <span class=n>query</span> <span class=o>+=</span> <span class=s2>&#34; order by 1&#34;</span>
+    <span class=k>async</span> <span class=k>with</span> <span class=n>info</span><span class=o>.</span><span class=n>context</span><span class=p>[</span><span class=s1>&#39;db&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>acquire</span><span class=p>()</span> <span class=k>as</span> <span class=n>con</span><span class=p>:</span>
+        <span class=n>rows</span> <span class=o>=</span> <span class=k>await</span> <span class=n>con</span><span class=o>.</span><span class=n>fetch</span><span class=p>(</span><span class=n>query</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>)</span>
+    <span class=k>return</span> <span class=p>[</span><span class=nb>dict</span><span class=p>(</span><span class=n>row</span><span class=p>)</span> <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=n>rows</span><span class=p>]</span>
 
-<p>Let&rsquo;s put all the resolvers into one Python module <code>resolvers.py</code>. If you want to follow along, create this file now and put the following code into it. Don&rsquo;t worry, I will explain in more detail what&rsquo;s going on in this module below. Make sure you have Python 3.6 or newer installed, because we are making use of some recent features and because this is also required by GraphQL-core-next.</p>
-<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="c1"># resolvers.py</span>
 
-<span class="c1"># Helper functions to fetch rows from the database</span>
+<span class=c1># SQL query to fetch rows from the work table</span>
+<span class=n>select_work</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;
+</span><span class=s2>    select workid as id, title, year, genretype as genre, notes,
+</span><span class=s2>    totalwords as &#34;totalWords&#34;, totalparagraphs as &#34;totalParagraphs&#34;
+</span><span class=s2>    from work&#34;&#34;&#34;</span>
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_row</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="s2">&#34;&#34;&#34;Fetch a single row from the database&#34;&#34;&#34;</span>
-    <span class="n">query</span> <span class="o">+=</span> <span class="s2">&#34; order by 1&#34;</span>
-    <span class="k">async</span> <span class="k">with</span> <span class="n">info</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="k">await</span> <span class="n">con</span><span class="o">.</span><span class="n">fetchrow</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Not found&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">if</span> <span class="n">row</span> <span class="k">else</span> <span class="kc">None</span>
+<span class=c1># SQL query to fetch rows from the character table</span>
+<span class=n>select_character</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;
+</span><span class=s2>    select charid as id, charname as name, description,
+</span><span class=s2>    speechcount as &#34;speechCount&#34;
+</span><span class=s2>    from character&#34;&#34;&#34;</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_rows</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="s2">&#34;&#34;&#34;Fetch a list of rows from the database&#34;&#34;&#34;</span>
-    <span class="n">query</span> <span class="o">+=</span> <span class="s2">&#34; order by 1&#34;</span>
-    <span class="k">async</span> <span class="k">with</span> <span class="n">info</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="k">await</span> <span class="n">con</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+<span class=c1># The actual resolvers</span>
 
+<span class=k>async</span> <span class=k>def</span> <span class=nf>resolve_work</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=n>info</span><span class=p>,</span> <span class=nb>id</span><span class=p>):</span>
+    <span class=k>return</span> <span class=k>await</span> <span class=n>fetch_row</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>f</span><span class=s2>&#34;</span><span class=si>{select_work}</span><span class=s2> where workid=$1&#34;</span><span class=p>,</span> <span class=nb>id</span><span class=p>)</span>
 
-<span class="c1"># SQL query to fetch rows from the work table</span>
-<span class="n">select_work</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
-</span><span class="s2">    select workid as id, title, year, genretype as genre, notes,
-</span><span class="s2">    totalwords as &#34;totalWords&#34;, totalparagraphs as &#34;totalParagraphs&#34;
-</span><span class="s2">    from work&#34;&#34;&#34;</span>
 
-<span class="c1"># SQL query to fetch rows from the character table</span>
-<span class="n">select_character</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
-</span><span class="s2">    select charid as id, charname as name, description,
-</span><span class="s2">    speechcount as &#34;speechCount&#34;
-</span><span class="s2">    from character&#34;&#34;&#34;</span>
-
-
-<span class="c1"># The actual resolvers</span>
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">resolve_work</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">fetch_row</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">f</span><span class="s2">&#34;</span><span class="si">{select_work}</span><span class="s2"> where workid=$1&#34;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">resolve_works</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">fetch_rows</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">select_work</span><span class="p">)</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">resolve_character</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">fetch_row</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">f</span><span class="s2">&#34;</span><span class="si">{select_character}</span><span class="s2"> where charid=$1&#34;</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">resolve_characters</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">fetch_rows</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">select_character</span><span class="p">)</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">resolve_works_for_char</span><span class="p">(</span><span class="n">char</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&#34;</span><span class="si">{select_work}</span><span class="s2"> natural join character_work where charid=$1&#34;</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">fetch_rows</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">char</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">resolve_chars_for_work</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&#34;</span><span class="si">{select_character}</span><span class="s2"> natural join character_work where workid=$1&#34;</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">fetch_rows</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">work</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span></code></pre></div>
-<p>In the code above we first define two helper functions <code>fetch_row()</code> and <code>fetch_rows()</code> for fetching a single row and a couple of rows from the database. As the first parameter, they take an <code>info</code> object, which is something that is used by GraphQL to pass information about the execution state of the GraphQL query to the resolvers. The info object also has a <code>context</code> attribute with per-request state. This is normally used to pass authentication information or database sessions. We use it to pass a dictionary with a <code>db</code> key that has a pool of <code>asynpg</code> database connections as value. Using the <code>acquire()</code> context handler, we get a database connection from that pool, and then run <code>fetchrow()</code> or <code>fetch()</code> on that connection to fetch a single row or multiple rows from the database, passing the actual SQL query and any parameters for that query. Since this is an asynchronous operation, its result must be <code>await</code>ed.</p>
-
-<p>Note that before returning the results, we convert them to ordinary Python dicts. The reason for this is that we want to make use of the default resolvers that GraphQL-core-next provides. These default resolvers normally use attribute access to fetch values from objects if they don&rsquo;t look like Python dicts. The existence of these default resolvers relieves us from the burden of having to write resolvers for each and every column in our database.</p>
-
-<p>Next we define the SQL queries to be used for fetching rows from the <code>work</code> and <code>character</code> tables. Note that we aliased some lowercase columns as camelCase because that is the style convention for naming fields in an GraphQL API.</p>
-
-<p>Finally, we define the actual resolvers. Again, we are using <code>async def</code> instead of <code>def</code> because we want to run everything asynchronously.</p>
-
-<p>Note that there are two types of resolvers. The first four resolvers are used for the top level of the query, while the last two are used for nested queries. Those nested resolvers take the previous object as their first argument, while the root resolvers get a special root object instead, which is not necessary and therefore ignored in our case. As the second argument, the resolvers take the mentioned info object. The additional arguments are those passed to the GraphQL query. For instance, the resolvers for fetching an individual work or character take the <code>id</code> argument (another GraphQL convention) which corresponds to the <code>workid</code> and <code>charid</code>  primary key columns in the database accordingly. You could also pass other arguments to the resolvers that fetch lists of works or characters, like a search string for the title or name or the fields to be used for sorting the list etc. But again, we want to keep things simple here.</p>
-
-<h2 id="the-schema">The schema</h2>
-
-<p>To build a GraphQL API, we not only need the resolver functions, but we also need to create a GraphQL schema that exactly defines which data fields of which types can be queried in which places.</p>
-
-<p>GraphQL-core-next provides the building blocks to create such a schema in Python code. Here is how you would use them to build the schema for our example API that gives access to Shakespeare&rsquo;s works:</p>
-<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="c1"># schema.py</span>
-
-<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
-
-<span class="kn">from</span> <span class="nn">graphql</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">GraphQLArgument</span><span class="p">,</span> <span class="n">GraphQLEnumType</span><span class="p">,</span> <span class="n">GraphQLField</span><span class="p">,</span>
-    <span class="n">GraphQLID</span><span class="p">,</span> <span class="n">GraphQLInt</span><span class="p">,</span> <span class="n">GraphQLList</span><span class="p">,</span> <span class="n">GraphQLNonNull</span><span class="p">,</span>
-    <span class="n">GraphQLObjectType</span><span class="p">,</span> <span class="n">GraphQLSchema</span><span class="p">,</span> <span class="n">GraphQLString</span><span class="p">)</span>
-
-<span class="kn">import</span> <span class="nn">resolvers</span>
-
-
-<span class="c1"># Define the Schema using GraphQL types:</span>
-
-<span class="k">class</span> <span class="nc">GenreType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-
-    <span class="n">COMEDY</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
-    <span class="n">HISTORY</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
-    <span class="n">POEM</span> <span class="o">=</span> <span class="s1">&#39;p&#39;</span>
-    <span class="n">SONNET</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
-    <span class="n">TRAGEDY</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span>
-
-
-<span class="n">F</span> <span class="o">=</span> <span class="n">GraphQLField</span>
-<span class="n">L</span> <span class="o">=</span> <span class="n">GraphQLList</span>
-<span class="n">NN</span> <span class="o">=</span> <span class="n">GraphQLNonNull</span>
-
-<span class="n">WorkType</span> <span class="o">=</span> <span class="n">GraphQLObjectType</span><span class="p">(</span><span class="s1">&#39;Work&#39;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLID</span><span class="p">)),</span>
-    <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLString</span><span class="p">)),</span>
-    <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLInt</span><span class="p">)),</span>
-    <span class="s1">&#39;genre&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLEnumType</span><span class="p">(</span><span class="s1">&#39;GenreType&#39;</span><span class="p">,</span> <span class="n">GenreType</span><span class="p">))),</span>
-    <span class="s1">&#39;notes&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">GraphQLString</span><span class="p">),</span>
-    <span class="s1">&#39;totalWords&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLInt</span><span class="p">)),</span>
-    <span class="s1">&#39;totalParagraphs&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLInt</span><span class="p">)),</span>
-    <span class="s1">&#39;characters&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">CharacterType</span><span class="p">))),</span>
-                    <span class="n">resolve</span><span class="o">=</span><span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_chars_for_work</span><span class="p">)})</span>
-
-<span class="n">CharacterType</span> <span class="o">=</span> <span class="n">GraphQLObjectType</span><span class="p">(</span><span class="s1">&#39;Character&#39;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLID</span><span class="p">)),</span>
-    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLString</span><span class="p">)),</span>
-    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">GraphQLString</span><span class="p">),</span>
-    <span class="s1">&#39;speechCount&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLInt</span><span class="p">)),</span>
-    <span class="s1">&#39;works&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">WorkType</span><span class="p">))),</span>
-               <span class="n">resolve</span><span class="o">=</span><span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_works_for_char</span><span class="p">)})</span>
-
-<span class="n">query_type</span> <span class="o">=</span> <span class="n">GraphQLObjectType</span><span class="p">(</span><span class="s1">&#39;Query&#39;</span><span class="p">,</span> <span class="p">{</span>
-    <span class="s1">&#39;work&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">WorkType</span><span class="p">),</span>
-              <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">GraphQLArgument</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLID</span><span class="p">))},</span>
-              <span class="n">resolve</span><span class="o">=</span><span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_work</span><span class="p">),</span>
-    <span class="s1">&#39;works&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">WorkType</span><span class="p">))),</span>
-               <span class="n">resolve</span><span class="o">=</span><span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_works</span><span class="p">),</span>
-    <span class="s1">&#39;character&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">CharacterType</span><span class="p">),</span>
-                   <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">GraphQLArgument</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">GraphQLID</span><span class="p">))},</span>
-                   <span class="n">resolve</span><span class="o">=</span><span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_character</span><span class="p">),</span>
-    <span class="s1">&#39;characters&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">L</span><span class="p">(</span><span class="n">NN</span><span class="p">(</span><span class="n">CharacterType</span><span class="p">))),</span>
-                    <span class="n">resolve</span><span class="o">=</span><span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_characters</span><span class="p">)})</span>
-
-<span class="n">schema</span> <span class="o">=</span> <span class="n">GraphQLSchema</span><span class="p">(</span><span class="n">query_type</span><span class="p">)</span></code></pre></div>
-<p>Just put the code above in a file named <code>schema.py</code> and save it along with the <code>resolvers.py</code> file you already created.</p>
-
-<p>At the top of the file, we&rsquo;re importing all the building blocks I mentioned above. These are used to build the two types we are using in our example, the <code>WorkType</code> corresponding to the <code>work</code> table and the <code>CharacterType</code> corresponding to the <code>character</code> table in the database. Then we also define the root type <code>Query</code> with the four fields that can be requested on the top level of a GraphQL query: <code>work</code>, <code>works</code>, <code>character</code>, and <code>characters</code>. We use the plural form for fields that refer to a list of objects, so that you can intuitively understand what you can expect when requesting the respective field.</p>
-
-<p>As you see, every type gets passed a name and a dictionary of GraphQL fields. The keys are the field names and the values are the field types. The fields are resolved either by the default resolvers or the specified resolver functions. For instance, the <code>WorkType</code> has a field <code>characters</code> which is a List of <code>CharacterType</code> objects. We use the <code>GraphQLList</code> wrapper to specify that. We also use the <code>GraphQLNonNull</code> wrapper to specify that both the list itself and all of its elements may not be null. For this field, we are using the <code>resolve_chars_for_work()</code> resolver function. The four root resolvers are used for the four fields that can be queried on the root level. Two of them use an <code>GraphQLArgument</code> in order to pass the <code>id</code> which itself is of type <code>GraphQLID</code>. This type is not much different from <code>GraphQLString</code>, but indicates that the value should be interpreted as a unique ID.</p>
-
-<p>The <code>WorkType</code> also has a <code>genre</code> field that is an <code>GraphQLEnumType</code>, i.e. an enumeration of possible values, like <code>COMEDY</code> or <code>POEM</code>. The code shows how it is possible to map these enum values used by the GraphQL API to the actual values in the backend database, which uses single lowercase characters to encode the genre. The code shows how you can uses a Python Enum for this purpose, but you can also use a dictionary.</p>
-
-<p>The Python code above is pretty straightforward, albeit a bit ugly and verbose. I tried to reduce the verbosity a bit by using alias names for the most frequently used GraphQL types. As an alternative to building the GraphQL schema in Python code using GraphQL types as building blocks, it is also possible with GraphQL-core-next to define the schema using the GraphQL schema definition language (SDL). The only drawback here is that the SDL does not describe the server-side implementation of the schema, so you will need to reconnect the resolvers and mapping of enum values manually after creating the schema from the SDL if you want to build a fully working GraphQL server. Here is the code if you want to follow this alternative approach:</p>
-<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="c1"># schema.py</span>
-
-<span class="kn">from</span> <span class="nn">graphql</span> <span class="k">import</span> <span class="n">build_schema</span>
-
-<span class="kn">import</span> <span class="nn">resolvers</span>
-
-<span class="c1"># Build the schema using SDL:</span>
-
-<span class="n">schema</span> <span class="o">=</span> <span class="n">build_schema</span><span class="p">(</span><span class="s2">&#34;&#34;&#34;
-</span><span class="s2">    type Query {
-</span><span class="s2">        work(id: ID!): Work!
-</span><span class="s2">        works: [Work!]!
-</span><span class="s2">        character(id: ID!): Character!
-</span><span class="s2">        characters: [Character!]!
-</span><span class="s2">    }
-</span><span class="s2">
-</span><span class="s2">    enum Genre {
-</span><span class="s2">        COMEDY
-</span><span class="s2">        HISTORY
-</span><span class="s2">        POEM
-</span><span class="s2">        SONNET
-</span><span class="s2">        TRAGEDY
-</span><span class="s2">    }
-</span><span class="s2">
-</span><span class="s2">    type Work {
-</span><span class="s2">        id: ID!
-</span><span class="s2">        title: String!
-</span><span class="s2">        year: Int!
-</span><span class="s2">        genre: Genre
-</span><span class="s2">        notes: String
-</span><span class="s2">        totalWords: Int!
-</span><span class="s2">        totalParagraphs: Int!
-</span><span class="s2">        characters: [Character!]!
-</span><span class="s2">    }
-</span><span class="s2">
-</span><span class="s2">    type Character {
-</span><span class="s2">        id: ID!
-</span><span class="s2">        name: String!
-</span><span class="s2">        description: String
-</span><span class="s2">        speechCount: Int!
-</span><span class="s2">        works: [Work!]!
-</span><span class="s2">    }
-</span><span class="s2">    &#34;&#34;&#34;</span><span class="p">)</span>
-
-<span class="c1"># Add the server-side know-how:</span>
-
-<span class="n">fields</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">query_type</span><span class="o">.</span><span class="n">fields</span>
-<span class="n">fields</span><span class="p">[</span><span class="s1">&#39;work&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span> <span class="o">=</span> <span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_work</span>
-<span class="n">fields</span><span class="p">[</span><span class="s1">&#39;works&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span> <span class="o">=</span> <span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_works</span>
-<span class="n">fields</span><span class="p">[</span><span class="s1">&#39;character&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span> <span class="o">=</span> <span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_character</span>
-<span class="n">fields</span><span class="p">[</span><span class="s1">&#39;characters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span> <span class="o">=</span> <span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_characters</span>
-
-<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">get_type</span><span class="p">(</span><span class="s1">&#39;Genre&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">value</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-<span class="n">fields</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">get_type</span><span class="p">(</span><span class="s1">&#39;Work&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fields</span>
-<span class="n">fields</span><span class="p">[</span><span class="s1">&#39;characters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span> <span class="o">=</span> <span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_chars_for_work</span>
-<span class="n">fields</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">get_type</span><span class="p">(</span><span class="s1">&#39;Character&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fields</span>
-<span class="n">fields</span><span class="p">[</span><span class="s1">&#39;works&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span> <span class="o">=</span> <span class="n">resolvers</span><span class="o">.</span><span class="n">resolve_works_for_char</span></code></pre></div>
-<p>Event though these two files look very different, they achieve the same goal of defining a GraphQL schema that can be used for our GraphQL server, which we will build next.</p>
-
-<h3 id="the-server">The server</h3>
-
-<p>Now that we have a GraphQL schema, it&rsquo;s time to build the actual GraphQL server. We want it to be an asynchronous HTTP server, so we are building it with <code>aiohttp</code>. We also need <code>asyncpg</code> and of course <code>GraphQL-core-next</code>. These all can be installed very easily with <code>pip</code> or <code>pipenv</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">pip install aiohttp asyncpg GraphQL-core-next</code></pre></div>
-<p>Creating the GraphQL server with <code>aiohttp</code> is not too complicated. You can copy the following code and save it as <code>server.py</code> along with the <code>resolvers.py</code> and <code>schema.py</code> files you already created. Again, I&rsquo;ll explain how it works below.</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># server.py</span>
-
-<span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
-<span class="kn">import</span> <span class="nn">asyncpg</span>
-
-<span class="kn">from</span> <span class="nn">graphql</span> <span class="kn">import</span> <span class="n">graphql</span>
-
-<span class="kn">from</span> <span class="nn">schema</span> <span class="kn">import</span> <span class="n">schema</span>
-
-
-<span class="n">async</span> <span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
-    <span class="n">app</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">await</span> <span class="n">asyncpg</span><span class="o">.</span><span class="n">create_pool</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="s1">&#39;shakespeare&#39;</span><span class="p">)</span>
-
-
-<span class="n">async</span> <span class="k">def</span> <span class="nf">close_db</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
-    <span class="n">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-
-<span class="n">async</span> <span class="k">def</span> <span class="nf">get_query</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="n">content_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">content_type</span>
-    <span class="k">if</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s1">&#39;application/graphql&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">await</span> <span class="n">request</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s1">&#39;application/json&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">await</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">())[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
-
-
-<span class="n">async</span> <span class="k">def</span> <span class="nf">graphql_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_query</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">graphql</span><span class="p">(</span>
-        <span class="n">schema</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">context_value</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]})</span>
-    <span class="n">errors</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span>
-    <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
-        <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="n">error</span><span class="o">.</span><span class="n">formatted</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="n">errors</span><span class="p">}</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-
-
-<span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
-<span class="n">app</span><span class="o">.</span><span class="n">on_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">init_db</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">on_shutdown</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">close_db</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_post</span><span class="p">(</span><span class="s1">&#39;/graphql&#39;</span><span class="p">,</span> <span class="n">graphql_view</span><span class="p">)</span>
-<span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span></code></pre></div>
-<p>Before running this code, a few explanations. At the top of the file, we&rsquo;re importing all of our dependencies. The <code>graphql</code> package is provided by <code>GraphQL-core-next</code>. The <code>schema</code> module is the one we just created above (using either of the two approaches).</p>
-
-<p>Next we define a few asynchronous functions (coroutines) to be used by <code>aiohttp</code>. The <code>init_db()</code> function creates a pool of database connections to the <code>shakespeare</code> database and stores it in the global <code>app</code> object which is an Application instance created with <code>aiohttp</code>. The function is executed when the web server starts. The <code>close_db()</code> function closes the database connection pool properly when the web server shuts down. <code>get_query()</code> is a helper function that gets the actual GraphQL query from a web request. And finally, the <code>graphql_view()</code> function is the actual request handler for our GraphQL requests. It is called whenever a URL starting with <code>/graphql</code> is requested from our server as a POST request. We only care about that <code>/graphql</code> route here and ignore all other URLs.</p>
-
-<p>In our <code>graphql_view()</code> request handler, the following things happen: First, we get the actual GraphQL query string with the <code>get_query()</code> function. Since this is an asynchronous function, we must <code>await</code> the result. Next, we call the asynchronous <code>grapqhl()</code> function provided by the <code>graphql</code> package and again <code>await</code> its result. This function gets passed our GraphQL schema, the GraphQL query string, and a context object that will be passed to the resolvers. This is a dictionary, inside which we pass the reference to our global database connection pool under the <code>db</code> key.</p>
-
-<p>The <code>graphql()</code> function is the one that actually executes the query in the request against the schema that we provided, using the resolver functions that we attached to the schema. Its result is an <code>ExecutionResult</code> object which has a <code>data</code> attribute and an <code>errors</code> attribute. The former contains the actual result of the query if it was valid and could be executed without errors. Otherwise, <code>errors</code> attribute will contain a list of <code>GraphQLError</code>s with the positions of the validation or execution errors and corresponding error messages.</p>
-
-<p>The code at the bottom of the file sets up an <code>aiohttp</code> application, makes sure the <code>init_db()</code> function runs on startup and <code>close_db</code> on shutdown, mounts the <code>graphql_view()</code> request handler to the <code>/graphql</code> route, and finally starts the web server on localhost port 8080.</p>
-
-<h2 id="the-client">The Client</h2>
-
-<p>For testing the GraphQL API, you can use a GraphQL client like <a href="https://insomnia.rest/">Insomnia</a> (which was actually a REST client, but now speaks GraphQL, too). Run the <code>server.py</code> file and then start Insomnia. Create a new workspace &ldquo;Shakespeare&rdquo;. There, create a new request &ldquo;Hamlet&rdquo;, selecting &ldquo;POST&rdquo; as the request method and &ldquo;GraphQL query&rdquo; as the body. Change the URL of the query to <code>http://localhost:8080/graphql</code> and enter our GraphQL query from above as the body. You should get the expected output:</p>
-
-<img class="center" src="https://cito.github.io/img/shakespeare-with-graphql-1.png" alt="Query Hamlet with Insomnia">
-
-<p>Another way way of testing the GraphQL API is by using the <a href="https://github.com/graphql/graphiql">GraphiQL</a> IDE which can be integrated into the server or started as a <a href="https://electronjs.org/apps/graphiql">standalone app</a> using Electron.</p>
-
-<img class="center" src="https://cito.github.io/img/shakespeare-with-graphql-2.png" alt="Query Hamlet with GraphiQL">
-
-<p>When you click on the &ldquo;Docs&rdquo; Button on the right side of the GraphiQL window, you can browse through the documentation of all the types defined in our schema. You would also see descriptions for the types and enum values if we had added these when defining the schema. This is what I really like about GraphiQL. Like Insomnia, GraphiQL also uses the schema information to auto suggest field and argument names, and translates <code>GraphQLErrors</code> into squiggly red lines under the corresponding positions in the query.  Once you got accustomed to this kind of convenience when testing queries against your API, you don&rsquo;t want to miss it any more.</p>
-
-<p>Let&rsquo;s try to use the API we created to find out the title of Shakespeare&rsquo;s work in which the character Hamlet appeared. Ok, this is not a very difficult question, you say. So let&rsquo;s try to also find out in the same query, in which year that work has been written and how many words it contains. This is still quite easy to do with GraphiQL and our Shakespeare GraphQL API server:</p>
-
-<img class="center" src="https://cito.github.io/img/shakespeare-with-graphql-3.png" alt="Query Hamlet title, year and total words with GraphiQL">
-
-<p>Have fun playing around with our small API. Maybe you want to extend it to the other data that&rsquo;s available in the database, making it possible to retrieve the full text of Shakespeare&rsquo;s works, or build a small single page web app using this API.</p>
-</section>
-</article>
-</main>
-
-<aside class="rel">
-<p>
-
-</p>
-<p>
-
-<a href="https://cito.github.io/blog/web-ext-with-angular/">Web Extensions made with Angular <i class="fa fa-long-arrow-right"></i> </a>
-
-</p>
-</aside>
-
-<footer id="site-footer">
-<p>&copy; 2016-2018 Christoph Zwerschke. All rights reserved.</p>
-</footer>
-</body>
-</html>
+<span class=k>async</span> <span class=k>def</span> <span class=nf>resolve_works</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=n>info</span><span class=p>):</span>
+    <span class=k>return</span> <span class=k>await</span> <span class=n>fetch_rows</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>select_work</span><span class=p>)</span>
+
+
+<span class=k>async</span> <span class=k>def</span> <span class=nf>resolve_character</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=n>info</span><span class=p>,</span> <span class=nb>id</span><span class=p>):</span>
+    <span class=k>return</span> <span class=k>await</span> <span class=n>fetch_row</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>f</span><span class=s2>&#34;</span><span class=si>{select_character}</span><span class=s2> where charid=$1&#34;</span><span class=p>,</span> <span class=nb>id</span><span class=p>)</span>
+
+
+<span class=k>async</span> <span class=k>def</span> <span class=nf>resolve_characters</span><span class=p>(</span><span class=n>root</span><span class=p>,</span> <span class=n>info</span><span class=p>):</span>
+    <span class=k>return</span> <span class=k>await</span> <span class=n>fetch_rows</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>select_character</span><span class=p>)</span>
+
+
+<span class=k>async</span> <span class=k>def</span> <span class=nf>resolve_works_for_char</span><span class=p>(</span><span class=n>char</span><span class=p>,</span> <span class=n>info</span><span class=p>):</span>
+    <span class=n>query</span> <span class=o>=</span> <span class=n>f</span><span class=s2>&#34;</span><span class=si>{select_work}</span><span class=s2> natural join character_work where charid=$1&#34;</span>
+    <span class=k>return</span> <span class=k>await</span> <span class=n>fetch_rows</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>query</span><span class=p>,</span> <span class=n>char</span><span class=p>[</span><span class=s1>&#39;id&#39;</span><span class=p>])</span>
+
+
+<span class=k>async</span> <span class=k>def</span> <span class=nf>resolve_chars_for_work</span><span class=p>(</span><span class=n>work</span><span class=p>,</span> <span class=n>info</span><span class=p>):</span>
+    <span class=n>query</span> <span class=o>=</span> <span class=n>f</span><span class=s2>&#34;</span><span class=si>{select_character}</span><span class=s2> natural join character_work where workid=$1&#34;</span>
+    <span class=k>return</span> <span class=k>await</span> <span class=n>fetch_rows</span><span class=p>(</span><span class=n>info</span><span class=p>,</span> <span class=n>query</span><span class=p>,</span> <span class=n>work</span><span class=p>[</span><span class=s1>&#39;id&#39;</span><span class=p>])</span></code></pre></div><p>In the code above we first define two helper functions <code>fetch_row()</code> and <code>fetch_rows()</code> for fetching a single row and a couple of rows from the database. As the first parameter, they take an <code>info</code> object, which is something that is used by GraphQL to pass information about the execution state of the GraphQL query to the resolvers. The info object also has a <code>context</code> attribute with per-request state. This is normally used to pass authentication information or database sessions. We use it to pass a dictionary with a <code>db</code> key that has a pool of <code>asynpg</code> database connections as value. Using the <code>acquire()</code> context handler, we get a database connection from that pool, and then run <code>fetchrow()</code> or <code>fetch()</code> on that connection to fetch a single row or multiple rows from the database, passing the actual SQL query and any parameters for that query. Since this is an asynchronous operation, its result must be <code>await</code>ed.</p><p>Note that before returning the results, we convert them to ordinary Python dicts. The reason for this is that we want to make use of the default resolvers that GraphQL-core-next provides. These default resolvers normally use attribute access to fetch values from objects if they don&rsquo;t look like Python dicts. The existence of these default resolvers relieves us from the burden of having to write resolvers for each and every column in our database.</p><p>Next we define the SQL queries to be used for fetching rows from the <code>work</code> and <code>character</code> tables. Note that we aliased some lowercase columns as camelCase because that is the style convention for naming fields in an GraphQL API.</p><p>Finally, we define the actual resolvers. Again, we are using <code>async def</code> instead of <code>def</code> because we want to run everything asynchronously.</p><p>Note that there are two types of resolvers. The first four resolvers are used for the top level of the query, while the last two are used for nested queries. Those nested resolvers take the previous object as their first argument, while the root resolvers get a special root object instead, which is not necessary and therefore ignored in our case. As the second argument, the resolvers take the mentioned info object. The additional arguments are those passed to the GraphQL query. For instance, the resolvers for fetching an individual work or character take the <code>id</code> argument (another GraphQL convention) which corresponds to the <code>workid</code> and <code>charid</code> primary key columns in the database accordingly. You could also pass other arguments to the resolvers that fetch lists of works or characters, like a search string for the title or name or the fields to be used for sorting the list etc. But again, we want to keep things simple here.</p><h2 id=the-schema>The schema</h2><p>To build a GraphQL API, we not only need the resolver functions, but we also need to create a GraphQL schema that exactly defines which data fields of which types can be queried in which places.</p><p>GraphQL-core-next provides the building blocks to create such a schema in Python code. Here is how you would use them to build the schema for our example API that gives access to Shakespeare&rsquo;s works:</p><div class=highlight><pre class=chroma><code class=language-python3 data-lang=python3><span class=c1># schema.py</span>
+
+<span class=kn>from</span> <span class=nn>enum</span> <span class=k>import</span> <span class=n>Enum</span>
+
+<span class=kn>from</span> <span class=nn>graphql</span> <span class=k>import</span> <span class=p>(</span>
+    <span class=n>GraphQLArgument</span><span class=p>,</span> <span class=n>GraphQLEnumType</span><span class=p>,</span> <span class=n>GraphQLField</span><span class=p>,</span>
+    <span class=n>GraphQLID</span><span class=p>,</span> <span class=n>GraphQLInt</span><span class=p>,</span> <span class=n>GraphQLList</span><span class=p>,</span> <span class=n>GraphQLNonNull</span><span class=p>,</span>
+    <span class=n>GraphQLObjectType</span><span class=p>,</span> <span class=n>GraphQLSchema</span><span class=p>,</span> <span class=n>GraphQLString</span><span class=p>)</span>
+
+<span class=kn>import</span> <span class=nn>resolvers</span>
+
+
+<span class=c1># Define the Schema using GraphQL types:</span>
+
+<span class=k>class</span> <span class=nc>GenreType</span><span class=p>(</span><span class=n>Enum</span><span class=p>):</span>
+
+    <span class=n>COMEDY</span> <span class=o>=</span> <span class=s1>&#39;c&#39;</span>
+    <span class=n>HISTORY</span> <span class=o>=</span> <span class=s1>&#39;h&#39;</span>
+    <span class=n>POEM</span> <span class=o>=</span> <span class=s1>&#39;p&#39;</span>
+    <span class=n>SONNET</span> <span class=o>=</span> <span class=s1>&#39;s&#39;</span>
+    <span class=n>TRAGEDY</span> <span class=o>=</span> <span class=s1>&#39;t&#39;</span>
+
+
+<span class=n>F</span> <span class=o>=</span> <span class=n>GraphQLField</span>
+<span class=n>L</span> <span class=o>=</span> <span class=n>GraphQLList</span>
+<span class=n>NN</span> <span class=o>=</span> <span class=n>GraphQLNonNull</span>
+
+<span class=n>WorkType</span> <span class=o>=</span> <span class=n>GraphQLObjectType</span><span class=p>(</span><span class=s1>&#39;Work&#39;</span><span class=p>,</span> <span class=k>lambda</span><span class=p>:</span> <span class=p>{</span>
+    <span class=s1>&#39;id&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLID</span><span class=p>)),</span>
+    <span class=s1>&#39;title&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLString</span><span class=p>)),</span>
+    <span class=s1>&#39;year&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLInt</span><span class=p>)),</span>
+    <span class=s1>&#39;genre&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLEnumType</span><span class=p>(</span><span class=s1>&#39;GenreType&#39;</span><span class=p>,</span> <span class=n>GenreType</span><span class=p>))),</span>
+    <span class=s1>&#39;notes&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>GraphQLString</span><span class=p>),</span>
+    <span class=s1>&#39;totalWords&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLInt</span><span class=p>)),</span>
+    <span class=s1>&#39;totalParagraphs&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLInt</span><span class=p>)),</span>
+    <span class=s1>&#39;characters&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>L</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>CharacterType</span><span class=p>))),</span>
+                    <span class=n>resolve</span><span class=o>=</span><span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_chars_for_work</span><span class=p>)})</span>
+
+<span class=n>CharacterType</span> <span class=o>=</span> <span class=n>GraphQLObjectType</span><span class=p>(</span><span class=s1>&#39;Character&#39;</span><span class=p>,</span> <span class=k>lambda</span><span class=p>:</span> <span class=p>{</span>
+    <span class=s1>&#39;id&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLID</span><span class=p>)),</span>
+    <span class=s1>&#39;name&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLString</span><span class=p>)),</span>
+    <span class=s1>&#39;description&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>GraphQLString</span><span class=p>),</span>
+    <span class=s1>&#39;speechCount&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLInt</span><span class=p>)),</span>
+    <span class=s1>&#39;works&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>L</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>WorkType</span><span class=p>))),</span>
+               <span class=n>resolve</span><span class=o>=</span><span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_works_for_char</span><span class=p>)})</span>
+
+<span class=n>query_type</span> <span class=o>=</span> <span class=n>GraphQLObjectType</span><span class=p>(</span><span class=s1>&#39;Query&#39;</span><span class=p>,</span> <span class=p>{</span>
+    <span class=s1>&#39;work&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>WorkType</span><span class=p>),</span>
+              <span class=n>args</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;id&#39;</span><span class=p>:</span> <span class=n>GraphQLArgument</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLID</span><span class=p>))},</span>
+              <span class=n>resolve</span><span class=o>=</span><span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_work</span><span class=p>),</span>
+    <span class=s1>&#39;works&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>L</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>WorkType</span><span class=p>))),</span>
+               <span class=n>resolve</span><span class=o>=</span><span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_works</span><span class=p>),</span>
+    <span class=s1>&#39;character&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>CharacterType</span><span class=p>),</span>
+                   <span class=n>args</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;id&#39;</span><span class=p>:</span> <span class=n>GraphQLArgument</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>GraphQLID</span><span class=p>))},</span>
+                   <span class=n>resolve</span><span class=o>=</span><span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_character</span><span class=p>),</span>
+    <span class=s1>&#39;characters&#39;</span><span class=p>:</span> <span class=n>F</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>L</span><span class=p>(</span><span class=n>NN</span><span class=p>(</span><span class=n>CharacterType</span><span class=p>))),</span>
+                    <span class=n>resolve</span><span class=o>=</span><span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_characters</span><span class=p>)})</span>
+
+<span class=n>schema</span> <span class=o>=</span> <span class=n>GraphQLSchema</span><span class=p>(</span><span class=n>query_type</span><span class=p>)</span></code></pre></div><p>Just put the code above in a file named <code>schema.py</code> and save it along with the <code>resolvers.py</code> file you already created.</p><p>At the top of the file, we&rsquo;re importing all the building blocks I mentioned above. These are used to build the two types we are using in our example, the <code>WorkType</code> corresponding to the <code>work</code> table and the <code>CharacterType</code> corresponding to the <code>character</code> table in the database. Then we also define the root type <code>Query</code> with the four fields that can be requested on the top level of a GraphQL query: <code>work</code>, <code>works</code>, <code>character</code>, and <code>characters</code>. We use the plural form for fields that refer to a list of objects, so that you can intuitively understand what you can expect when requesting the respective field.</p><p>As you see, every type gets passed a name and a dictionary of GraphQL fields. The keys are the field names and the values are the field types. The fields are resolved either by the default resolvers or the specified resolver functions. For instance, the <code>WorkType</code> has a field <code>characters</code> which is a List of <code>CharacterType</code> objects. We use the <code>GraphQLList</code> wrapper to specify that. We also use the <code>GraphQLNonNull</code> wrapper to specify that both the list itself and all of its elements may not be null. For this field, we are using the <code>resolve_chars_for_work()</code> resolver function. The four root resolvers are used for the four fields that can be queried on the root level. Two of them use an <code>GraphQLArgument</code> in order to pass the <code>id</code> which itself is of type <code>GraphQLID</code>. This type is not much different from <code>GraphQLString</code>, but indicates that the value should be interpreted as a unique ID.</p><p>The <code>WorkType</code> also has a <code>genre</code> field that is an <code>GraphQLEnumType</code>, i.e. an enumeration of possible values, like <code>COMEDY</code> or <code>POEM</code>. The code shows how it is possible to map these enum values used by the GraphQL API to the actual values in the backend database, which uses single lowercase characters to encode the genre. The code shows how you can uses a Python Enum for this purpose, but you can also use a dictionary.</p><p>The Python code above is pretty straightforward, albeit a bit ugly and verbose. I tried to reduce the verbosity a bit by using alias names for the most frequently used GraphQL types. As an alternative to building the GraphQL schema in Python code using GraphQL types as building blocks, it is also possible with GraphQL-core-next to define the schema using the GraphQL schema definition language (SDL). The only drawback here is that the SDL does not describe the server-side implementation of the schema, so you will need to reconnect the resolvers and mapping of enum values manually after creating the schema from the SDL if you want to build a fully working GraphQL server. Here is the code if you want to follow this alternative approach:</p><div class=highlight><pre class=chroma><code class=language-python3 data-lang=python3><span class=c1># schema.py</span>
+
+<span class=kn>from</span> <span class=nn>graphql</span> <span class=k>import</span> <span class=n>build_schema</span>
+
+<span class=kn>import</span> <span class=nn>resolvers</span>
+
+<span class=c1># Build the schema using SDL:</span>
+
+<span class=n>schema</span> <span class=o>=</span> <span class=n>build_schema</span><span class=p>(</span><span class=s2>&#34;&#34;&#34;
+</span><span class=s2>    type Query {
+</span><span class=s2>        work(id: ID!): Work!
+</span><span class=s2>        works: [Work!]!
+</span><span class=s2>        character(id: ID!): Character!
+</span><span class=s2>        characters: [Character!]!
+</span><span class=s2>    }
+</span><span class=s2>
+</span><span class=s2>    enum Genre {
+</span><span class=s2>        COMEDY
+</span><span class=s2>        HISTORY
+</span><span class=s2>        POEM
+</span><span class=s2>        SONNET
+</span><span class=s2>        TRAGEDY
+</span><span class=s2>    }
+</span><span class=s2>
+</span><span class=s2>    type Work {
+</span><span class=s2>        id: ID!
+</span><span class=s2>        title: String!
+</span><span class=s2>        year: Int!
+</span><span class=s2>        genre: Genre
+</span><span class=s2>        notes: String
+</span><span class=s2>        totalWords: Int!
+</span><span class=s2>        totalParagraphs: Int!
+</span><span class=s2>        characters: [Character!]!
+</span><span class=s2>    }
+</span><span class=s2>
+</span><span class=s2>    type Character {
+</span><span class=s2>        id: ID!
+</span><span class=s2>        name: String!
+</span><span class=s2>        description: String
+</span><span class=s2>        speechCount: Int!
+</span><span class=s2>        works: [Work!]!
+</span><span class=s2>    }
+</span><span class=s2>    &#34;&#34;&#34;</span><span class=p>)</span>
+
+<span class=c1># Add the server-side know-how:</span>
+
+<span class=n>fields</span> <span class=o>=</span> <span class=n>schema</span><span class=o>.</span><span class=n>query_type</span><span class=o>.</span><span class=n>fields</span>
+<span class=n>fields</span><span class=p>[</span><span class=s1>&#39;work&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>resolve</span> <span class=o>=</span> <span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_work</span>
+<span class=n>fields</span><span class=p>[</span><span class=s1>&#39;works&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>resolve</span> <span class=o>=</span> <span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_works</span>
+<span class=n>fields</span><span class=p>[</span><span class=s1>&#39;character&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>resolve</span> <span class=o>=</span> <span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_character</span>
+<span class=n>fields</span><span class=p>[</span><span class=s1>&#39;characters&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>resolve</span> <span class=o>=</span> <span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_characters</span>
+
+<span class=k>for</span> <span class=n>name</span><span class=p>,</span> <span class=n>value</span> <span class=ow>in</span> <span class=n>schema</span><span class=o>.</span><span class=n>get_type</span><span class=p>(</span><span class=s1>&#39;Genre&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>values</span><span class=o>.</span><span class=n>items</span><span class=p>():</span>
+    <span class=n>value</span><span class=o>.</span><span class=n>value</span> <span class=o>=</span> <span class=n>name</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>.</span><span class=n>lower</span><span class=p>()</span>
+
+<span class=n>fields</span> <span class=o>=</span> <span class=n>schema</span><span class=o>.</span><span class=n>get_type</span><span class=p>(</span><span class=s1>&#39;Work&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>fields</span>
+<span class=n>fields</span><span class=p>[</span><span class=s1>&#39;characters&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>resolve</span> <span class=o>=</span> <span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_chars_for_work</span>
+<span class=n>fields</span> <span class=o>=</span> <span class=n>schema</span><span class=o>.</span><span class=n>get_type</span><span class=p>(</span><span class=s1>&#39;Character&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>fields</span>
+<span class=n>fields</span><span class=p>[</span><span class=s1>&#39;works&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>resolve</span> <span class=o>=</span> <span class=n>resolvers</span><span class=o>.</span><span class=n>resolve_works_for_char</span></code></pre></div><p>Event though these two files look very different, they achieve the same goal of defining a GraphQL schema that can be used for our GraphQL server, which we will build next.</p><h3 id=the-server>The server</h3><p>Now that we have a GraphQL schema, it&rsquo;s time to build the actual GraphQL server. We want it to be an asynchronous HTTP server, so we are building it with <code>aiohttp</code>. We also need <code>asyncpg</code> and of course <code>GraphQL-core-next</code>. These all can be installed very easily with <code>pip</code> or <code>pipenv</code>:</p><div class=highlight><pre class=chroma><code class=language-bash data-lang=bash>pip install aiohttp asyncpg GraphQL-core-next</code></pre></div><p>Creating the GraphQL server with <code>aiohttp</code> is not too complicated. You can copy the following code and save it as <code>server.py</code> along with the <code>resolvers.py</code> and <code>schema.py</code> files you already created. Again, I&rsquo;ll explain how it works below.</p><div class=highlight><pre class=chroma><code class=language-python data-lang=python><span class=c1># server.py</span>
+
+<span class=kn>from</span> <span class=nn>aiohttp</span> <span class=kn>import</span> <span class=n>web</span>
+<span class=kn>import</span> <span class=nn>asyncpg</span>
+
+<span class=kn>from</span> <span class=nn>graphql</span> <span class=kn>import</span> <span class=n>graphql</span>
+
+<span class=kn>from</span> <span class=nn>schema</span> <span class=kn>import</span> <span class=n>schema</span>
+
+
+<span class=n>async</span> <span class=k>def</span> <span class=nf>init_db</span><span class=p>(</span><span class=n>app</span><span class=p>):</span>
+    <span class=n>app</span><span class=p>[</span><span class=s1>&#39;db&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=n>await</span> <span class=n>asyncpg</span><span class=o>.</span><span class=n>create_pool</span><span class=p>(</span><span class=n>database</span><span class=o>=</span><span class=s1>&#39;shakespeare&#39;</span><span class=p>)</span>
+
+
+<span class=n>async</span> <span class=k>def</span> <span class=nf>close_db</span><span class=p>(</span><span class=n>app</span><span class=p>):</span>
+    <span class=n>await</span> <span class=n>app</span><span class=p>[</span><span class=s1>&#39;db&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>close</span><span class=p>()</span>
+
+
+<span class=n>async</span> <span class=k>def</span> <span class=nf>get_query</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+    <span class=n>content_type</span> <span class=o>=</span> <span class=n>request</span><span class=o>.</span><span class=n>content_type</span>
+    <span class=k>if</span> <span class=n>content_type</span> <span class=o>==</span> <span class=s1>&#39;application/graphql&#39;</span><span class=p>:</span>
+        <span class=k>return</span> <span class=n>await</span> <span class=n>request</span><span class=o>.</span><span class=n>text</span><span class=p>()</span>
+    <span class=k>elif</span> <span class=n>content_type</span> <span class=o>==</span> <span class=s1>&#39;application/json&#39;</span><span class=p>:</span>
+        <span class=k>return</span> <span class=p>(</span><span class=n>await</span> <span class=n>request</span><span class=o>.</span><span class=n>json</span><span class=p>())[</span><span class=s1>&#39;query&#39;</span><span class=p>]</span>
+
+
+<span class=n>async</span> <span class=k>def</span> <span class=nf>graphql_view</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+    <span class=n>query</span> <span class=o>=</span> <span class=n>await</span> <span class=n>get_query</span><span class=p>(</span><span class=n>request</span><span class=p>)</span>
+    <span class=n>result</span> <span class=o>=</span> <span class=n>await</span> <span class=n>graphql</span><span class=p>(</span>
+        <span class=n>schema</span><span class=p>,</span> <span class=n>query</span><span class=p>,</span> <span class=n>context_value</span><span class=o>=</span><span class=p>{</span><span class=s1>&#39;db&#39;</span><span class=p>:</span> <span class=n>request</span><span class=o>.</span><span class=n>app</span><span class=p>[</span><span class=s1>&#39;db&#39;</span><span class=p>]})</span>
+    <span class=n>errors</span> <span class=o>=</span> <span class=n>result</span><span class=o>.</span><span class=n>errors</span>
+    <span class=k>if</span> <span class=n>errors</span><span class=p>:</span>
+        <span class=n>errors</span> <span class=o>=</span> <span class=p>[</span><span class=n>error</span><span class=o>.</span><span class=n>formatted</span> <span class=k>for</span> <span class=n>error</span> <span class=ow>in</span> <span class=n>errors</span><span class=p>]</span>
+        <span class=n>result</span> <span class=o>=</span> <span class=p>{</span><span class=s1>&#39;errors&#39;</span><span class=p>:</span> <span class=n>errors</span><span class=p>}</span>
+    <span class=k>else</span><span class=p>:</span>
+        <span class=n>result</span> <span class=o>=</span> <span class=p>{</span><span class=s1>&#39;data&#39;</span><span class=p>:</span> <span class=n>result</span><span class=o>.</span><span class=n>data</span><span class=p>}</span>
+    <span class=k>return</span> <span class=n>web</span><span class=o>.</span><span class=n>json_response</span><span class=p>(</span><span class=n>result</span><span class=p>)</span>
+
+
+<span class=n>app</span> <span class=o>=</span> <span class=n>web</span><span class=o>.</span><span class=n>Application</span><span class=p>()</span>
+<span class=n>app</span><span class=o>.</span><span class=n>on_startup</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>init_db</span><span class=p>)</span>
+<span class=n>app</span><span class=o>.</span><span class=n>on_shutdown</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>close_db</span><span class=p>)</span>
+<span class=n>app</span><span class=o>.</span><span class=n>router</span><span class=o>.</span><span class=n>add_post</span><span class=p>(</span><span class=s1>&#39;/graphql&#39;</span><span class=p>,</span> <span class=n>graphql_view</span><span class=p>)</span>
+<span class=n>web</span><span class=o>.</span><span class=n>run_app</span><span class=p>(</span><span class=n>app</span><span class=p>,</span> <span class=n>host</span><span class=o>=</span><span class=s1>&#39;127.0.0.1&#39;</span><span class=p>,</span> <span class=n>port</span><span class=o>=</span><span class=mi>8080</span><span class=p>)</span></code></pre></div><p>Before running this code, a few explanations. At the top of the file, we&rsquo;re importing all of our dependencies. The <code>graphql</code> package is provided by <code>GraphQL-core-next</code>. The <code>schema</code> module is the one we just created above (using either of the two approaches).</p><p>Next we define a few asynchronous functions (coroutines) to be used by <code>aiohttp</code>. The <code>init_db()</code> function creates a pool of database connections to the <code>shakespeare</code> database and stores it in the global <code>app</code> object which is an Application instance created with <code>aiohttp</code>. The function is executed when the web server starts. The <code>close_db()</code> function closes the database connection pool properly when the web server shuts down. <code>get_query()</code> is a helper function that gets the actual GraphQL query from a web request. And finally, the <code>graphql_view()</code> function is the actual request handler for our GraphQL requests. It is called whenever a URL starting with <code>/graphql</code> is requested from our server as a POST request. We only care about that <code>/graphql</code> route here and ignore all other URLs.</p><p>In our <code>graphql_view()</code> request handler, the following things happen: First, we get the actual GraphQL query string with the <code>get_query()</code> function. Since this is an asynchronous function, we must <code>await</code> the result. Next, we call the asynchronous <code>grapqhl()</code> function provided by the <code>graphql</code> package and again <code>await</code> its result. This function gets passed our GraphQL schema, the GraphQL query string, and a context object that will be passed to the resolvers. This is a dictionary, inside which we pass the reference to our global database connection pool under the <code>db</code> key.</p><p>The <code>graphql()</code> function is the one that actually executes the query in the request against the schema that we provided, using the resolver functions that we attached to the schema. Its result is an <code>ExecutionResult</code> object which has a <code>data</code> attribute and an <code>errors</code> attribute. The former contains the actual result of the query if it was valid and could be executed without errors. Otherwise, <code>errors</code> attribute will contain a list of <code>GraphQLError</code>s with the positions of the validation or execution errors and corresponding error messages.</p><p>The code at the bottom of the file sets up an <code>aiohttp</code> application, makes sure the <code>init_db()</code> function runs on startup and <code>close_db</code> on shutdown, mounts the <code>graphql_view()</code> request handler to the <code>/graphql</code> route, and finally starts the web server on localhost port 8080.</p><h2 id=the-client>The Client</h2><p>For testing the GraphQL API, you can use a GraphQL client like <a href=https://insomnia.rest/>Insomnia</a> (which was actually a REST client, but now speaks GraphQL, too). Run the <code>server.py</code> file and then start Insomnia. Create a new workspace &ldquo;Shakespeare&rdquo;. There, create a new request &ldquo;Hamlet&rdquo;, selecting &ldquo;POST&rdquo; as the request method and &ldquo;GraphQL query&rdquo; as the body. Change the URL of the query to <code>http://localhost:8080/graphql</code> and enter our GraphQL query from above as the body. You should get the expected output:</p><img class=center src=https://cito.github.io/img/shakespeare-with-graphql-1.png alt="Query Hamlet with Insomnia"><p>Another way way of testing the GraphQL API is by using the <a href=https://github.com/graphql/graphiql>GraphiQL</a> IDE which can be integrated into the server or started as a <a href=https://electronjs.org/apps/graphiql>standalone app</a> using Electron.</p><img class=center src=https://cito.github.io/img/shakespeare-with-graphql-2.png alt="Query Hamlet with GraphiQL"><p>When you click on the &ldquo;Docs&rdquo; Button on the right side of the GraphiQL window, you can browse through the documentation of all the types defined in our schema. You would also see descriptions for the types and enum values if we had added these when defining the schema. This is what I really like about GraphiQL. Like Insomnia, GraphiQL also uses the schema information to auto suggest field and argument names, and translates <code>GraphQLErrors</code> into squiggly red lines under the corresponding positions in the query. Once you got accustomed to this kind of convenience when testing queries against your API, you don&rsquo;t want to miss it any more.</p><p>Let&rsquo;s try to use the API we created to find out the title of Shakespeare&rsquo;s work in which the character Hamlet appeared. Ok, this is not a very difficult question, you say. So let&rsquo;s try to also find out in the same query, in which year that work has been written and how many words it contains. This is still quite easy to do with GraphiQL and our Shakespeare GraphQL API server:</p><img class=center src=https://cito.github.io/img/shakespeare-with-graphql-3.png alt="Query Hamlet title, year and total words with GraphiQL"><p>Have fun playing around with our small API. Maybe you want to extend it to the other data that&rsquo;s available in the database, making it possible to retrieve the full text of Shakespeare&rsquo;s works, or build a small single page web app using this API.</p></section></article></main><aside class=rel><p><a href=https://cito.github.io/blog/web-ext-with-angular/><i class="fa fa-long-arrow-left"></i>Web Extensions made with Angular</a></p><p></p></aside><footer id=site-footer><p>&copy; 2016-2019 Christoph Zwerschke. All rights reserved.</p></footer></body></html>
