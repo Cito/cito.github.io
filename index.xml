@@ -1,16 +1,125 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seasoned &amp; Agile</title><link>https://cito.github.io/</link><description>Recent content on Seasoned &amp; Agile</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 17 Aug 2018 17:00:00 +0100</lastBuildDate><atom:link href="https://cito.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Using GraphQL or REST, that is the question</title><link>https://cito.github.io/blog/shakespeare-with-graphql/</link><pubDate>Fri, 17 Aug 2018 17:00:00 +0100</pubDate><guid>https://cito.github.io/blog/shakespeare-with-graphql/</guid><description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/shakespeare-with-graphql-0.jpg&#34; alt=&#34;Hamlet&#34;&gt;
-&lt;p&gt;This blog has been dormant for too long &amp;ndash; it&amp;rsquo;s time to post another article. In order to live up to the blog title, this article will combine some old and seasoned stuff (PostgreSQL and Shakespeare&amp;rsquo;s works) with the latest trends for agile developers (GraphQL, asyncio and type hints for Python).&lt;/p&gt;</description></item><item><title>Web Extensions made with Angular</title><link>https://cito.github.io/blog/web-ext-with-angular/</link><pubDate>Wed, 01 Feb 2017 19:00:00 +0100</pubDate><guid>https://cito.github.io/blog/web-ext-with-angular/</guid><description>&lt;p&gt;In this blog post I want to show how you can create &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/What_are_WebExtensions&#34;&gt;WebExtensions&lt;/a&gt; for modern web browsers like Firefox, Chrome, Opera or Edge using the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. Angular version 2 and above).&lt;/p&gt;
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-0.png&#34; alt=&#34;Web Extensions made with Angular&#34;&gt;</description></item><item><title>Ending the Epic Battle for Overlay Icons</title><link>https://cito.github.io/blog/overlay-icon-battle/</link><pubDate>Fri, 13 Jan 2017 19:31:27 +0100</pubDate><guid>https://cito.github.io/blog/overlay-icon-battle/</guid><description>&lt;p&gt;An epic battle is going on deep inside in the registry of my Windows PC. The combatants: Dropbox, Google Drive, OneDrive and the allied forces of TortoiseGit, TortoiseHg and TortoiseSVN. The weapons: blank spaces.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Seasoned &amp; Agile</title>
+    <link>https://cito.github.io/</link>
+    <description>Recent content on Seasoned &amp; Agile</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 17 Aug 2018 17:00:00 +0100</lastBuildDate>
+    
+	<atom:link href="https://cito.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Using GraphQL or REST, that is the question</title>
+      <link>https://cito.github.io/blog/shakespeare-with-graphql/</link>
+      <pubDate>Fri, 17 Aug 2018 17:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/shakespeare-with-graphql/</guid>
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/shakespeare-with-graphql-0.jpg&#34; alt=&#34;Hamlet&#34;&gt;
+
+&lt;p&gt;This blog has been dormant for too long &amp;ndash; it&amp;rsquo;s time to post another article. In order to live up to the blog title, this article will combine some old and seasoned stuff (PostgreSQL and Shakespeare&amp;rsquo;s works) with the latest trends for agile developers (GraphQL, asyncio and type hints for Python).&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Web Extensions made with Angular</title>
+      <link>https://cito.github.io/blog/web-ext-with-angular/</link>
+      <pubDate>Wed, 01 Feb 2017 19:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/web-ext-with-angular/</guid>
+      <description>&lt;p&gt;In this blog post I want to show how you can create &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/What_are_WebExtensions&#34;&gt;WebExtensions&lt;/a&gt; for modern web browsers like Firefox, Chrome, Opera or Edge using the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. Angular version 2 and above).&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-0.png&#34; alt=&#34;Web Extensions made with Angular&#34;&gt;</description>
+    </item>
+    
+    <item>
+      <title>Ending the Epic Battle for Overlay Icons</title>
+      <link>https://cito.github.io/blog/overlay-icon-battle/</link>
+      <pubDate>Fri, 13 Jan 2017 19:31:27 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/overlay-icon-battle/</guid>
+      <description>&lt;p&gt;An epic battle is going on deep inside in the registry of my Windows PC. The combatants: Dropbox, Google Drive, OneDrive and the allied forces of TortoiseGit, TortoiseHg and TortoiseSVN. The weapons: blank spaces.&lt;/p&gt;
+
 &lt;p&gt;Let me explain: As so often, wars start when there are certain scarce or indivisible resources that are in demand by multiple contenders. In this, case, the resources are so called &amp;ldquo;overlay icons&amp;rdquo;. These are the tiny additions displayed at the lower left corner of the symbols for files and folders in the Windows explorer, like the small arrow that indicates a shortcut. Some third-party tools like TortoiseGit or Dropbox make also good use of them to show the state of the files in the registry or the cloud, like whether the file has been changed, is not yet synchronized and so on.&lt;/p&gt;
-&lt;img class=&#34;center&#34; src=&#34;https://cito.github.io/img/overlay-icon-battle.png&#34; alt=&#34;Overlay Icons&#34;&gt;</description></item><item><title>Never Iterate a Changing Dict</title><link>https://cito.github.io/blog/never-iterate-a-changing-dict/</link><pubDate>Sat, 07 Jan 2017 19:52:45 +0100</pubDate><guid>https://cito.github.io/blog/never-iterate-a-changing-dict/</guid><description>&lt;p&gt;Yesterday I noticed a bug in a Python program that only appeared when running it with the new Python 3.6.&lt;/p&gt;
+
+&lt;img class=&#34;center&#34; src=&#34;https://cito.github.io/img/overlay-icon-battle.png&#34; alt=&#34;Overlay Icons&#34;&gt;</description>
+    </item>
+    
+    <item>
+      <title>Never Iterate a Changing Dict</title>
+      <link>https://cito.github.io/blog/never-iterate-a-changing-dict/</link>
+      <pubDate>Sat, 07 Jan 2017 19:52:45 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/never-iterate-a-changing-dict/</guid>
+      <description>&lt;p&gt;Yesterday I noticed a bug in a Python program that only appeared when running it with the new Python 3.6.&lt;/p&gt;
+
 &lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/never-iterate-a-changing-dict.jpg&#34; alt=&#34;A slippery slope&#34;&gt;
-&lt;p&gt;It turned out that the program had been running a slippery slope all the time.&lt;/p&gt;</description></item><item><title>Python and the 36 Towers</title><link>https://cito.github.io/blog/python-36-towers/</link><pubDate>Tue, 27 Dec 2016 17:10:27 +0100</pubDate><guid>https://cito.github.io/blog/python-36-towers/</guid><description>&lt;p&gt;This year my brother&amp;rsquo;s family sent us a puzzle in their Christmas package, mentioning that they already solved it and we should give it a try over the Christmas holidays, too. The puzzle is called &amp;ldquo;36 Cube&amp;rdquo; and looks like this:&lt;/p&gt;
+
+&lt;p&gt;It turned out that the program had been running a slippery slope all the time.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Python and the 36 Towers</title>
+      <link>https://cito.github.io/blog/python-36-towers/</link>
+      <pubDate>Tue, 27 Dec 2016 17:10:27 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/python-36-towers/</guid>
+      <description>&lt;p&gt;This year my brother&amp;rsquo;s family sent us a puzzle in their Christmas package, mentioning that they already solved it and we should give it a try over the Christmas holidays, too. The puzzle is called &amp;ldquo;36 Cube&amp;rdquo; and looks like this:&lt;/p&gt;
+
 &lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-1.jpg&#34; alt=&#34;36 Cube&#34;&gt;
+
 &lt;p&gt;The &amp;ldquo;36 Cube&amp;rdquo; consists of a board with a 6x6 grid of tower stubs and 36 towers in 6 different heights and colors which need to be stacked on the stubs so that they all have the same height, forming a cube like in the picture. Also, no two towers of the same color may appear in the same row or column - similar to a Sudoku puzzle.&lt;/p&gt;
-&lt;p&gt;The puzzle looked tricky already, but it turned out it was even trickier than I first thought.&lt;/p&gt;</description></item><item><title>The new f-strings in Python 3.6</title><link>https://cito.github.io/blog/f-strings/</link><pubDate>Sat, 24 Dec 2016 09:00:00 +0100</pubDate><guid>https://cito.github.io/blog/f-strings/</guid><description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/f-strings-0.jpg&#34; alt=&#34;Benchmark results&#34;&gt;
+
+&lt;p&gt;The puzzle looked tricky already, but it turned out it was even trickier than I first thought.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>The new f-strings in Python 3.6</title>
+      <link>https://cito.github.io/blog/f-strings/</link>
+      <pubDate>Sat, 24 Dec 2016 09:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/f-strings/</guid>
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/f-strings-0.jpg&#34; alt=&#34;Benchmark results&#34;&gt;
+
 &lt;p&gt;Hurray! It&amp;rsquo;s Christmas time - and Python 3.6 has been released!&lt;/p&gt;
-&lt;p&gt;One of the &lt;a href=&#34;https://docs.python.org/3.6/whatsnew/3.6.html&#34;&gt;many goodies&lt;/a&gt; packed into the new release are &lt;a href=&#34;https://docs.python.org/3.6/reference/lexical_analysis.html#f-strings&#34;&gt;formatted string literals&lt;/a&gt;, or simply called &amp;ldquo;f-strings&amp;rdquo;. In this blog post I&amp;rsquo;ll explain why this is good news.&lt;/p&gt;</description></item><item><title>Pinboard - Social Bookmarking for Introverts</title><link>https://cito.github.io/blog/pinboard-review/</link><pubDate>Fri, 23 Dec 2016 19:00:00 +0100</pubDate><guid>https://cito.github.io/blog/pinboard-review/</guid><description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/pinboard-review.jpg&#34; alt=&#34;Pinboard&#34;&gt;
+
+&lt;p&gt;One of the &lt;a href=&#34;https://docs.python.org/3.6/whatsnew/3.6.html&#34;&gt;many goodies&lt;/a&gt; packed into the new release are &lt;a href=&#34;https://docs.python.org/3.6/reference/lexical_analysis.html#f-strings&#34;&gt;formatted string literals&lt;/a&gt;, or simply called &amp;ldquo;f-strings&amp;rdquo;. In this blog post I&amp;rsquo;ll explain why this is good news.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Pinboard - Social Bookmarking for Introverts</title>
+      <link>https://cito.github.io/blog/pinboard-review/</link>
+      <pubDate>Fri, 23 Dec 2016 19:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/pinboard-review/</guid>
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/pinboard-review.jpg&#34; alt=&#34;Pinboard&#34;&gt;
+
 &lt;p&gt;Here is a short review of the &lt;a href=&#34;https://pinboard.in/&#34;&gt;Pinboard&lt;/a&gt; bookmarking service that I&amp;rsquo;m using for several years now.&lt;/p&gt;
-&lt;p&gt;Every web browser has a built-in bookmark manager, usually opened with the keyboard shortcut &lt;code&gt;Ctrl&lt;/code&gt;+&lt;code&gt;Shift&lt;/code&gt;+&lt;code&gt;B&lt;/code&gt;. Modern browsers also allow syncing your bookmarks to the could, so that you can share your bookmarks for instance between your home desktop and your tablet or office computer. So why are online bookmark managers like Pinboard still interesting? Why would you even want to pay for them?&lt;/p&gt;</description></item><item><title>Welcome to my Blog</title><link>https://cito.github.io/blog/welcome/</link><pubDate>Thu, 22 Dec 2016 22:00:00 +0100</pubDate><guid>https://cito.github.io/blog/welcome/</guid><description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/welcome.jpg&#34; alt=&#34;Heidelberg&#34;&gt;
-&lt;p&gt;It&amp;rsquo;s this time of the year again, and I decided to use some of the cold and long winter evenings to finally start blogging.&lt;/p&gt;</description></item><item><title>About this blog and its author</title><link>https://cito.github.io/about/</link><pubDate>Fri, 16 Dec 2016 20:00:00 +0100</pubDate><guid>https://cito.github.io/about/</guid><description>About me A few words about me: I&amp;rsquo;m Christoph Zwerschke, a software developer and programming enthusiast currently living in the lovely Odenwald mountains in Germany with my lovely family.
-Besides programming, I&amp;rsquo;ve been fascinated with Mathematics (which I studied at Heidelberg University and finished with a diploma), Physics (my minor subject at the university), Astronomy, Electronics, Music (as an amateur piano player) and to some extend also explored Philosophy and Christian Theology.</description></item></channel></rss>
+
+&lt;p&gt;Every web browser has a built-in bookmark manager, usually opened with the keyboard shortcut &lt;code&gt;Ctrl&lt;/code&gt;+&lt;code&gt;Shift&lt;/code&gt;+&lt;code&gt;B&lt;/code&gt;. Modern browsers also allow syncing your bookmarks to the could, so that you can share your bookmarks for instance between your home desktop and your tablet or office computer. So why are online bookmark managers like Pinboard still interesting? Why would you even want to pay for them?&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Welcome to my Blog</title>
+      <link>https://cito.github.io/blog/welcome/</link>
+      <pubDate>Thu, 22 Dec 2016 22:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/welcome/</guid>
+      <description>&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/welcome.jpg&#34; alt=&#34;Heidelberg&#34;&gt;
+
+&lt;p&gt;It&amp;rsquo;s this time of the year again, and I decided to use some of the cold and long winter evenings to finally start blogging.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>About this blog and its author</title>
+      <link>https://cito.github.io/about/</link>
+      <pubDate>Fri, 16 Dec 2016 20:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/about/</guid>
+      <description>About me A few words about me: I&amp;rsquo;m Christoph Zwerschke, a software developer and programming enthusiast currently living in the lovely Odenwald mountains in Germany with my lovely family.
+Besides programming, I&amp;rsquo;ve been fascinated with Mathematics (which I studied at Heidelberg University and finished with a diploma), Physics (my minor subject at the university), Astronomy, Electronics, Music (as an amateur piano player) and to some extend also explored Philosophy and Christian Theology.</description>
+    </item>
+    
+  </channel>
+</rss>

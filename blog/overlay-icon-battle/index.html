@@ -1,93 +1,205 @@
-<!doctype html><html class=no-js lang=en><head><meta charset=utf-8><base href=https://cito.github.io/><title>Ending the Epic Battle for Overlay Icons | Seasoned &amp; Agile</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A solution for automatically rearranging the sort order of the overlay icons in the Windows registry."><meta name=description content="[windows, desktop, icons, overlay icons, python, programming, registry]"><meta name=author content="Christoph Zwerschke"><meta name=date content="2017-01-13 19:31:27 &#43;0100 CET"><meta name=last-modified content="2018-02-13 21:48:42 &#43;0100 CET"><link rel=canonical href=https://cito.github.io/blog/overlay-icon-battle/><link rel=stylesheet type=text/css href=https://cito.github.io/css/font-awesome.min.css><link rel=stylesheet type=text/css href=https://cito.github.io/css/syntax.min.css><link rel=stylesheet type=text/css href=https://cito.github.io/css/main.min.css><link rel=icon type=image/png sizes=32x32 href=https://cito.github.io/img/favicon32.png><link rel=icon type=image/png sizes=96x96 href=https://cito.github.io/img/favicon96.png><link rel=icon type=image/png sizes=16x16 href=https://cito.github.io/img/favicon16.png></head><body lang=en><header id=site-header><a href=https://cito.github.io/ class=title>Seasoned &amp; Agile</a><nav><ul><li><a href=https://cito.github.io/about/ title="About Me" rel=me><i class="fa fa-user-circle"></i></a></li><li><a href=https://cito.github.io/tags/ title=Tags><i class="fa fa-tags"></i></a></li><li><a href=https://github.com/cito title="~ GitHub ~"><i class="fa fa-github"></i></a></li><li><a href=https://plus.google.com/+ChristophZwerschke title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li><li><a href=https://twitter.com/CitoZwer title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li><li><a href=mailto:cito@online.de title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li><li><a href title=RSS><i class="fa fa-rs"></i></a></li></ul></nav></header><main id=site-main role=main><article><header><div>Fri Jan 13, 2017</div><div>5 minute read</div><ul class=tags><li><a href=https://cito.github.io//tags/python>Python</a></li><li><a href=https://cito.github.io//tags/windows>Windows</a></li></ul></header><section><h1 class=title>Ending the Epic Battle for Overlay Icons</h1><p>An epic battle is going on deep inside in the registry of my Windows PC. The combatants: Dropbox, Google Drive, OneDrive and the allied forces of TortoiseGit, TortoiseHg and TortoiseSVN. The weapons: blank spaces.</p><p>Let me explain: As so often, wars start when there are certain scarce or indivisible resources that are in demand by multiple contenders. In this, case, the resources are so called &ldquo;overlay icons&rdquo;. These are the tiny additions displayed at the lower left corner of the symbols for files and folders in the Windows explorer, like the small arrow that indicates a shortcut. Some third-party tools like TortoiseGit or Dropbox make also good use of them to show the state of the files in the registry or the cloud, like whether the file has been changed, is not yet synchronized and so on.</p><img class=center src=https://cito.github.io/img/overlay-icon-battle.png alt="Overlay Icons"><p>The problem is: Windows has only 15 slots available for such overlay icons. Yes, even in the latest Windows 10, you still only have 15 slots. While it didn&rsquo;t matter much in former times, when they were rarely used, it has become a real problem today. Several different cloud services are now fighting for these few slots, and if you&rsquo;re a developer, you will probably like TortoiseGit and other clients for source repositories which also use the overlay icons to display the state of the files in the registry in the Windows explorer, which is a tremendously helpful. While all the Tortoise clients share the same icons, these are already 9 of the available slots.</p><p>This means that in the end, not all overlay icons will be displayed. Windows simply sorts the registered overlay icons alphabetically in the registry and uses only the first 15 of them. Soon, software vendors found that there is a simple trick to get their icons into the top 10 of the overlay icons in front of all the others, just by prepending the icon names with a blank. This of course spurred an absurd arms race of vendors prepending names with more and more blanks in order to overtrump others already using this trick.</p><p>The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.</p><p>Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use. Before applying the changes, it also creates a backup file of the unaltered settings that can be loaded with the registry editor in case you change your mind and want to restore everything:</p><div class=highlight><pre class=chroma><code class=language-python3 data-lang=python3><span class=c1>#/usr/bin/python3</span>
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8">
+<base href="https://cito.github.io/">
 
-<span class=kn>import</span> <span class=nn>codecs</span>
-<span class=kn>import</span> <span class=nn>os</span>
-<span class=kn>import</span> <span class=nn>winreg</span> <span class=k>as</span> <span class=nn>reg</span>
+<title>Ending the Epic Battle for Overlay Icons | Seasoned &amp; Agile</title>
 
-<span class=c1># names of all overlay icons that shall be boosted:</span>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<span class=n>boost</span> <span class=o>=</span> <span class=s2>&#34;&#34;&#34;
-</span><span class=s2>    Tortoise1Normal
-</span><span class=s2>    Tortoise2Modified
-</span><span class=s2>    Tortoise3Conflict
-</span><span class=s2>    Tortoise4Locked
-</span><span class=s2>    Tortoise5ReadOnly
-</span><span class=s2>    Tortoise6Deleted
-</span><span class=s2>    Tortoise7Added
-</span><span class=s2>    Tortoise8Ignored
-</span><span class=s2>    Tortoise9Unversioned
-</span><span class=s2>    DropboxExt01
-</span><span class=s2>    DropboxExt02
-</span><span class=s2>    DropboxExt03
-</span><span class=s2>    DropboxExt04
-</span><span class=s2>    DropboxExt05
-</span><span class=s2>    DropboxExt06
-</span><span class=s2>&#34;&#34;&#34;</span>
+<meta name="description" content="A solution for automatically rearranging the sort order of the overlay icons in the Windows registry.">
 
-<span class=n>boost</span> <span class=o>=</span> <span class=nb>set</span><span class=p>(</span><span class=n>boost</span><span class=o>.</span><span class=n>split</span><span class=p>())</span>
-
-<span class=n>backup_filename</span> <span class=o>=</span> <span class=s1>&#39;IconOverlayBackup.reg&#39;</span>
-
-<span class=n>key</span> <span class=o>=</span> <span class=p>(</span><span class=sa>r</span><span class=s1>&#39;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion&#39;</span>
-       <span class=sa>r</span><span class=s1>&#39;\Explorer\ShellIconOverlayIdentifiers&#39;</span><span class=p>)</span>
-<span class=n>sub_key</span> <span class=o>=</span> <span class=n>key</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s1>&#39;</span><span class=se>\\</span><span class=s1>&#39;</span><span class=p>,</span> <span class=mi>1</span><span class=p>)[</span><span class=mi>1</span><span class=p>]</span>
-
-<span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
-
-    <span class=k>with</span> <span class=n>reg</span><span class=o>.</span><span class=n>OpenKey</span><span class=p>(</span><span class=n>reg</span><span class=o>.</span><span class=n>HKEY_LOCAL_MACHINE</span><span class=p>,</span> <span class=n>sub_key</span><span class=p>)</span> <span class=k>as</span> <span class=n>base</span><span class=p>:</span>
-        <span class=n>backup</span> <span class=o>=</span> <span class=p>[]</span>
-        <span class=n>names</span> <span class=o>=</span> <span class=nb>set</span><span class=p>()</span>
-        <span class=n>deletes</span> <span class=o>=</span> <span class=p>[]</span>
-        <span class=n>renames</span> <span class=o>=</span> <span class=p>[]</span>
-        <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span>
-        <span class=k>while</span> <span class=kc>True</span><span class=p>:</span>
-            <span class=k>try</span><span class=p>:</span>
-                <span class=n>name</span> <span class=o>=</span> <span class=n>reg</span><span class=o>.</span><span class=n>EnumKey</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>i</span><span class=p>)</span>
-                <span class=n>value</span> <span class=o>=</span> <span class=n>reg</span><span class=o>.</span><span class=n>QueryValue</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>name</span><span class=p>)</span>
-            <span class=k>except</span> <span class=ne>OSError</span><span class=p>:</span>
-                <span class=k>break</span>
-            <span class=n>backup</span><span class=o>.</span><span class=n>append</span><span class=p>((</span><span class=n>name</span><span class=p>,</span> <span class=n>value</span><span class=p>))</span>
-            <span class=n>core</span> <span class=o>=</span> <span class=n>name</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
-            <span class=k>if</span> <span class=n>core</span> <span class=ow>in</span> <span class=n>names</span><span class=p>:</span>
-                <span class=n>deletes</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
-            <span class=k>else</span><span class=p>:</span>
-                <span class=n>names</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>core</span><span class=p>)</span>
-                <span class=k>if</span> <span class=n>core</span> <span class=ow>in</span> <span class=n>boost</span><span class=p>:</span>
-                    <span class=n>core</span> <span class=o>=</span> <span class=s1>&#39; &#39;</span> <span class=o>+</span> <span class=n>core</span>
-                <span class=k>if</span> <span class=n>core</span> <span class=o>!=</span> <span class=n>name</span><span class=p>:</span>
-                    <span class=n>renames</span><span class=o>.</span><span class=n>append</span><span class=p>((</span><span class=n>name</span><span class=p>,</span> <span class=n>core</span><span class=p>))</span>
-            <span class=n>i</span> <span class=o>+=</span> <span class=mi>1</span>
-
-        <span class=k>if</span> <span class=n>deletes</span> <span class=ow>or</span> <span class=n>renames</span><span class=p>:</span>
-            <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Write backup file&#39;</span><span class=p>,</span> <span class=n>backup_filename</span><span class=p>)</span>
-            <span class=k>with</span> <span class=n>codecs</span><span class=o>.</span><span class=nb>open</span><span class=p>(</span><span class=n>backup_filename</span><span class=p>,</span> <span class=s1>&#39;w&#39;</span><span class=p>,</span> <span class=s1>&#39;utf_16_le&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>backup_file</span><span class=p>:</span>
-                <span class=n>wr</span> <span class=o>=</span> <span class=n>backup_file</span><span class=o>.</span><span class=n>write</span>
-                <span class=n>wr</span><span class=p>(</span><span class=s1>&#39;</span><span class=se>\ufeff</span><span class=s1>&#39;</span><span class=p>)</span>
-                <span class=n>wr</span><span class=p>(</span><span class=s1>&#39;Windows Registry Editor Version 5.00</span><span class=se>\r\n\r\n</span><span class=s1>&#39;</span><span class=p>)</span>
-                <span class=n>wr</span><span class=p>(</span><span class=s1>&#39;[</span><span class=si>{}</span><span class=s1>]</span><span class=se>\r\n\r\n</span><span class=s1>&#39;</span><span class=o>.</span><span class=nb>format</span><span class=p>(</span><span class=n>key</span><span class=p>))</span>
-                <span class=k>for</span> <span class=n>name</span><span class=p>,</span> <span class=n>value</span> <span class=ow>in</span> <span class=n>backup</span><span class=p>:</span>
-                    <span class=n>wr</span><span class=p>(</span><span class=s1>&#39;[</span><span class=si>{}</span><span class=se>\\</span><span class=si>{}</span><span class=s1>]</span><span class=se>\r\n</span><span class=s1>&#39;</span><span class=o>.</span><span class=nb>format</span><span class=p>(</span><span class=n>key</span><span class=p>,</span> <span class=n>name</span><span class=p>))</span>
-                    <span class=n>wr</span><span class=p>(</span><span class=s1>&#39;@=&#34;</span><span class=si>{}</span><span class=s1>&#34;</span><span class=se>\r\n\r\n</span><span class=s1>&#39;</span><span class=o>.</span><span class=nb>format</span><span class=p>(</span><span class=n>value</span><span class=p>))</span>
-
-            <span class=k>for</span> <span class=n>name</span> <span class=ow>in</span> <span class=n>deletes</span><span class=p>:</span>
-                <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Delete&#39;</span><span class=p>,</span> <span class=nb>repr</span><span class=p>(</span><span class=n>name</span><span class=p>))</span>
-                <span class=n>reg</span><span class=o>.</span><span class=n>DeleteKey</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>name</span><span class=p>)</span>
-            <span class=k>for</span> <span class=n>old_name</span><span class=p>,</span> <span class=n>new_name</span> <span class=ow>in</span> <span class=n>renames</span><span class=p>:</span>
-                <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Rename&#39;</span><span class=p>,</span> <span class=nb>repr</span><span class=p>(</span><span class=n>old_name</span><span class=p>),</span> <span class=s1>&#39;to&#39;</span><span class=p>,</span> <span class=nb>repr</span><span class=p>(</span><span class=n>new_name</span><span class=p>))</span>
-                <span class=n>value</span> <span class=o>=</span> <span class=n>reg</span><span class=o>.</span><span class=n>QueryValue</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>old_name</span><span class=p>)</span>
-                <span class=n>reg</span><span class=o>.</span><span class=n>CreateKey</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>new_name</span><span class=p>)</span>
-                <span class=n>reg</span><span class=o>.</span><span class=n>SetValue</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>new_name</span><span class=p>,</span> <span class=n>reg</span><span class=o>.</span><span class=n>REG_SZ</span><span class=p>,</span> <span class=n>value</span><span class=p>)</span>
-                <span class=n>reg</span><span class=o>.</span><span class=n>DeleteKey</span><span class=p>(</span><span class=n>base</span><span class=p>,</span> <span class=n>old_name</span><span class=p>)</span>
-
-            <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Restart Windows Explorer&#39;</span><span class=p>)</span>
-            <span class=k>if</span> <span class=ow>not</span> <span class=n>os</span><span class=o>.</span><span class=n>system</span><span class=p>(</span><span class=s1>&#39;taskkill /F /IM explorer.exe&#39;</span><span class=p>):</span>
-                <span class=n>os</span><span class=o>.</span><span class=n>system</span><span class=p>(</span><span class=s1>&#39;start explorer.exe&#39;</span><span class=p>)</span>
-
-        <span class=k>else</span><span class=p>:</span>
-            <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Nothing to rename&#39;</span><span class=p>)</span>
+<meta name="description" content="[windows, desktop, icons, overlay icons, python, programming, registry]">
 
 
-<span class=k>if</span> <span class=vm>__name__</span> <span class=o>==</span> <span class=s1>&#39;__main__&#39;</span><span class=p>:</span>
-    <span class=n>main</span><span class=p>()</span></code></pre></div><p>This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.</p><p>Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a shortcut file referencing the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &ldquo;run as administrator&rdquo; under the advanced options (do not set &ldquo;run as administrator&rdquo; under the compatibility section, because this would then apply to the Python executable in general).</p><p>Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up.</p><p>In order to make the changes effective, the Windows Explorer process must be restarted. Usually this happens only when rebooting Windows, or logging off and in again. To make this less troublesome, I have added two lines in the above script that forcefully terminate and restart the Windows Explorer process. This is another reason why the script must be run with elevated privileges.</p><p>By the way, another notorious Windows problem with desktop icons is that it sometimes completely jumbles or forgets the position of the icons on the desktop, particularly when the Windows Explorer process restarts, which can be pretty annoying when you just carefully arranged everything to your likes. Whenever this happens, I restore the icons with <a href="http://www.softwareok.com/?seite=Freeware/DesktopOK">DesktopOK</a>, a small but very useful utility provided by Nenad Hrg as freeware.</p><p><aside class=update><span class=lastmod>Updated Tue Oct 31, 2017:</span>
-Charles Ruhs pointed out that instead of rebooting, one can simply restart the Windows Explorer.</aside><aside class=update><span class=lastmod>Updated Tue Feb 13, 2018:</span>
-Robert van Drie suggested to create a backup of the current settings.</aside></p></section></article></main><aside class=rel><p><a href=https://cito.github.io/blog/never-iterate-a-changing-dict/><i class="fa fa-long-arrow-left"></i>Never Iterate a Changing Dict</a></p><p><a href=https://cito.github.io/blog/web-ext-with-angular/>Web Extensions made with Angular <i class="fa fa-long-arrow-right"></i></a></p></aside><footer id=site-footer><p>&copy; 2016-2020 Christoph Zwerschke. All rights reserved.</p></footer></body></html>
+<meta name="author" content="Christoph Zwerschke">
+<meta name="date" content="2017-01-13 19:31:27 &#43;0100 CET">
+<meta name="last-modified" content="2018-02-13 21:48:42 &#43;0100 CET">
+<link rel="canonical" href="https://cito.github.io/blog/overlay-icon-battle/">
+
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/syntax.min.css">
+<link rel="stylesheet" type="text/css" href="https://cito.github.io/css/main.min.css">
+<link rel="icon" type="image/png" sizes="32x32" href="https://cito.github.io/img/favicon32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://cito.github.io/img/favicon96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://cito.github.io/img/favicon16.png">
+</head>
+<body lang="en">
+<header id="site-header">
+<a href="https://cito.github.io/" class="title">Seasoned &amp; Agile</a>
+<nav><ul>
+<li><a href="https://cito.github.io/about/" title="About Me" rel="me"><i class="fa fa-user-circle"></i></a></li>
+<li><a href="https://cito.github.io/tags/" title="Tags"><i class="fa fa-tags"></i></a></li>
+<li><a href="https://github.com/cito" title="~ GitHub ~"><i class="fa fa-github"></i></a></li>
+<li><a href="https://plus.google.com/+ChristophZwerschke" title="~ Google+ ~"><i class="fa fa-google-plus-official"></i></a></li>
+<li><a href="https://twitter.com/CitoZwer" title="~ Twitter ~"><i class="fa fa-twitter"></i></a></li>
+<li><a href="mailto:cito@online.de" title="~ E-Mail ~"><i class="fa fa-envelope"></i></a></li>
+<li><a href="" title="RSS"><i class="fa fa-rs"></i></a></li>
+</ul></nav>
+</header>
+
+
+<main id="site-main" role="main">
+<article>
+
+<header>
+<div>Fri Jan 13, 2017</div>
+<div>5 minute read</div>
+<ul class="tags">
+  
+    <li> <a href="https://cito.github.io//tags/python">Python</a> </li>
+  
+    <li> <a href="https://cito.github.io//tags/windows">Windows</a> </li>
+  
+</ul>
+</header>
+<section>
+<h1 class="title">Ending the Epic Battle for Overlay Icons</h1>
+<p>An epic battle is going on deep inside in the registry of my Windows PC. The combatants: Dropbox, Google Drive, OneDrive and the allied forces of TortoiseGit, TortoiseHg and TortoiseSVN. The weapons: blank spaces.</p>
+
+<p>Let me explain: As so often, wars start when there are certain scarce or indivisible resources that are in demand by multiple contenders. In this, case, the resources are so called &ldquo;overlay icons&rdquo;. These are the tiny additions displayed at the lower left corner of the symbols for files and folders in the Windows explorer, like the small arrow that indicates a shortcut. Some third-party tools like TortoiseGit or Dropbox make also good use of them to show the state of the files in the registry or the cloud, like whether the file has been changed, is not yet synchronized and so on.</p>
+
+<img class="center" src="https://cito.github.io/img/overlay-icon-battle.png" alt="Overlay Icons">
+
+<p>The problem is: Windows has only 15 slots available for such overlay icons. Yes, even in the latest Windows 10, you still only have 15 slots. While it didn&rsquo;t matter much in former times, when they were rarely used, it has become a real problem today. Several different cloud services are now fighting for these few slots, and if you&rsquo;re a developer, you will probably like TortoiseGit and other clients for source repositories which also use the overlay icons to display the state of the files in the registry in the Windows explorer, which is a tremendously helpful. While all the Tortoise clients share the same icons, these are already 9 of the available slots.</p>
+
+<p>This means that in the end, not all overlay icons will be displayed. Windows simply sorts the registered overlay icons alphabetically in the registry and uses only the first 15 of them. Soon, software vendors found that there is a simple trick to get their icons into the top 10 of the overlay icons in front of all the others, just by prepending the icon names with a blank. This of course spurred an absurd arms race of vendors prepending names with more and more blanks in order to overtrump others already using this trick.</p>
+
+<p>The Tortoise clients finally gave up adding blanks, with the annoying consequence that whenever there was an update of one of the cloud clients, and they re-registered their icon handlers with a nasty amount of blanks, my so useful overlay icons for the Tortoise clients disappeared.</p>
+
+<p>Being tired of renaming the icon handlers in the registry by hand, I wrote the following Python script to finally end that epic battle. It simply removes all the prepended blanks from the icon names and adds only one blank to those icons I really want to use. Before applying the changes, it also creates a backup file of the unaltered settings that can be loaded with the registry editor in case you change your mind and want to restore everything:</p>
+<div class="highlight"><pre class="chroma"><code class="language-python3" data-lang="python3"><span class="c1">#/usr/bin/python3</span>
+
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">winreg</span> <span class="k">as</span> <span class="nn">reg</span>
+
+<span class="c1"># names of all overlay icons that shall be boosted:</span>
+
+<span class="n">boost</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    Tortoise1Normal
+</span><span class="s2">    Tortoise2Modified
+</span><span class="s2">    Tortoise3Conflict
+</span><span class="s2">    Tortoise4Locked
+</span><span class="s2">    Tortoise5ReadOnly
+</span><span class="s2">    Tortoise6Deleted
+</span><span class="s2">    Tortoise7Added
+</span><span class="s2">    Tortoise8Ignored
+</span><span class="s2">    Tortoise9Unversioned
+</span><span class="s2">    DropboxExt01
+</span><span class="s2">    DropboxExt02
+</span><span class="s2">    DropboxExt03
+</span><span class="s2">    DropboxExt04
+</span><span class="s2">    DropboxExt05
+</span><span class="s2">    DropboxExt06
+</span><span class="s2">&#34;&#34;&#34;</span>
+
+<span class="n">boost</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">boost</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+<span class="n">backup_filename</span> <span class="o">=</span> <span class="s1">&#39;IconOverlayBackup.reg&#39;</span>
+
+<span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">r</span><span class="s1">&#39;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion&#39;</span>
+       <span class="sa">r</span><span class="s1">&#39;\Explorer\ShellIconOverlayIdentifiers&#39;</span><span class="p">)</span>
+<span class="n">sub_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="k">with</span> <span class="n">reg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span> <span class="n">sub_key</span><span class="p">)</span> <span class="k">as</span> <span class="n">base</span><span class="p">:</span>
+        <span class="n">backup</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">deletes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">renames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">EnumKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">QueryValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">backup</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+            <span class="n">core</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">core</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="n">deletes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">core</span> <span class="ow">in</span> <span class="n">boost</span><span class="p">:</span>
+                    <span class="n">core</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">core</span>
+                <span class="k">if</span> <span class="n">core</span> <span class="o">!=</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="n">renames</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">core</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">deletes</span> <span class="ow">or</span> <span class="n">renames</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Write backup file&#39;</span><span class="p">,</span> <span class="n">backup_filename</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="n">backup_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;utf_16_le&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backup_file</span><span class="p">:</span>
+                <span class="n">wr</span> <span class="o">=</span> <span class="n">backup_file</span><span class="o">.</span><span class="n">write</span>
+                <span class="n">wr</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\ufeff</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">wr</span><span class="p">(</span><span class="s1">&#39;Windows Registry Editor Version 5.00</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">wr</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">{}</span><span class="s1">]</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">backup</span><span class="p">:</span>
+                    <span class="n">wr</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">{}</span><span class="se">\\</span><span class="si">{}</span><span class="s1">]</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                    <span class="n">wr</span><span class="p">(</span><span class="s1">&#39;@=&#34;</span><span class="si">{}</span><span class="s1">&#34;</span><span class="se">\r\n\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="nb">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">deletes</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Delete&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">old_name</span><span class="p">,</span> <span class="n">new_name</span> <span class="ow">in</span> <span class="n">renames</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rename&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">old_name</span><span class="p">),</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">new_name</span><span class="p">))</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">QueryValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">old_name</span><span class="p">)</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">CreateKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new_name</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">REG_SZ</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="n">reg</span><span class="o">.</span><span class="n">DeleteKey</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">old_name</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Restart Windows Explorer&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;taskkill /F /IM explorer.exe&#39;</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;start explorer.exe&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nothing to rename&#39;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></code></pre></div>
+<p>This script also demonstrates how you can modify the Windows registry using only Python and the batteries included in the standard library.</p>
+
+<p>Note that this script needs to run with elevated privileges so that it can change the registry. One way to achieve this: Create a shortcut file referencing the Python executable on the desktop, open the properties dialog, add the full path to the above script as argument to its target and select &ldquo;run as administrator&rdquo; under the advanced options (do not set &ldquo;run as administrator&rdquo; under the compatibility section, because this would then apply to the Python executable in general).</p>
+
+<p>Unfortunately, you still need to decide which icons are most useful - you cannot have them all. You also need to run this script every time the icons get screwed up.</p>
+
+<p>In order to make the changes effective, the Windows Explorer process must be restarted. Usually this happens only when rebooting Windows, or logging off and in again. To make this less troublesome, I have added two lines in the above script that forcefully terminate and restart the Windows Explorer process. This is another reason why the script must be run with elevated privileges.</p>
+
+<p>By the way, another notorious Windows problem with desktop icons is that it sometimes completely jumbles or forgets the position of the icons on the desktop, particularly when the Windows Explorer process restarts, which can be pretty annoying when you just carefully arranged everything to your likes. Whenever this happens, I restore the icons with <a href="http://www.softwareok.com/?seite=Freeware/DesktopOK">DesktopOK</a>, a small but very useful utility provided by Nenad Hrg as freeware.</p>
+
+<p><aside class="update">
+<span class="lastmod">Updated Tue Oct 31, 2017:</span>
+Charles Ruhs pointed out that instead of rebooting, one can simply restart the Windows Explorer.
+</aside>
+
+<aside class="update">
+<span class="lastmod">Updated Tue Feb 13, 2018:</span>
+Robert van Drie suggested to create a backup of the current settings.
+</aside>
+</p>
+</section>
+</article>
+</main>
+
+<aside class="rel">
+<p>
+
+<a href="https://cito.github.io/blog/never-iterate-a-changing-dict/"> <i class="fa fa-long-arrow-left"></i> Never Iterate a Changing Dict</a>
+
+</p>
+<p>
+
+<a href="https://cito.github.io/blog/web-ext-with-angular/">Web Extensions made with Angular <i class="fa fa-long-arrow-right"></i> </a>
+
+</p>
+</aside>
+
+<footer id="site-footer">
+<p>&copy; 2016-2020 Christoph Zwerschke. All rights reserved.</p>
+</footer>
+</body>
+</html>
+

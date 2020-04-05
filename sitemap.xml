@@ -1,1 +1,128 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url><loc>https://cito.github.io/blog/shakespeare-with-graphql/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod></url><url><loc>https://cito.github.io/blog/web-ext-with-angular/</loc><lastmod>2017-11-04T11:00:00+01:00</lastmod></url><url><loc>https://cito.github.io/blog/overlay-icon-battle/</loc><lastmod>2018-02-13T21:48:42+01:00</lastmod></url><url><loc>https://cito.github.io/blog/never-iterate-a-changing-dict/</loc><lastmod>2017-01-07T19:52:45+01:00</lastmod></url><url><loc>https://cito.github.io/blog/python-36-towers/</loc><lastmod>2016-12-27T17:10:27+01:00</lastmod></url><url><loc>https://cito.github.io/blog/f-strings/</loc><lastmod>2016-12-24T09:00:00+01:00</lastmod></url><url><loc>https://cito.github.io/blog/pinboard-review/</loc><lastmod>2016-12-23T19:00:00+01:00</lastmod></url><url><loc>https://cito.github.io/blog/welcome/</loc><lastmod>2016-12-22T22:00:00+01:00</lastmod></url><url><loc>https://cito.github.io/about/</loc><lastmod>2016-12-16T20:00:00+01:00</lastmod></url><url><loc>https://cito.github.io/tags/angular/</loc><lastmod>2017-11-04T11:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/blog/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/future/</loc><lastmod>2016-12-22T22:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/graphql/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/math/</loc><lastmod>2016-12-27T17:10:27+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/postgresql/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/programming/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/puzzles/</loc><lastmod>2016-12-27T17:10:27+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/python/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/</loc><lastmod>2018-08-17T17:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/</loc><lastmod>2017-11-04T11:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/tools/</loc><lastmod>2016-12-23T19:00:00+01:00</lastmod><priority>0</priority></url><url><loc>https://cito.github.io/tags/windows/</loc><lastmod>2018-02-13T21:48:42+01:00</lastmod><priority>0</priority></url></urlset>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://cito.github.io/blog/shakespeare-with-graphql/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/web-ext-with-angular/</loc>
+    <lastmod>2017-11-04T11:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/overlay-icon-battle/</loc>
+    <lastmod>2018-02-13T21:48:42+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/never-iterate-a-changing-dict/</loc>
+    <lastmod>2017-01-07T19:52:45+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/python-36-towers/</loc>
+    <lastmod>2016-12-27T17:10:27+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/f-strings/</loc>
+    <lastmod>2016-12-24T09:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/pinboard-review/</loc>
+    <lastmod>2016-12-23T19:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/welcome/</loc>
+    <lastmod>2016-12-22T22:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/about/</loc>
+    <lastmod>2016-12-16T20:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/angular/</loc>
+    <lastmod>2017-11-04T11:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/blog/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/future/</loc>
+    <lastmod>2016-12-22T22:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/graphql/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/math/</loc>
+    <lastmod>2016-12-27T17:10:27+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/postgresql/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/programming/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/puzzles/</loc>
+    <lastmod>2016-12-27T17:10:27+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/python/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/</loc>
+    <lastmod>2018-08-17T17:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/</loc>
+    <lastmod>2017-11-04T11:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/tools/</loc>
+    <lastmod>2016-12-23T19:00:00+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://cito.github.io/tags/windows/</loc>
+    <lastmod>2018-02-13T21:48:42+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

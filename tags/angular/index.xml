@@ -1,2 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Angular on Seasoned &amp; Agile</title><link>https://cito.github.io/tags/angular/</link><description>Recent content in Angular on Seasoned &amp; Agile</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 01 Feb 2017 19:00:00 +0100</lastBuildDate><atom:link href="https://cito.github.io/tags/angular/index.xml" rel="self" type="application/rss+xml"/><item><title>Web Extensions made with Angular</title><link>https://cito.github.io/blog/web-ext-with-angular/</link><pubDate>Wed, 01 Feb 2017 19:00:00 +0100</pubDate><guid>https://cito.github.io/blog/web-ext-with-angular/</guid><description>&lt;p&gt;In this blog post I want to show how you can create &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/What_are_WebExtensions&#34;&gt;WebExtensions&lt;/a&gt; for modern web browsers like Firefox, Chrome, Opera or Edge using the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. Angular version 2 and above).&lt;/p&gt;
-&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-0.png&#34; alt=&#34;Web Extensions made with Angular&#34;&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Angular on Seasoned &amp; Agile</title>
+    <link>https://cito.github.io/tags/angular/</link>
+    <description>Recent content in Angular on Seasoned &amp; Agile</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 01 Feb 2017 19:00:00 +0100</lastBuildDate>
+    
+	<atom:link href="https://cito.github.io/tags/angular/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Web Extensions made with Angular</title>
+      <link>https://cito.github.io/blog/web-ext-with-angular/</link>
+      <pubDate>Wed, 01 Feb 2017 19:00:00 +0100</pubDate>
+      
+      <guid>https://cito.github.io/blog/web-ext-with-angular/</guid>
+      <description>&lt;p&gt;In this blog post I want to show how you can create &lt;a href=&#34;https://developer.mozilla.org/en-US/Add-ons/WebExtensions/What_are_WebExtensions&#34;&gt;WebExtensions&lt;/a&gt; for modern web browsers like Firefox, Chrome, Opera or Edge using the new &lt;a href=&#34;https://angular.io/&#34;&gt;Angular framework&lt;/a&gt; (i.e. Angular version 2 and above).&lt;/p&gt;
+
+&lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/web-ext-with-angular-0.png&#34; alt=&#34;Web Extensions made with Angular&#34;&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
