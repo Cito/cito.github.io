@@ -1,30 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Math on Seasoned &amp; Agile</title>
-    <link>https://cito.github.io/tags/math/</link>
-    <description>Recent content in Math on Seasoned &amp; Agile</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Tue, 27 Dec 2016 17:10:27 +0100</lastBuildDate>
-    
-	<atom:link href="https://cito.github.io/tags/math/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Python and the 36 Towers</title>
-      <link>https://cito.github.io/blog/python-36-towers/</link>
-      <pubDate>Tue, 27 Dec 2016 17:10:27 +0100</pubDate>
-      
-      <guid>https://cito.github.io/blog/python-36-towers/</guid>
-      <description>&lt;p&gt;This year my brother&amp;rsquo;s family sent us a puzzle in their Christmas package, mentioning that they already solved it and we should give it a try over the Christmas holidays, too. The puzzle is called &amp;ldquo;36 Cube&amp;rdquo; and looks like this:&lt;/p&gt;
-
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Math on Seasoned &amp; Agile</title><link>https://cito.github.io/tags/math/</link><description>Recent content in Math on Seasoned &amp; Agile</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 27 Dec 2016 17:10:27 +0100</lastBuildDate><atom:link href="https://cito.github.io/tags/math/index.xml" rel="self" type="application/rss+xml"/><item><title>Python and the 36 Towers</title><link>https://cito.github.io/blog/python-36-towers/</link><pubDate>Tue, 27 Dec 2016 17:10:27 +0100</pubDate><guid>https://cito.github.io/blog/python-36-towers/</guid><description>&lt;p&gt;This year my brother&amp;rsquo;s family sent us a puzzle in their Christmas package, mentioning that they already solved it and we should give it a try over the Christmas holidays, too. The puzzle is called &amp;ldquo;36 Cube&amp;rdquo; and looks like this:&lt;/p&gt;
 &lt;img class=&#34;center half&#34; src=&#34;https://cito.github.io/img/python-36-towers-1.jpg&#34; alt=&#34;36 Cube&#34;&gt;
-
 &lt;p&gt;The &amp;ldquo;36 Cube&amp;rdquo; consists of a board with a 6x6 grid of tower stubs and 36 towers in 6 different heights and colors which need to be stacked on the stubs so that they all have the same height, forming a cube like in the picture. Also, no two towers of the same color may appear in the same row or column - similar to a Sudoku puzzle.&lt;/p&gt;
-
-&lt;p&gt;The puzzle looked tricky already, but it turned out it was even trickier than I first thought.&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+&lt;p&gt;The puzzle looked tricky already, but it turned out it was even trickier than I first thought.&lt;/p&gt;</description></item></channel></rss>
