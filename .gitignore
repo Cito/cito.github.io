@@ -1,0 +1,13 @@
+.astro/
+.idea/
+.vscode/
+*.swp
+
+node_modules/
+
+backup.sh
+
+dist/
+
+old/
+drafts/

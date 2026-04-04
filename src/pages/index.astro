@@ -1,0 +1,178 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import PostCard from '@/components/PostCard.svelte';
+import { getReadTime } from '@/lib/utils/readTime';
+import { getPublishedPosts, getPostSlug } from '@/lib/utils/posts';
+import { SITE } from '@/config';
+import { Image } from 'astro:assets';
+import profilePhoto from '@/site-assets/profile_photo.png';
+import { getLangFlag } from '@/lib/utils/lang';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { parseMarkdown } from '@/lib/simple-markdown';
+
+const posts = (await getPublishedPosts()).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const featuredPosts = posts.filter((post) => post.data.featured).slice(0, SITE.featuredPostsCount);
+const latestPosts = posts.filter((post) => !post.data.featured).slice(0, SITE.latestPostsCount);
+
+---
+
+<Layout title="Welcome">
+  <!-- 1. Hero Section -->
+  <section
+    class="flex flex-col-reverse md:flex-row items-center gap-8 sm:gap-12 lg:gap-16 mb-24 lg:mb-32"
+  >
+    <div class="flex-1 text-center md:text-left">
+      <div
+        class="hero-content"
+        set:html={(() => {
+          try {
+            const fullPath = join(process.cwd(), SITE.hero.filePath);
+            const markdown = readFileSync(fullPath, 'utf-8');
+            return parseMarkdown(markdown.replace('{author}', SITE.author));
+          } catch {
+            return `<h1>I'm ${SITE.author}, developer and designer.</h1><p>${SITE.homeHeroDescription}</p>`;
+          }
+        })()}
+      />
+      <div class="flex flex-wrap justify-center md:justify-start gap-4 sm:gap-6">
+        {
+          Object.entries(SITE.social).map(([platform, link]) => (
+            <a
+              href={link}
+              aria-label={`Visit our ${platform} profile`}
+              class="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-all no-underline"
+            >
+              {platform}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <div
+      class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 3xl:w-72 3xl:h-72 rounded-2xl overflow-hidden border border-border shadow-xl shrink-0"
+    >
+      <Image
+        src={profilePhoto}
+        alt={SITE.author}
+        width={400}
+        height={400}
+        widths={[200, 400, 800]}
+        sizes="(max-width: 639px) 128px, (max-width: 1023px) 160px, 400px"
+        class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 ease-out scale-105 hover:scale-100"
+      />
+    </div>
+  </section>
+
+  <div class="flex flex-col gap-24 lg:gap-32">
+    <!-- 2. Featured Posts -->
+    {
+      featuredPosts.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between mb-8 sm:mb-12">
+            <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              Featured
+            </h2>
+            <div class="h-px flex-1 mx-4 sm:mx-8 bg-border opacity-70" />
+            <a
+              href="/posts"
+              class="px-2 py-0.5 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-accent hover:text-primary transition-all no-underline"
+            >
+              See all posts
+            </a>
+          </div>
+          <div class="grid gap-3 sm:gap-4">
+            {featuredPosts.map((post) => (
+              <PostCard {post} slug={getPostSlug(post)} readTime={getReadTime(post.body || '')} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- 3. Latest Posts -->
+    <section>
+      <div class="flex items-baseline justify-between mb-8 sm:mb-12">
+        <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+          Latest Writing
+        </h2>
+        <div class="h-px flex-1 mx-4 sm:mx-8 bg-border opacity-70"></div>
+        <a
+          href="/posts"
+          class="px-2 py-0.5 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-accent hover:text-primary transition-all no-underline"
+          >Writing Archive</a
+        >
+      </div>
+      <div class="grid gap-3 sm:gap-4">
+        {
+          latestPosts.map((post) => (
+            <PostCard {post} slug={getPostSlug(post)} readTime={getReadTime(post.body || '')} />
+          ))
+        }
+      </div>
+    </section>
+
+  </div>
+</Layout>
+
+<style>
+  .hero-content :global(h1) {
+    font-size: 1.875rem; /* text-3xl */
+    line-height: 1.1;
+    font-weight: 900; /* font-black */
+    letter-spacing: -0.025em; /* tracking-tight */
+    margin-bottom: 1rem; /* mb-4 */
+    color: var(--color-foreground);
+  }
+
+  @media (min-width: 640px) {
+    .hero-content :global(h1) {
+      font-size: 2.25rem; /* sm:text-4xl */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-content :global(h1) {
+      font-size: 3rem; /* lg:text-5xl */
+    }
+  }
+
+  @media (min-width: 1920px) {
+    .hero-content :global(h1) {
+      font-size: 3.75rem; /* 3xl:text-6xl */
+    }
+  }
+
+  .hero-content :global(p) {
+    font-size: 1rem; /* text-base */
+    line-height: 1.625; /* leading-relaxed */
+    color: var(--color-muted-foreground);
+    margin-bottom: 2rem; /* mb-8 */
+    max-width: 42rem; /* max-w-2xl */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (min-width: 640px) {
+    .hero-content :global(p) {
+      font-size: 1.125rem; /* sm:text-lg */
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-content :global(p) {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-content :global(p) {
+      font-size: 1.25rem; /* lg:text-xl */
+    }
+  }
+</style>
