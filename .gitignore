@@ -1,6 +1,13 @@
 .astro/
+
 .idea/
 .vscode/
+
+.agents/
+.claude/
+AGENTS.md
+CLAUDE.md
+
 *.swp
 
 node_modules/

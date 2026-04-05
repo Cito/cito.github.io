@@ -5,7 +5,7 @@ pubDate: 2016-12-24
 tags: ["Python", "Programming"]
 ---
 
-![Benchmark results](/img/f-strings-0.jpg)
+![Christmas time](/img/f-strings-0.jpg)
 
 Hurray! It's Christmas time - and Python 3.6 has been released!
 
