@@ -2,6 +2,7 @@
 title: "Web Extensions made with Angular"
 description: "This article describes how you can create a web extension for modern web browsers using the new Angular framework."
 pubDate: 2017-02-01
+updatedDate: 2017-11-04
 tags: ["Angular","Programming"]
 ---
 

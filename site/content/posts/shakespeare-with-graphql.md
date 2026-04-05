@@ -1,5 +1,5 @@
 ---
-title: "Using GraphQL or REST, that is the question"
+title: "Using GraphQL or REST, That Is the Question"
 description: "We create a GraphQL API for Shakespeare's work using GraphQL-core-next, asyncio, asyncpg and PostgreSQL."
 pubDate: 2018-08-17
 tags: ["GraphQL","PostgreSQL","Python","Programming"]

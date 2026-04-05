@@ -2,6 +2,7 @@
 title: "Ending the Epic Battle for Overlay Icons"
 description: "A solution for automatically rearranging the sort order of the overlay icons in the Windows registry."
 pubDate: 2017-01-13
+updatedDate: 2023-01-26
 tags: ["Python","Windows"]
 ---
 
