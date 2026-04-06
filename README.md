@@ -69,7 +69,8 @@ pnpm install
    ```
 
 3. Write the post body in Markdown below the frontmatter.
-4. Images go in `site/assets/img/` and are referenced as `![alt](/img/file.jpg)`.
+4. Illustrative images go in `site/assets/img/` (`![alt](/img/file.jpg)`).
+   Screenshots and full-width images go in `site/assets/scr/` (`![alt](/scr/file.png)`).
 5. Run `pnpm dev` to preview, then commit and push to `main` to publish.
 
 **Frontmatter fields:**
@@ -155,7 +156,8 @@ configuration.
   `email` entries to the `socialIcons` map (with proper SVG path data), and
   remove unused entries (`x`, `telegram`, `facebook`, `youtube`).
 - **`src/styles/global.css`** — append the "Site customisations" section from
-  the bottom of the file (post image sizing and centering).
+  the bottom of the file (post image sizing: constrained for `/img/`, full-width
+  for `/scr/`).
 - **`src/components/SocialShare.svelte`** — replace the `platforms` array
   with LinkedIn, BlueSky, and Mastodon entries (each with a `name`, `icon`
   SVG path string, and `getShareUrl` function), removing X, Telegram, and
@@ -172,7 +174,8 @@ site/                  # Content (posts, about page, config, assets)
     posts/*.md         # Blog posts
     about/index.md     # About page
   assets/              # Static files (images, favicons, legacy redirects)
-    img/               # Blog post images
+    img/               # Illustrative images (displayed at constrained size)
+    scr/               # Screenshots (displayed at full content width)
 src/                   # Theme engine (Spaceship) — don't edit for content
 .github/workflows/     # GitHub Actions deployment
 ```

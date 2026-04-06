@@ -94,15 +94,15 @@ The `img` directory contains the icons in various sizes and variations (highligh
 
 In order to communicate with the Pinboard API, we need the user's Pinboard API token. If the token has not yet been stored in the local storage area of the extension, we first need to show a login dialog that requests it from the user:
 
-![Pinboard Pin login dialog](/img/web-ext-with-angular-1.png)
+![Pinboard Pin login dialog](/scr/web-ext-with-angular-1.png)
 
 Only after the user has entered the API token and it has been validated, we want to show the actual popup for storing the current page as a bookmark:
 
-![Pinboard Pin bookmark dialog](/img/web-ext-with-angular-2.png)
+![Pinboard Pin bookmark dialog](/scr/web-ext-with-angular-2.png)
 
 This can be easily solved with a so-called "guard" in Angular. We can use the same guard not only as an authentication guard, but also for navigating to the other pages that are part of our WebExtension. One of them is the options page showing a form where you can change the settings of the add-on:
 
-![Pinboard Pin options dialog](/img/web-ext-with-angular-3.png)
+![Pinboard Pin options dialog](/scr/web-ext-with-angular-3.png)
 
 This options page must be specified as the property `page` of the `options_ui` object in the `manifest.json` file. Unfortunately, the Angular CLI creates only one `index.html` page for us, and it cannot be easily configured to provide an additional `options.html` page. But luckily, Firefox allows passing query parameters to the options page:
 
@@ -211,7 +211,7 @@ The `httpGet()` method is a universal method for communicating with the Pinboard
 
 The reactive extensions used in Angular are very convenient for combining the various asynchronous operations. They are particularly handy for implementing the auto-suggest feature that suggests suitable tags from Pinboard when entering text in the tag input field:
 
-![Pinboard Pin auto-suggest tags](/img/web-ext-with-angular-4.png)
+![Pinboard Pin auto-suggest tags](/scr/web-ext-with-angular-4.png)
 
 Here, we can make good use of the `debounceTime()` and `distinctUntilChanged()` operators on the Observable that reports the keyboard events on the tag input field, since we don't want to check the suggested tags too frequently.
 

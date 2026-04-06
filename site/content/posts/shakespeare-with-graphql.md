@@ -379,16 +379,16 @@ The code at the bottom of the file sets up an `aiohttp` application, makes sure 
 
 For testing the GraphQL API, you can use a GraphQL client like [Insomnia](https://insomnia.rest/) (which was actually a REST client, but now speaks GraphQL, too). Run the `server.py` file and then start Insomnia. Create a new workspace "Shakespeare". There, create a new request "Hamlet", selecting "POST" as the request method and "GraphQL query" as the body. Change the URL of the query to `http://localhost:8080/graphql` and enter our GraphQL query from above as the body. You should get the expected output:
 
-![Query Hamlet with Insomnia](/img/shakespeare-with-graphql-1.png)
+![Query Hamlet with Insomnia](/scr/shakespeare-with-graphql-1.png)
 
 Another way of testing the GraphQL API is by using the [GraphiQL](https://github.com/graphql/graphiql) IDE which can be integrated into the server or started as a [standalone app](https://electronjs.org/apps/graphiql) using Electron.
 
-![Query Hamlet with GraphiQL](/img/shakespeare-with-graphql-2.png)
+![Query Hamlet with GraphiQL](/scr/shakespeare-with-graphql-2.png)
 
 When you click on the "Docs" Button on the right side of the GraphiQL window, you can browse through the documentation of all the types defined in our schema. You would also see descriptions for the types and enum values if we had added these when defining the schema. This is what I really like about GraphiQL. Like Insomnia, GraphiQL also uses the schema information to auto suggest field and argument names, and translates `GraphQLErrors` into squiggly red lines under the corresponding positions in the query.  Once you got accustomed to this kind of convenience when testing queries against your API, you don't want to miss it any more.
 
 Let's try to use the API we created to find out the title of Shakespeare's work in which the character Hamlet appeared. Ok, this is not a very difficult question, you say. So let's try to also find out in the same query, in which year that work has been written and how many words it contains. This is still quite easy to do with GraphiQL and our Shakespeare GraphQL API server:
 
-![Query Hamlet title, year and total words with GraphiQL](/img/shakespeare-with-graphql-3.png)
+![Query Hamlet title, year and total words with GraphiQL](/scr/shakespeare-with-graphql-3.png)
 
 Have fun playing around with our small API. Maybe you want to extend it to the other data that's available in the database, making it possible to retrieve the full text of Shakespeare's works, or build a small single page web app using this API.

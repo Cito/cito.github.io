@@ -301,3 +301,9 @@ h6:hover .heading-link {
   max-width: 360px;
   max-height: 400px;
 }
+
+.prose img[src*="/scr/"] {
+  max-width: 100%;
+  max-height: 100%;
+}
+
